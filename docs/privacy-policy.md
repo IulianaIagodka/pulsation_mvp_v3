@@ -24,6 +24,10 @@ Local data is used to:
 - avoid repeating the same intervention too often,
 - apply gentle in-app limits (stored locally).
 
+## 2a. Notifications
+
+If you allow notifications, Pulsation may schedule a **local reminder** on your device after the app has been in the background for a while (about 20 minutes). The reminder is generated on your phone; we do not send marketing push messages from a server.
+
 ## 3. Data Sharing
 
 Pulsation does not sell your personal data.

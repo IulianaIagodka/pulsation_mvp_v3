@@ -18,7 +18,8 @@
       "bundleIdentifier": "com.maksym.pulsation",
       "buildNumber": "1",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSUserNotificationsUsageDescription": "Pulsation sends a gentle reminder after you have been away for a while."
       }
     },
     "android": {
@@ -35,7 +36,13 @@
     "plugins": [
       "expo-router",
       "expo-sqlite",
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-notifications",
+        {
+          "color": "#0D121E"
+        }
+      ]
     ],
     "extra": {
       "router": {},

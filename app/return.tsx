@@ -25,7 +25,6 @@ export default function ReturnScreen() {
           />
         </View>
         <CalmText style={styles.body}>{uiCopy.returnBody}</CalmText>
-        <CalmText style={styles.hint}>{uiCopy.spiralHint}</CalmText>
       </SoftCard>
     </CalmScreen>
   );
@@ -34,12 +33,4 @@ export default function ReturnScreen() {
 const styles = StyleSheet.create({
   spiralSlot: { minHeight: spiralLayout.slotMinHeight, justifyContent: "center", alignItems: "center" },
   body: { color: colors.textSecondary, textAlign: "center", fontSize: 16, lineHeight: 25, marginTop: 24 },
-  hint: {
-    marginTop: 14,
-    color: colors.textSecondary,
-    opacity: 0.38,
-    fontSize: 12,
-    letterSpacing: 0.4,
-    textAlign: "center",
-  },
 });

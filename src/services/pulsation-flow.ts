@@ -8,10 +8,7 @@ import { collectSignal } from "../modules/signal-collector";
 import { calculateEffectiveness } from "../modules/reflection-engine";
 import { runTriggerEngine } from "../modules/trigger-engine";
 import { updateMemory } from "../modules/memory-update";
-import {
-  isTestRotateModeEnabled,
-  pickNextRotatingIntervention,
-} from "../modules/test-intervention-rotate";
+import { pickNextRotatingIntervention } from "../modules/test-intervention-rotate";
 
 export function bootstrapPulsation() {
   try {
@@ -24,20 +21,12 @@ export function bootstrapPulsation() {
 export function decideIntervention(): InterventionType | undefined {
   try {
     bootstrapPulsation();
-    if (isTestRotateModeEnabled()) {
-      const selected = pickNextRotatingIntervention();
-      logEvent("trigger_evaluated", {
-        shouldDeliver: true,
-        selected,
-        reason: "test_rotate",
-      });
-      return selected;
-    }
     const signal = collectSignal();
     logEvent("signal_collected", signal);
     const decision = runTriggerEngine(signal);
-    logEvent("trigger_evaluated", decision);
-    return decision.shouldDeliver ? decision.selected : undefined;
+    const selected = pickNextRotatingIntervention();
+    logEvent("trigger_evaluated", { ...decision, selected, rotation: true });
+    return selected;
   } catch (error) {
     console.warn("[pulsation-flow] Failed to decide intervention:", error);
     return undefined;

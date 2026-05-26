@@ -11,7 +11,9 @@ const assetsDir = join(root, "assets");
 
 const size = 1024;
 const base = 136;
-const s = size / base;
+/** Outer ring uses this fraction of canvas width (inset for home-screen / adaptive masks). */
+const artScale = 0.76;
+const s = (size * artScale) / base;
 const cx = size / 2;
 const cy = size / 2;
 const bg = "#0D121E";

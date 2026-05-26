@@ -13,10 +13,7 @@
     },
     "production": {
       "distribution": "store",
-      "autoIncrement": true,
-      "env": {
-        "EXPO_PUBLIC_TEST_ROTATE_INTERVENTIONS": "false"
-      }
+      "autoIncrement": true
     }
   },
   "submit": {

@@ -37,4 +37,10 @@ describe("collectSignal", () => {
     const signal = collectSignal();
     expect(signal.distractingSessionMinutes).toBeGreaterThanOrEqual(20);
   });
+
+  it("uses pending inactive minutes from a background resume", () => {
+    __sessionRuntimeInternals.setPendingInactiveMinutes(30);
+    const signal = collectSignal();
+    expect(signal.distractingSessionMinutes).toBe(30);
+  });
 });

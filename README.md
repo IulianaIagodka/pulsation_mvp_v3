@@ -56,14 +56,37 @@ Dark minimal palette from technical requirements is implemented in `src/design/t
 - Spiral: `#4F6B91`, `#2A3954` / `#233045`
 - Surfaces: `#141B2C`, `#1A2235`
 
-## Test mode (rotate interventions)
+## Intervention rotation
 
 Each visit to the trigger screen (`/trigger`) picks the next intervention in order:
 `feet_on_ground` → `find_three_things` → `triangle_breath` → repeat.
 
-- **On by default in dev** (`__DEV__`).
-- Force on: `EXPO_PUBLIC_TEST_ROTATE_INTERVENTIONS=true npm run start`
-- Force off in dev: `EXPO_PUBLIC_TEST_ROTATE_INTERVENTIONS=false npm run start`
+## Inactivity trigger
+
+If Pulsation was in the background for **20+ minutes**:
+
+1. A **local notification** is shown (“One action for you now?” / “Одна дія зараз?”).
+2. Reopening the app navigates to `/trigger` (not during action / explanation / return).
+
+iOS will ask for notification permission the first time you background the app. After adding `expo-notifications`, run `npm run ios` once (not only Expo Go) so the native module is linked.
+
+### Test in Simulator (no Date & Time setting needed)
+
+iOS Simulator often has no manual clock control. Use a short threshold instead:
+
+```bash
+EXPO_PUBLIC_INACTIVITY_TRIGGER_MINUTES=0 npm start
+```
+
+Then: open app → **⌘⇧H** (Home) → open Pulsation again → should land on `/trigger`.
+
+To fake a long absence after any background:
+
+```bash
+EXPO_PUBLIC_INACTIVITY_TRIGGER_MINUTES=1 EXPO_PUBLIC_SIMULATED_INACTIVE_MINUTES=25 npm start
+```
+
+Background once (even briefly), then return to the app.
 
 ## Native Integration TODO
 

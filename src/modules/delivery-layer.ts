@@ -29,36 +29,35 @@ const guidanceByLocale: Record<Locale, Record<InterventionType, Guidance>> = {
   en: {
     feet_on_ground: {
       actionText:
-        "Place your feet on the floor. Notice the pressure under them. Take one slow breath.",
-      explanationText: "Noticing the floor under you helps you settle.",
+        "Place your feet on the floor. Notice the pressure under them. Take one slow breath",
+      explanationText: "Noticing the floor under you helps you settle",
     },
     find_three_things: {
       actionText:
         "Find three things around you:\n- something round\n- something soft\n- something still",
       explanationText:
-        "Looking for shapes, textures or stillness\ngrounds your nervous system in the present.",
+        "Looking for shapes, textures or stillness\ngrounds your nervous system in the present",
     },
     triangle_breath: {
-      actionText: "Follow a calm triangle rhythm: inhale, pause, exhale, each side unhurried.",
+      actionText: "Follow a calm triangle rhythm: inhale, pause, exhale, each side unhurried",
       explanationText:
-        "A simple breath pattern can quiet internal noise and help your nervous system return to balance.",
+        "A simple breath pattern can quiet internal noise and help your nervous system return to balance",
     },
   },
   uk: {
     feet_on_ground: {
       actionText:
-        "Постав стопи на підлогу. Відчуй тиск під ними. Зроби один повільний вдих.",
-      explanationText: "Коли відчуваєш підлогу під собою, стає легше заспокоїтись.",
+        "Постав ноги на підлогу. Відчуй опору під ними. Зроби один повільний видих",
+      explanationText: "Коли відчуваєш підлогу, легше заспокоїтись",
     },
     find_three_things: {
       actionText:
-        "Знайди три речі навколо себе:\n- щось кругле\n- щось м’яке\n- щось нерухоме",
-      explanationText: "Пошук форм, текстур чи нерухомості\nм’яко заземлює нервову систему в теперішньому.",
+        "Знайди поруч три речі:\n- щось кругле\n- щось м’яке\n- щось нерухоме",
+      explanationText: "Коли шукаєш форми, фактури чи нерухомість,\nнервова система м’яко повертається в теперішнє",
     },
     triangle_breath: {
-      actionText: "Пройди спокійний трикутник дихання: вдих, пауза, видих — повільно й м’яко.",
-      explanationText:
-        "Простий дихальний ритм заспокоює систему та допомагає повернути відчуття внутрішньої рівноваги.",
+      actionText: "Дихай спокійним трикутником: вдих, пауза, видих — без поспіху",
+      explanationText: "Простий ритм дихання заспокоює й повертає відчуття рівноваги",
     },
   },
 };
@@ -77,6 +76,8 @@ const uiCopyByLocale: Record<
     returnBody: string;
     returnAction: string;
     spiralHint: string;
+    inactivityNotificationTitle: string;
+    inactivityNotificationBody: string;
     aboutLink: string;
     aboutTitle: string;
     aboutParagraphs: readonly string[];
@@ -87,20 +88,22 @@ const uiCopyByLocale: Record<
   en: {
     onboardingLine: "Pulsation exists to bring you back to yourself",
     triggerPrompt: "One action for you now?",
-    triggerPauseMessage: "Not now. You can continue gently.",
+    triggerPauseMessage: "Not now. You can continue gently",
     triggerAccept: "I can take this moment",
     triggerDecline: "I will stay for now",
     actionDone: "This feels complete",
     actionSkip: "Not this time",
     explanationContinue: "I will carry this with me",
-    returnBody: "You are here. Continue when it feels right.",
+    returnBody: "You are here",
     returnAction: "Return to stillness",
     spiralHint: "tap the spiral",
+    inactivityNotificationTitle: "Pulsation",
+    inactivityNotificationBody: "One action for you now?",
     aboutLink: "About",
     aboutTitle: "About Pulsation",
     aboutParagraphs: [
       "Pulsation offers short, calming micro-actions when everyday digital use feels like a lot.",
-      "After onboarding, the app invites you to one gentle action and quietly picks among three micro-interventions based on your recent use, stored only on this device.",
+      "If you allow notifications, after about 20 minutes away the app may send one quiet reminder on this device. No marketing messages.",
       "Pulsation does not read or analyze your other apps.",
       "This is a wellbeing app, not a medical device or substitute for professional care.",
     ] as const,
@@ -108,24 +111,26 @@ const uiCopyByLocale: Record<
     aboutVersionPrefix: "Version",
   },
   uk: {
-    onboardingLine: "Pulsation існує, щоб повертати тебе до себе",
-    triggerPrompt: "Одна дія для тебе зараз?",
-    triggerPauseMessage: "Зараз не час. Можна просто побути.",
-    triggerAccept: "Я можу взяти цей момент",
-    triggerDecline: "Зараз я просто побуду",
+    onboardingLine: "Pulsation допомагає повернутися до себе",
+    triggerPrompt: "Одна дія зараз?",
+    triggerPauseMessage: "Зараз не час. Можна просто побути",
+    triggerAccept: "Можу взяти цей момент",
+    triggerDecline: "Зараз просто побуду",
     actionDone: "Цього достатньо",
     actionSkip: "Не цього разу",
-    explanationContinue: "Я візьму це з собою",
-    returnBody: "Ти вже тут. Продовжуй, коли відчуєш готовність.",
+    explanationContinue: "Візьму це з собою",
+    returnBody: "Ти тут",
     returnAction: "Повернутися до тиші",
     spiralHint: "торкнись спіралі",
+    inactivityNotificationTitle: "Pulsation",
+    inactivityNotificationBody: "Одна дія зараз?",
     aboutLink: "Про застосунок",
     aboutTitle: "Про Pulsation",
     aboutParagraphs: [
-      "Pulsation пропонує короткі заспокійливі дії, коли щоденне перебування в цифрі відчувається надмірним.",
-      "Після онбордингу застосунок запрошує до однієї м’якої дії й тихо обирає одну з трьох мікроінтервенцій з урахуванням недавнього досвіду — лише на цьому пристрої.",
-      "Pulsation не читає й не аналізує інші твої додатки.",
-      "Це застосунок для добробуту, а не медичний пристрій і не заміна професійної допомоги.",
+      "Pulsation — короткі спокійні дії, коли цифрове навантаження стає занадто великим.",
+      "Якщо дозволиш сповіщення, після близько 20 хвилин відсутності надійде одне тихе нагадування. Без реклами.",
+      "Застосунок не читає й не аналізує інші додатки на телефоні.",
+      "Це застосунок для добробуту, не медичний виріб і не заміна професійної допомоги.",
     ] as const,
     aboutBack: "Назад",
     aboutVersionPrefix: "Версія",
