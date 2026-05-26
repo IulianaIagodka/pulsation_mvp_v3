@@ -9,6 +9,7 @@ describe("spiral layout regression checks", () => {
     expect(breathingRhythm.spiral.inhaleMs).toBeGreaterThan(0);
     expect(breathingRhythm.spiral.holdMs).toBeGreaterThan(0);
     expect(breathingRhythm.spiral.exhaleMs).toBeGreaterThan(0);
+    expect(breathingRhythm.spiral.scaleInhale).toBeGreaterThan(breathingRhythm.spiral.scaleExhale);
   });
 
   it("keeps find-three-things reveal delays increasing", () => {

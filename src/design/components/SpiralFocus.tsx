@@ -8,14 +8,14 @@ type Props = { onPress?: () => void };
 export function SpiralFocus({ onPress }: Props) {
   const scale = useRef(new Animated.Value(1)).current;
   const opacity = useRef(new Animated.Value(0.94)).current;
-  const { inhaleMs, holdMs, exhaleMs } = breathingRhythm.spiral;
+  const { inhaleMs, holdMs, exhaleMs, scaleExhale, scaleInhale } = breathingRhythm.spiral;
 
   useEffect(() => {
     const loop = Animated.loop(
       Animated.sequence([
         Animated.parallel([
           Animated.timing(scale, {
-            toValue: 1.06,
+            toValue: scaleInhale,
             duration: inhaleMs,
             easing: Easing.inOut(Easing.quad),
             useNativeDriver: true,
@@ -29,7 +29,7 @@ export function SpiralFocus({ onPress }: Props) {
         ]),
         Animated.parallel([
           Animated.timing(scale, {
-            toValue: 1.06,
+            toValue: scaleInhale,
             duration: holdMs,
             easing: Easing.inOut(Easing.quad),
             useNativeDriver: true,
@@ -43,7 +43,7 @@ export function SpiralFocus({ onPress }: Props) {
         ]),
         Animated.parallel([
           Animated.timing(scale, {
-            toValue: 1,
+            toValue: scaleExhale,
             duration: exhaleMs,
             easing: Easing.inOut(Easing.quad),
             useNativeDriver: true,

@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Animated, Platform, StyleSheet, View } from "react-native";
+import { Animated, Platform, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
 import { CalmScreen } from "../src/design/components/CalmScreen";
 import { CalmText } from "../src/design/components/CalmText";
 import { SpiralFocus } from "../src/design/components/SpiralFocus";
@@ -30,6 +30,11 @@ export default function OnboardingScreen() {
           <CalmText style={styles.copy}>{uiCopy.onboardingLine}</CalmText>
         </View>
         <CalmText style={styles.hint}>{uiCopy.spiralHint}</CalmText>
+        <TouchableWithoutFeedback onPress={() => router.push("/about")}>
+          <View style={styles.aboutLinkWrap}>
+            <CalmText style={styles.aboutLink}>{uiCopy.aboutLink}</CalmText>
+          </View>
+        </TouchableWithoutFeedback>
       </Animated.View>
     </CalmScreen>
   );
@@ -55,5 +60,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     letterSpacing: 0.4,
     textAlign: "center",
+  },
+  aboutLinkWrap: {
+    marginTop: spacing.xl,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    alignSelf: "center",
+  },
+  aboutLink: {
+    color: colors.textSecondary,
+    opacity: 0.7,
+    fontSize: 14,
+    letterSpacing: 0.35,
+    textAlign: "center",
+    textDecorationLine: "underline",
   },
 });

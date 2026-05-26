@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableWithoutFeedback, View } from "react-native";
 import { CalmScreen } from "../src/design/components/CalmScreen";
 import { CalmText } from "../src/design/components/CalmText";
 import { SpiralFocus } from "../src/design/components/SpiralFocus";
@@ -10,34 +10,32 @@ import { decideIntervention } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
 import { colors } from "../src/design/tokens";
 import { spiralLayout } from "../src/design/animation-rhythm";
+import { InterventionType } from "../src/types/domain";
+
+const defaultIntervention: InterventionType = "find_three_things";
 
 export default function TriggerScreen() {
   const router = useRouter();
   const setSelected = useAppStore((s) => s.setSelectedIntervention);
-  const [message, setMessage] = useState(uiCopy.triggerPrompt);
-  const [canProceedToAction, setCanProceedToAction] = useState(true);
 
   useEffect(() => {
-    const selected = decideIntervention();
-    if (selected) {
-      setSelected(selected);
-      setCanProceedToAction(true);
-    } else {
-      // MVP flow always offers one action immediately after onboarding.
-      setSelected("find_three_things");
-      setMessage(uiCopy.triggerPrompt);
-      setCanProceedToAction(true);
-    }
+    const selected = decideIntervention() ?? defaultIntervention;
+    setSelected(selected);
   }, [setSelected]);
 
   return (
     <CalmScreen centered>
       <SoftCard>
         <View style={styles.spiralSlot}>
-          <SpiralFocus onPress={() => router.push(canProceedToAction ? "/action" : "/return")} />
+          <SpiralFocus onPress={() => router.push("/action")} />
         </View>
-        <CalmText style={styles.message}>{message}</CalmText>
+        <CalmText style={styles.message}>{uiCopy.triggerPrompt}</CalmText>
         <CalmText style={styles.hint}>{uiCopy.spiralHint}</CalmText>
+        <TouchableWithoutFeedback onPress={() => router.push("/about")}>
+          <View style={styles.aboutLinkWrap}>
+            <CalmText style={styles.aboutLink}>{uiCopy.aboutLink}</CalmText>
+          </View>
+        </TouchableWithoutFeedback>
       </SoftCard>
     </CalmScreen>
   );
@@ -53,5 +51,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     letterSpacing: 0.4,
     textAlign: "center",
+  },
+  aboutLinkWrap: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    alignSelf: "center",
+  },
+  aboutLink: {
+    color: colors.textSecondary,
+    opacity: 0.7,
+    fontSize: 14,
+    letterSpacing: 0.35,
+    textAlign: "center",
+    textDecorationLine: "underline",
   },
 });

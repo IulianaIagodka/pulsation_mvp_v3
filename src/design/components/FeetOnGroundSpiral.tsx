@@ -8,7 +8,7 @@ type Props = { onPress?: () => void };
 export function FeetOnGroundSpiral({ onPress }: Props) {
   const scale = useRef(new Animated.Value(1)).current;
   const opacity = useRef(new Animated.Value(0.94)).current;
-  const { inhaleMs, holdMs, exhaleMs } = breathingRhythm.spiral;
+  const { inhaleMs, holdMs, exhaleMs, scaleExhale, scaleInhale } = breathingRhythm.spiral;
 
   useEffect(() => {
     const loop = Animated.loop(
@@ -16,7 +16,7 @@ export function FeetOnGroundSpiral({ onPress }: Props) {
         // Inhale: gentle expansion and subtle brightening.
         Animated.parallel([
           Animated.timing(scale, {
-            toValue: 1.06,
+            toValue: scaleInhale,
             duration: inhaleMs,
             easing: Easing.inOut(Easing.quad),
             useNativeDriver: true,
@@ -31,7 +31,7 @@ export function FeetOnGroundSpiral({ onPress }: Props) {
         // Hold: almost still, no visual jump.
         Animated.parallel([
           Animated.timing(scale, {
-            toValue: 1.06,
+            toValue: scaleInhale,
             duration: holdMs,
             easing: Easing.inOut(Easing.quad),
             useNativeDriver: true,
@@ -46,7 +46,7 @@ export function FeetOnGroundSpiral({ onPress }: Props) {
         // Exhale: soft contraction with tiny downward settling.
         Animated.parallel([
           Animated.timing(scale, {
-            toValue: 1,
+            toValue: scaleExhale,
             duration: exhaleMs,
             easing: Easing.inOut(Easing.quad),
             useNativeDriver: true,

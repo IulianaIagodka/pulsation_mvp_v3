@@ -10,7 +10,8 @@ export function FindThreeThingsSpiral({ onPress }: Props) {
   const opacity = useRef(new Animated.Value(0.94)).current;
   const haloScale = useRef(new Animated.Value(1)).current;
   const haloOpacity = useRef(new Animated.Value(0.08)).current;
-  const { inhaleMs, holdMs, exhaleMs } = breathingRhythm.spiral;
+  const { inhaleMs, holdMs, exhaleMs, scaleExhale, scaleInhale, haloScaleExhale, haloScaleInhale } =
+    breathingRhythm.spiral;
 
   useEffect(() => {
     const loop = Animated.loop(
@@ -18,7 +19,7 @@ export function FindThreeThingsSpiral({ onPress }: Props) {
         // Inhale: gentle expansion and subtle brightening.
         Animated.parallel([
           Animated.timing(scale, {
-            toValue: 1.06,
+            toValue: scaleInhale,
             duration: inhaleMs,
             easing: Easing.inOut(Easing.quad),
             useNativeDriver: true,
@@ -30,7 +31,7 @@ export function FindThreeThingsSpiral({ onPress }: Props) {
             useNativeDriver: true,
           }),
           Animated.timing(haloScale, {
-            toValue: 1.08,
+            toValue: haloScaleInhale,
             duration: inhaleMs,
             easing: Easing.inOut(Easing.quad),
             useNativeDriver: true,
@@ -45,7 +46,7 @@ export function FindThreeThingsSpiral({ onPress }: Props) {
         // Hold: almost still, no visual jump.
         Animated.parallel([
           Animated.timing(scale, {
-            toValue: 1.06,
+            toValue: scaleInhale,
             duration: holdMs,
             easing: Easing.inOut(Easing.quad),
             useNativeDriver: true,
@@ -60,7 +61,7 @@ export function FindThreeThingsSpiral({ onPress }: Props) {
         // Exhale: soft contraction with tiny downward settling.
         Animated.parallel([
           Animated.timing(scale, {
-            toValue: 1,
+            toValue: scaleExhale,
             duration: exhaleMs,
             easing: Easing.inOut(Easing.quad),
             useNativeDriver: true,
@@ -72,7 +73,7 @@ export function FindThreeThingsSpiral({ onPress }: Props) {
             useNativeDriver: true,
           }),
           Animated.timing(haloScale, {
-            toValue: 1,
+            toValue: haloScaleExhale,
             duration: exhaleMs,
             easing: Easing.inOut(Easing.quad),
             useNativeDriver: true,

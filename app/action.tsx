@@ -7,7 +7,7 @@ import { FeetOnGroundSpiral } from "../src/design/components/FeetOnGroundSpiral"
 import { FindThreeThingsSpiral } from "../src/design/components/FindThreeThingsSpiral";
 import { SoftCard } from "../src/design/components/SoftCard";
 import { TriangleBreathSpiral } from "../src/design/components/TriangleBreathSpiral";
-import { interventionCopy, interventionGuidance, uiCopy } from "../src/modules/delivery-layer";
+import { activeLocale, interventionCopy, interventionGuidance, uiCopy } from "../src/modules/delivery-layer";
 import { registerInterventionOutcome } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
 import { colors, spacing, typography } from "../src/design/tokens";
@@ -19,7 +19,7 @@ export default function ActionScreen() {
   const router = useRouter();
   const setSelected = useAppStore((s) => s.setSelectedIntervention);
   const selected = useAppStore((s) => s.selectedIntervention) ?? "feet_on_ground";
-  const isUkrainian = uiCopy.spiralHint === "торкнись спіралі";
+  const isUkrainian = activeLocale === "uk";
   const findThreeQueue = useMemo(
     () =>
       isUkrainian
@@ -33,6 +33,7 @@ export default function ActionScreen() {
     new Animated.Value(0),
   ]).current;
   const inhaleOpacity = useRef(new Animated.Value(0)).current;
+  const holdOpacity = useRef(new Animated.Value(0)).current;
   const exhaleOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -61,11 +62,12 @@ export default function ActionScreen() {
   useEffect(() => {
     if (selected !== "triangle_breath") {
       inhaleOpacity.setValue(0);
+      holdOpacity.setValue(0);
       exhaleOpacity.setValue(0);
       return;
     }
 
-    // Controlled pacing by count: inhale and exhale fade in/out, hold stays constant.
+    // Controlled pacing by count: words appear/disappear in one shared spot.
     const triangleLoop = Animated.loop(
       Animated.sequence([
         Animated.timing(inhaleOpacity, {
@@ -81,7 +83,19 @@ export default function ActionScreen() {
           easing: Easing.inOut(Easing.quad),
           useNativeDriver: true,
         }),
+        Animated.timing(holdOpacity, {
+          toValue: 1,
+          duration: breathingRhythm.triangleBreath.fadeDurationMs,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
         Animated.delay(breathingRhythm.triangleBreath.holdBridgeDelayMs),
+        Animated.timing(holdOpacity, {
+          toValue: 0,
+          duration: breathingRhythm.triangleBreath.fadeDurationMs,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
         Animated.timing(exhaleOpacity, {
           toValue: 1,
           duration: breathingRhythm.triangleBreath.fadeDurationMs,
@@ -103,9 +117,10 @@ export default function ActionScreen() {
     return () => {
       triangleLoop.stop();
       inhaleOpacity.setValue(0);
+      holdOpacity.setValue(0);
       exhaleOpacity.setValue(0);
     };
-  }, [exhaleOpacity, inhaleOpacity, selected]);
+  }, [exhaleOpacity, holdOpacity, inhaleOpacity, selected]);
   const handleComplete = () => {
     registerInterventionOutcome(selected, true);
     router.push("/explanation");
@@ -138,11 +153,13 @@ export default function ActionScreen() {
               {isUkrainian ? "Слідуй за ритмом трикутника:" : "Follow the triangle rhythm:"}
             </CalmText>
             <View style={styles.phaseWordLayer}>
-              <Animated.View style={{ opacity: inhaleOpacity }}>
+              <Animated.View style={[styles.phaseWord, { opacity: inhaleOpacity }]}>
                 <CalmText style={styles.phaseLabel}>{isUkrainian ? "вдих" : "inhale"}</CalmText>
               </Animated.View>
-              <CalmText style={styles.phaseHold}>{isUkrainian ? "затримка" : "hold"}</CalmText>
-              <Animated.View style={{ opacity: exhaleOpacity }}>
+              <Animated.View style={[styles.phaseWord, { opacity: holdOpacity }]}>
+                <CalmText style={styles.phaseLabel}>{isUkrainian ? "затримка" : "hold"}</CalmText>
+              </Animated.View>
+              <Animated.View style={[styles.phaseWord, { opacity: exhaleOpacity }]}>
                 <CalmText style={styles.phaseLabel}>{isUkrainian ? "видих" : "exhale"}</CalmText>
               </Animated.View>
             </View>
@@ -193,15 +210,15 @@ const styles = StyleSheet.create({
   },
   phaseWordLayer: {
     marginTop: spacing.sm,
-    minHeight: 118,
+    minHeight: 60,
+    minWidth: 180,
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",
   },
-  phaseHold: {
-    color: colors.textSecondary,
-    textAlign: "center",
-    fontSize: 18,
-    lineHeight: 26,
+  phaseWord: {
+    position: "absolute",
+    alignItems: "center",
+    justifyContent: "center",
   },
   hint: {
     marginTop: spacing.md,

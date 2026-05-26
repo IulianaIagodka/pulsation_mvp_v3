@@ -3,6 +3,10 @@ export const breathingRhythm = {
     inhaleMs: 1900,
     holdMs: 800,
     exhaleMs: 2100,
+    scaleExhale: 1,
+    scaleInhale: 1.12,
+    haloScaleExhale: 1,
+    haloScaleInhale: 1.15,
   },
   findThreeThings: {
     revealDelayMs: [1800, 7000, 12000] as const,

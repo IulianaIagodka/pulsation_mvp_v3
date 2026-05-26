@@ -1,21 +1,50 @@
 {
-  "name": "pulsation_mvp_v3_temp",
+  "name": "pulsation_mvp_v3",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "test": "jest",
+    "doctor": "npx expo-doctor",
+    "build:ios:preview": "npx eas-cli build -p ios --profile preview",
+    "build:ios:prod": "npx eas-cli build -p ios --profile production",
+    "build:ios:testflight": "npx eas-cli build -p ios --profile production",
+    "submit:ios:prod": "npx eas-cli submit -p ios --profile production --latest",
+    "submit:ios:testflight": "npx eas-cli submit -p ios --profile production --latest",
+    "generate:icon": "node scripts/generate-app-icon.mjs"
   },
   "dependencies": {
     "expo": "~54.0.33",
+    "expo-constants": "~18.0.13",
+    "expo-linear-gradient": "~15.0.8",
+    "expo-linking": "~8.0.11",
+    "expo-localization": "~17.0.8",
+    "expo-router": "~6.0.23",
+    "expo-sqlite": "~16.0.10",
     "expo-status-bar": "~3.0.9",
     "react": "19.1.0",
-    "react-native": "0.81.5"
+    "react-dom": "^19.1.0",
+    "react-native": "0.81.5",
+    "react-native-reanimated": "~4.1.1",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0",
+    "react-native-svg": "15.12.1",
+    "react-native-web": "^0.21.2",
+    "react-native-worklets": "0.5.1",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "eas-cli": "^16.0.0",
+    "sharp": "^0.34.1",
+    "@types/jest": "^29.5.14",
     "@types/react": "~19.1.0",
+    "babel-preset-expo": "~54.0.10",
+    "jest": "~29.7.0",
+    "jest-expo": "~54.0.14",
+    "ts-jest": "^29.4.9",
     "typescript": "~5.9.2"
   },
   "private": true
