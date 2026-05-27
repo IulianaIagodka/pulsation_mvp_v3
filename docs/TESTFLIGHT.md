@@ -47,7 +47,7 @@ npm run submit:ios:testflight
 npx eas-cli build -p ios --profile production --auto-submit
 ```
 
-Потрібні: Apple ID, app-specific password (якщо 2FA), доступ до App Store Connect.
+У цьому проєкті `ascAppId` вже заданий в `eas.json` (`6773324495`), тому `submit` працює в non-interactive режимі через App Store Connect API key, що зберігається на EAS.
 
 ## Крок 3 — TestFlight у браузері
 

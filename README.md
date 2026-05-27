@@ -44,10 +44,10 @@ Schema is defined in `src/data/schema.ts`.
 
 ## UX Flow
 
-1. **Onboarding** (`app/index.tsx`): anchored spiral, calm main line (“Pulsation exists…”), delayed “tap the spiral” hint, optional **About** link in the footer (About is **only** here in the main flow).
+1. **Onboarding** (`app/index.tsx`): anchored spiral, calm main line (“Pulsation exists…”), delayed “tap the spiral” hint, optional **About** link in the footer (About is **only** here in the main flow). Onboarding is shown once per install/profile.
 2. **Trigger** (`app/trigger.tsx`): same spiral slot; main prompt; spiral hint appears last (timed after main copy).
 3. **Action** (`app/action.tsx`): one micro-intervention (feet / find 3 / triangle breath). Instruction copy uses the same soft **explanation rhythm** as return. **Find 3 things** shows three simple cues (shape · color · feel) from **7 rotating sets** in `find-three-variants.ts` — the same set never repeats back-to-back (stored in SQLite). **Spiral is the same visual everywhere** (`src/design/spiral-visual.ts` + `SpiralRings`). Tap uses `Pressable` so touches work above the scroll layer (see `AnchoredSpiralScreen` `elevation`). Action → return uses **`router.replace`** (no duplicate return in the stack).
-4. **Return** (`app/return.tsx`): “You are here” (after route fade), then intervention-specific explanation, then “tap the spiral”; tap spiral → onboarding. Find 3 return line: *Looking around slowly helps you return to where you are now.*
+4. **Return** (`app/return.tsx`): “You are here” (after route fade), then intervention-specific explanation, then “tap the spiral”; tap spiral → trigger. Find 3 return line: *Looking around slowly helps you return to where you are now.*
 
 Stack navigation uses a calm **fade** between routes (`app/_layout.tsx`, `breathingRhythm.motion.screenFadeMs`).
 
@@ -118,9 +118,8 @@ Background once (even briefly), then return to the app.
 
 ## Haptic regulation (iOS / Android)
 
-- **Trigger screen:** soft double-pulse when the screen appears.
-- **Triangle breath:** haptics follow inhale (4s) → hold (2s) → exhale (5s) → hold (2s), synced with spiral animation.
-- **Return screen:** grounding pulse on arrival.
+- **Trigger screen only:** soft double-pulse when “One action for you now?” appears.
+- **Action and Return screens:** no haptic feedback.
 
 Works in silent mode on iPhone (Taptic Engine). Requires a dev build (`npm run ios`) — not Expo Go alone after native module changes.
 

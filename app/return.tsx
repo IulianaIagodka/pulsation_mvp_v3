@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
@@ -6,7 +6,6 @@ import { ExplanationText } from "../src/design/components/ExplanationText";
 import { interventionGuidance, uiCopy } from "../src/modules/delivery-layer";
 import { useAppStore } from "../src/state/app-store";
 import { breathingRhythm, spiralHintTiming } from "../src/design/animation-rhythm";
-import { playReturnHaptic } from "../src/services/haptic-regulation";
 import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
 
 export default function ReturnScreen() {
@@ -19,10 +18,6 @@ export default function ReturnScreen() {
     router.replace("/trigger");
   }, [clear, router]);
   useRegisterSpiralPress(onSpiralPress);
-
-  useEffect(() => {
-    playReturnHaptic();
-  }, []);
 
   return (
     <AnchoredSpiralScreen>

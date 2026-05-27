@@ -12,7 +12,6 @@ import { registerInterventionOutcome } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
 import { colors, spacing } from "../src/design/tokens";
 import { breathingRhythm, spiralHintTiming } from "../src/design/animation-rhythm";
-import { startTriangleBreathHapticLoop } from "../src/services/haptic-regulation";
 
 const showDebugActionSelector = process.env.EXPO_PUBLIC_ENABLE_DEBUG_ACTION_SELECTOR === "true";
 
@@ -129,7 +128,6 @@ export default function ActionScreen() {
     );
 
     let cancelled = false;
-    const stopHaptics = startTriangleBreathHapticLoop();
     fullBreath.start(({ finished }) => {
       if (!finished || completionRef.current || cancelled) return;
       setShowTriangleSpiralHint(true);
@@ -137,7 +135,6 @@ export default function ActionScreen() {
 
     return () => {
       cancelled = true;
-      stopHaptics();
       fullBreath.stop();
       if (!isTransitioningRef.current) {
         inhaleOpacity.setValue(0);

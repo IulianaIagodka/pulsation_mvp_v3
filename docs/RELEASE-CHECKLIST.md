@@ -35,8 +35,8 @@ npm run build:ios:testflight
 npm run submit:ios:testflight
 ```
 
-- [ ] Build успішний на expo.dev
-- [ ] Submit успішний
+- [x] Build успішний на expo.dev (build 17)
+- [x] Submit успішний (ASC App ID `6773324495`)
 - [ ] У TestFlight встановлено **новий** build
 - [ ] На iPhone іконка оновилась (інколи кеш — видалити апку й поставити знову)
 

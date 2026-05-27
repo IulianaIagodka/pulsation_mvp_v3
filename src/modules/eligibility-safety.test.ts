@@ -5,8 +5,8 @@ describe("checkEligibility", () => {
     const result = checkEligibility(
       { timestamp: Date.now(), distractingSessionMinutes: 30, appCategory: "social" },
       {
-        quietHoursStart: 23,
-        quietHoursEnd: 7,
+        quietHoursStart: 0,
+        quietHoursEnd: 0,
         dailyCap: 4,
         cooldownMinutes: 60,
         interventionsToday: 0,
