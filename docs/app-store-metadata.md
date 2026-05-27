@@ -26,7 +26,7 @@ Pulsation
 | **Support URL** | `https://iulianaIagodka.github.io/pulsation_mvp_v3/pages/support.html` |
 | **Privacy Policy URL** | `https://iulianaIagodka.github.io/pulsation_mvp_v3/pages/privacy.html` |
 
-Email на сторінках: `support@pulsation.app` — заміни в `docs/pages/*.html`, якщо потрібна інша адреса.
+Support email (на сторінках і в політиці): **support.pulsation@gmail.com**
 
 ### Subtitle
 One gentle action to reset

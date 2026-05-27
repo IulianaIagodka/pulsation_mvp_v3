@@ -64,5 +64,5 @@ This Privacy Policy may be updated from time to time. Material updates will be r
 
 If you have questions about this Privacy Policy, contact:
 
-- Email: support@pulsation.app
+- Email: support.pulsation@gmail.com
 - Web: https://iulianaIagodka.github.io/pulsation_mvp_v3/pages/privacy.html (GitHub Pages; see `docs/pages/`)

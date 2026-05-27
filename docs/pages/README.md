@@ -25,13 +25,9 @@
 
 ## Змінити email
 
-Заміни `support@pulsation.app` у:
+Support email: **support.pulsation@gmail.com** (`support.html`, `privacy.html`, `docs/privacy-policy.md`).
 
-- `docs/pages/support.html`
-- `docs/pages/privacy.html`
-- `docs/privacy-policy.md`
-
-Потім commit + push; Pages оновиться за хвилину.
+Після зміни — commit + push; GitHub Pages оновиться за ~1–3 хв.
 
 ## Локальний перегляд
 
