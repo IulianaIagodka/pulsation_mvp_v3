@@ -80,6 +80,7 @@ Triangle breath pattern (labels + spiral): **inhale 4s → hold 2s → exhale 5s
 - `docs/RELEASE-CHECKLIST.md` — TestFlight → App Store checklist
 - `docs/TESTFLIGHT.md` — builds & submit
 - `docs/privacy-policy.md` — privacy policy text
+- `docs/pages/` — GitHub Pages (Support + Privacy for App Store Connect)
 - `docs/app-store-screenshots/` — iPhone screenshots at **1284×2778** for App Store Connect
 
 ## Intervention rotation

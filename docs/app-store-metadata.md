@@ -5,6 +5,29 @@
 ### App Name
 Pulsation
 
+### Copyright (App Store Connect → App Information)
+
+**Встав у Connect:**
+
+```
+© 2026 Iuliana Iagodka
+```
+
+Рік — **рік першої публікації** в Store (зараз **2026**). Має збігатися з власником Apple Developer акаунта.
+
+Де: [App Store Connect](https://appstoreconnect.apple.com) → **Apps** → **Pulsation** → **App Information** → **Copyright**.
+
+### Support URL & Privacy Policy URL (GitHub Pages)
+
+Після увімкнення Pages (див. `docs/pages/README.md`):
+
+| Поле | URL |
+|------|-----|
+| **Support URL** | `https://iulianaIagodka.github.io/pulsation_mvp_v3/pages/support.html` |
+| **Privacy Policy URL** | `https://iulianaIagodka.github.io/pulsation_mvp_v3/pages/privacy.html` |
+
+Email на сторінках: `support@pulsation.app` — заміни в `docs/pages/*.html`, якщо потрібна інша адреса.
+
 ### Subtitle
 One gentle action to reset
 
