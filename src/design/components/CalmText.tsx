@@ -1,11 +1,15 @@
 import { PropsWithChildren } from "react";
-import { StyleProp, StyleSheet, Text, TextStyle } from "react-native";
+import { StyleProp, StyleSheet, Text, TextProps, TextStyle } from "react-native";
 import { colors, typography } from "../tokens";
 
-type Props = PropsWithChildren<{ style?: StyleProp<TextStyle> }>;
+type Props = PropsWithChildren<TextProps & { style?: StyleProp<TextStyle> }>;
 
-export function CalmText({ children, style }: Props) {
-  return <Text style={[styles.text, style]}>{children}</Text>;
+export function CalmText({ children, style, ...rest }: Props) {
+  return (
+    <Text style={[styles.text, style]} {...rest}>
+      {children}
+    </Text>
+  );
 }
 
 const styles = StyleSheet.create({

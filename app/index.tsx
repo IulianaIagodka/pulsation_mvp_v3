@@ -1,12 +1,11 @@
 import { useRouter } from "expo-router";
 import { Animated, Platform, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
-import { CalmScreen } from "../src/design/components/CalmScreen";
 import { CalmText } from "../src/design/components/CalmText";
+import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { SpiralFocus } from "../src/design/components/SpiralFocus";
 import { colors, spacing } from "../src/design/tokens";
 import { useEffect, useRef } from "react";
 import { uiCopy } from "../src/modules/delivery-layer";
-import { spiralLayout } from "../src/design/animation-rhythm";
 
 export default function OnboardingScreen() {
   const router = useRouter();
@@ -21,36 +20,45 @@ export default function OnboardingScreen() {
   }, [opacity]);
 
   return (
-    <CalmScreen centered>
-      <Animated.View style={[styles.content, { opacity }]}>
-        <View style={styles.spiralSlot}>
-          <SpiralFocus onPress={() => router.push("/trigger")} />
-        </View>
-        <View style={styles.textWrap}>
-          <CalmText style={styles.copy}>{uiCopy.onboardingLine}</CalmText>
-        </View>
-        <CalmText style={styles.hint}>{uiCopy.spiralHint}</CalmText>
+    <AnchoredSpiralScreen
+      spiral={<SpiralFocus onPress={() => router.push("/trigger")} />}
+      footer={
         <TouchableWithoutFeedback onPress={() => router.push("/about")}>
           <View style={styles.aboutLinkWrap}>
             <CalmText style={styles.aboutLink}>{uiCopy.aboutLink}</CalmText>
           </View>
         </TouchableWithoutFeedback>
+      }
+    >
+      <Animated.View style={[styles.content, { opacity }]}>
+        <CalmText
+          style={styles.copy}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.82}
+        >
+          {uiCopy.onboardingLine}
+        </CalmText>
+        <CalmText style={styles.hint}>{uiCopy.spiralHint}</CalmText>
       </Animated.View>
-    </CalmScreen>
+    </AnchoredSpiralScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  content: { alignItems: "center" },
-  spiralSlot: { minHeight: spiralLayout.slotMinHeight, justifyContent: "center", alignItems: "center" },
-  textWrap: { marginTop: spacing.xl, maxWidth: 286 },
+  content: {
+    alignItems: "center",
+    width: "100%",
+    paddingHorizontal: spacing.md,
+  },
   copy: {
     color: colors.textSecondary,
     fontSize: 17,
-    lineHeight: 30,
+    lineHeight: 22,
     fontWeight: "400",
     textAlign: "center",
-    letterSpacing: 0.2,
+    letterSpacing: 0.15,
+    width: "100%",
     fontFamily: Platform.select({ ios: "Times New Roman", default: "serif" }),
   },
   hint: {
@@ -62,10 +70,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   aboutLinkWrap: {
-    marginTop: spacing.xl,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
-    alignSelf: "center",
   },
   aboutLink: {
     color: colors.textSecondary,

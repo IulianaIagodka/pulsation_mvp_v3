@@ -20,5 +20,10 @@ export const breathingRhythm = {
 } as const;
 
 export const spiralLayout = {
+  size: 136,
+  /** Vertical anchor: fraction of content area below safe area (0.5 = true center). */
+  anchorRatio: 0.36,
+  /** Gap between spiral bottom edge and first text line (px). */
+  textGap: 12,
   slotMinHeight: 160,
 } as const;

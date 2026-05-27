@@ -5,11 +5,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Defs, RadialGradient, Rect, Stop } from "react-native-svg";
 import { colors, spacing } from "../tokens";
 
-type Props = PropsWithChildren<{ centered?: boolean }>;
+type Props = PropsWithChildren<{
+  centered?: boolean;
+  /** No inner padding — full-bleed layout (anchored spiral screens). */
+  flush?: boolean;
+}>;
 
-export function CalmScreen({ children, centered = false }: Props) {
+export function CalmScreen({ children, centered = false, flush = false }: Props) {
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={styles.safe} edges={flush ? ["top", "left", "right"] : undefined}>
       <LinearGradient
         colors={[colors.backgroundSecondary, colors.backgroundPrimary, "#060C17"]}
         start={{ x: 0.12, y: 0.06 }}
@@ -28,7 +32,9 @@ export function CalmScreen({ children, centered = false }: Props) {
             <Rect x="0" y="0" width="100%" height="100%" fill="url(#vignette)" />
           </Svg>
         </View>
-        <View style={[styles.container, centered && styles.centered]}>{children}</View>
+        <View style={[styles.container, flush && styles.containerFlush, centered && styles.centered]}>
+          {children}
+        </View>
       </LinearGradient>
     </SafeAreaView>
   );
@@ -39,5 +45,6 @@ const styles = StyleSheet.create({
   gradient: { flex: 1 },
   overlay: { ...StyleSheet.absoluteFillObject },
   container: { flex: 1, padding: spacing.lg },
+  containerFlush: { padding: 0 },
   centered: { justifyContent: "center", alignItems: "center" },
 });

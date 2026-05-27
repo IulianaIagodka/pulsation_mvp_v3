@@ -1,11 +1,15 @@
 import { PropsWithChildren } from "react";
-import { StyleSheet, View, useWindowDimensions } from "react-native";
-import { colors, spacing } from "../tokens";
+import { StyleSheet, View, useWindowDimensions, type StyleProp, type ViewStyle } from "react-native";
+import { spacing } from "../tokens";
 
-export function SoftCard({ children }: PropsWithChildren) {
+type Props = PropsWithChildren<{
+  style?: StyleProp<ViewStyle>;
+}>;
+
+export function SoftCard({ children, style }: Props) {
   const { height } = useWindowDimensions();
   const isCompactHeight = height < 740;
-  return <View style={[styles.card, isCompactHeight && styles.cardCompact]}>{children}</View>;
+  return <View style={[styles.card, isCompactHeight && styles.cardCompact, style]}>{children}</View>;
 }
 
 const styles = StyleSheet.create({

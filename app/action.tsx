@@ -1,17 +1,16 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useRouter } from "expo-router";
 import { Animated, Easing, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
-import { CalmScreen } from "../src/design/components/CalmScreen";
 import { CalmText } from "../src/design/components/CalmText";
+import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { FeetOnGroundSpiral } from "../src/design/components/FeetOnGroundSpiral";
 import { FindThreeThingsSpiral } from "../src/design/components/FindThreeThingsSpiral";
-import { SoftCard } from "../src/design/components/SoftCard";
 import { TriangleBreathSpiral } from "../src/design/components/TriangleBreathSpiral";
 import { activeLocale, interventionCopy, interventionGuidance, uiCopy } from "../src/modules/delivery-layer";
 import { registerInterventionOutcome } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
 import { colors, spacing, typography } from "../src/design/tokens";
-import { breathingRhythm, spiralLayout } from "../src/design/animation-rhythm";
+import { breathingRhythm } from "../src/design/animation-rhythm";
 
 const showDebugActionSelector = process.env.EXPO_PUBLIC_ENABLE_DEBUG_ACTION_SELECTOR === "true";
 
@@ -127,13 +126,18 @@ export default function ActionScreen() {
   };
 
   return (
-    <CalmScreen centered>
-      <SoftCard>
-        <View style={styles.spiralSlot}>
-          {selected === "feet_on_ground" ? <FeetOnGroundSpiral onPress={handleComplete} /> : null}
-          {selected === "triangle_breath" ? <TriangleBreathSpiral onPress={handleComplete} /> : null}
-          {selected === "find_three_things" ? <FindThreeThingsSpiral onPress={handleComplete} /> : null}
-        </View>
+    <AnchoredSpiralScreen
+      spiral={
+        selected === "feet_on_ground" ? (
+          <FeetOnGroundSpiral onPress={handleComplete} />
+        ) : selected === "triangle_breath" ? (
+          <TriangleBreathSpiral onPress={handleComplete} />
+        ) : (
+          <FindThreeThingsSpiral onPress={handleComplete} />
+        )
+      }
+    >
+      <View style={styles.content}>
         <CalmText style={styles.title}>{interventionCopy[selected]}</CalmText>
         {selected === "find_three_things" ? (
           <View style={styles.sequenceWrap}>
@@ -186,13 +190,13 @@ export default function ActionScreen() {
             </TouchableWithoutFeedback>
           </View>
         ) : null}
-      </SoftCard>
-    </CalmScreen>
+      </View>
+    </AnchoredSpiralScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  spiralSlot: { minHeight: spiralLayout.slotMinHeight, alignItems: "center", justifyContent: "center" },
+  content: { alignItems: "center" },
   title: { fontSize: typography.gentle, marginBottom: spacing.md, color: colors.textPrimary, textAlign: "center" },
   body: { color: colors.textSecondary, textAlign: "center", fontSize: 16, lineHeight: 25 },
   sequenceWrap: { alignItems: "center", minHeight: 128 },
