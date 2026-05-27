@@ -3,8 +3,8 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
-import { SpiralFocus } from "../src/design/components/SpiralFocus";
 import { uiCopy } from "../src/modules/delivery-layer";
+import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
 import { decideIntervention } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
 import { playTriggerHaptic } from "../src/services/haptic-regulation";
@@ -22,6 +22,9 @@ export default function TriggerScreen() {
     setSelected(selected);
   }, [setSelected]);
 
+  const onSpiralPress = useCallback(() => router.push("/action"), [router]);
+  useRegisterSpiralPress(onSpiralPress);
+
   useFocusEffect(
     useCallback(() => {
       playTriggerHaptic();
@@ -29,7 +32,7 @@ export default function TriggerScreen() {
   );
 
   return (
-    <AnchoredSpiralScreen spiral={<SpiralFocus onPress={() => router.push("/action")} />}>
+    <AnchoredSpiralScreen>
       <View style={styles.content}>
         <ExplanationText variant="main" delayMs={breathingRhythm.explanationText.primaryDelayMs}>
           {uiCopy.triggerPrompt}

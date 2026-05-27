@@ -36,6 +36,7 @@ export function getOutcomesProfile(): OutcomesProfile {
       recentInterventions: safeParseJson(row.recent_interventions, []),
       lastFindThreeVariantIndex:
         row.last_find_three_variant != null ? Number(row.last_find_three_variant) : undefined,
+      onboardingCompleted: Boolean(row.onboarding_completed),
     };
   } catch (error) {
     console.warn("[outcomes-repo] Failed to read outcomes profile:", error);
@@ -45,16 +46,34 @@ export function getOutcomesProfile(): OutcomesProfile {
 
 export function saveOutcomesProfile(profile: OutcomesProfile) {
   try {
+    const existing = getDb().getFirstSync<{
+      last_find_three_variant: number | null;
+      onboarding_completed: number;
+    }>("SELECT last_find_three_variant, onboarding_completed FROM outcomes_profile WHERE id = ?", primaryId);
+
+    const lastFindThreeVariant =
+      profile.lastFindThreeVariantIndex !== undefined
+        ? profile.lastFindThreeVariantIndex
+        : (existing?.last_find_three_variant ?? null);
+
+    const onboardingCompleted =
+      profile.onboardingCompleted !== undefined
+        ? profile.onboardingCompleted
+          ? 1
+          : 0
+        : (existing?.onboarding_completed ?? 0);
+
     getDb().runSync(
       `INSERT OR REPLACE INTO outcomes_profile
-      (id, preferred_by_hour, completion_rates, recent_interventions, last_find_three_variant, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?)`,
+      (id, preferred_by_hour, completion_rates, recent_interventions, last_find_three_variant, onboarding_completed, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
         primaryId,
         JSON.stringify(profile.preferredByHour),
         JSON.stringify(profile.completionRates),
         JSON.stringify(profile.recentInterventions),
-        profile.lastFindThreeVariantIndex ?? null,
+        lastFindThreeVariant,
+        onboardingCompleted,
         Date.now(),
       ],
     );

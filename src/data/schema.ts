@@ -34,6 +34,7 @@ export const schemaStatements = [
     completion_rates TEXT NOT NULL,
     recent_interventions TEXT NOT NULL,
     last_find_three_variant INTEGER,
+    onboarding_completed INTEGER NOT NULL DEFAULT 0,
     updated_at INTEGER NOT NULL
   );`,
 ] as const;

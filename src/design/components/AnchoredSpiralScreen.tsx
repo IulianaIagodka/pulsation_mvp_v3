@@ -7,7 +7,8 @@ import { CalmScreen } from "./CalmScreen";
 import { SoftCard } from "./SoftCard";
 
 type Props = PropsWithChildren<{
-  spiral: ReactNode;
+  /** Omit when spiral is rendered by `PersistentSpiralLayer` in the root layout. */
+  spiral?: ReactNode;
   /** Vertically center text in the area below the spiral (onboarding). */
   centerContent?: boolean;
   /** Pinned to the bottom of the screen (e.g. About link on onboarding). */
@@ -27,9 +28,11 @@ export function AnchoredSpiralScreen({ spiral, children, centerContent = false, 
   return (
     <CalmScreen flush>
       <View style={styles.root}>
-        <View pointerEvents="box-none" style={[styles.spiralLayer, { top: spiralTop }]}>
-          {spiral}
-        </View>
+        {spiral ? (
+          <View pointerEvents="box-none" style={[styles.spiralLayer, { top: spiralTop }]}>
+            {spiral}
+          </View>
+        ) : null}
 
         <ScrollView
           style={styles.scroll}

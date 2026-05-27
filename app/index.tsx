@@ -1,24 +1,47 @@
-import { useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { CalmText } from "../src/design/components/CalmText";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { AboutFooterLink } from "../src/design/components/AboutFooterLink";
 import { ExplanationText } from "../src/design/components/ExplanationText";
-import { SpiralFocus } from "../src/design/components/SpiralFocus";
 import { spacing } from "../src/design/tokens";
 import { mainCopyTextStyle } from "../src/design/main-copy";
 import { uiCopy } from "../src/modules/delivery-layer";
 import { GentleTextTransition } from "../src/design/components/GentleTextTransition";
 import { breathingRhythm, spiralHintTiming } from "../src/design/animation-rhythm";
+import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
+import {
+  hasCompletedOnboarding,
+  markOnboardingCompleted,
+} from "../src/services/onboarding-gate";
 
 export default function OnboardingScreen() {
   const router = useRouter();
+  const [gateChecked, setGateChecked] = useState(false);
+  const [skipOnboarding, setSkipOnboarding] = useState(false);
+
+  useEffect(() => {
+    setSkipOnboarding(hasCompletedOnboarding());
+    setGateChecked(true);
+  }, []);
+
+  const onSpiralPress = useCallback(() => {
+    markOnboardingCompleted();
+    router.push("/trigger");
+  }, [router]);
+  useRegisterSpiralPress(onSpiralPress);
+
+  if (!gateChecked) {
+    return null;
+  }
+
+  if (skipOnboarding) {
+    return <Redirect href="/trigger" />;
+  }
 
   return (
-    <AnchoredSpiralScreen
-      spiral={<SpiralFocus onPress={() => router.push("/trigger")} />}
-      footer={<AboutFooterLink label={uiCopy.aboutLink} onPress={() => router.push("/about")} />}
-    >
+    <AnchoredSpiralScreen footer={<AboutFooterLink label={uiCopy.aboutLink} onPress={() => router.push("/about")} />}>
       <View style={styles.content}>
         <GentleTextTransition
           style={styles.mainLineWrap}

@@ -11,8 +11,6 @@ export const breathingRhythm = {
   findThreeThings: {
     revealDelayMs: [1800, 7000, 12000] as const,
     revealDurationMs: 1200,
-    /** Pause after last line + hint before auto-advance to return (~7s after hint). */
-    pauseBeforeAdvanceMs: 7000,
   },
   triangleBreath: {
     cycles: 3,
@@ -38,11 +36,6 @@ export const breathingRhythm = {
   /** Return copy starts after route fade so it does not overlap action. */
   returnScreen: {
     primaryDelayMs: 650,
-  },
-  actionAutoComplete: {
-    feetOnGroundMs: 7000,
-    /** After 3 breath cycles: time to show "tap the spiral" before auto-advance. */
-    triangleBreathExtraMs: 3200,
   },
 } as const;
 

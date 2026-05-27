@@ -13,6 +13,7 @@ export function updateMemory(
   const recent = [...profile.recentInterventions, intervention].slice(-8);
 
   return {
+    ...profile,
     preferredByHour: {
       ...profile.preferredByHour,
       [hour]: completed ? intervention : profile.preferredByHour[hour],

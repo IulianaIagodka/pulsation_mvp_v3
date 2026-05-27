@@ -3,9 +3,8 @@ import { useRouter } from "expo-router";
 import { Animated, Easing, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
 import { CalmText } from "../src/design/components/CalmText";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
-import { SpiralFocus } from "../src/design/components/SpiralFocus";
-import { TriangleBreathSpiral } from "../src/design/components/TriangleBreathSpiral";
 import { ExplanationText } from "../src/design/components/ExplanationText";
+import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
 import { activeLocale, interventionGuidance, uiCopy } from "../src/modules/delivery-layer";
 import { getFindThreeIntro, getFindThreeVariant } from "../src/modules/find-three-variants";
 import { assignNextFindThreeVariant } from "../src/services/find-three-flow";
@@ -44,8 +43,7 @@ export default function ActionScreen() {
     registerInterventionOutcome(selected, true);
     router.replace("/return");
   }, [router, selected]);
-  const completeActionRef = useRef(completeAction);
-  completeActionRef.current = completeAction;
+  useRegisterSpiralPress(completeAction);
 
   useEffect(() => {
     completionRef.current = false;
@@ -131,20 +129,14 @@ export default function ActionScreen() {
     );
 
     let cancelled = false;
-    let settleTimer: ReturnType<typeof setTimeout> | undefined;
     const stopHaptics = startTriangleBreathHapticLoop();
     fullBreath.start(({ finished }) => {
       if (!finished || completionRef.current || cancelled) return;
       setShowTriangleSpiralHint(true);
-      settleTimer = setTimeout(() => {
-        if (cancelled || completionRef.current) return;
-        completeActionRef.current();
-      }, breathingRhythm.actionAutoComplete.triangleBreathExtraMs);
     });
 
     return () => {
       cancelled = true;
-      if (settleTimer) clearTimeout(settleTimer);
       stopHaptics();
       fullBreath.stop();
       if (!isTransitioningRef.current) {
@@ -156,39 +148,8 @@ export default function ActionScreen() {
     };
   }, [exhaleOpacity, holdAfterExhaleOpacity, holdOpacity, inhaleOpacity, selected]);
 
-  useEffect(() => {
-    if (selected === "triangle_breath") return;
-
-    let autoCompleteMs = breathingRhythm.actionAutoComplete.feetOnGroundMs;
-
-    if (selected === "find_three_things") {
-      const { revealDelayMs, pauseBeforeAdvanceMs } = breathingRhythm.findThreeThings;
-      const lastRevealDelay = revealDelayMs[revealDelayMs.length - 1] ?? 0;
-      const hintLeadMs = 400;
-      autoCompleteMs =
-        lastRevealDelay +
-        breathingRhythm.explanationText.fadeMs +
-        hintLeadMs +
-        pauseBeforeAdvanceMs;
-    }
-
-    const timer = setTimeout(() => {
-      completeAction();
-    }, autoCompleteMs);
-
-    return () => clearTimeout(timer);
-  }, [completeAction, selected]);
-
   return (
-    <AnchoredSpiralScreen
-      spiral={
-        selected === "feet_on_ground" || selected === "find_three_things" ? (
-          <SpiralFocus onPress={completeAction} />
-        ) : (
-          <TriangleBreathSpiral onPress={completeAction} />
-        )
-      }
-    >
+    <AnchoredSpiralScreen>
       <View style={styles.content}>
         {selected === "find_three_things" ? (
           <View style={styles.sequenceWrap}>

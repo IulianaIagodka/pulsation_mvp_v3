@@ -10,6 +10,11 @@ export function initializeDb() {
   } catch {
     // column already present
   }
+  try {
+    db.execSync("ALTER TABLE outcomes_profile ADD COLUMN onboarding_completed INTEGER NOT NULL DEFAULT 0");
+  } catch {
+    // column already present
+  }
 }
 
 export function getDb() {

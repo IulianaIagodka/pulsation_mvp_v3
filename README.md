@@ -68,8 +68,9 @@ Dark minimal palette from technical requirements is implemented in `src/design/t
 | Main line typography | `src/design/main-copy.ts` (matches onboarding tone where used) |
 | Soft explanation-style fades | `ExplanationText` + `breathingRhythm.explanationText` |
 | Gentle screen text entrance | `GentleTextTransition` (opacity only) |
-| Spiral hint timing (“tap the spiral”) | `spiralHintTiming` in `src/design/animation-rhythm.ts` — always **after** other text; on **triangle breath**, the hint appears **after 3 full cycles** (then a short hold before auto-advance — `actionAutoComplete.triangleBreathExtraMs`) |
-| Find 3 staged lines + pause before return | `findThreeThings.revealDelayMs`, `pauseBeforeAdvanceMs` (~7s after hint) |
+| Spiral hint timing (“tap the spiral”) | `spiralHintTiming` in `src/design/animation-rhythm.ts` — always **after** other text; on **triangle breath**, the hint appears **after 3 full cycles** |
+| Find 3 staged lines | `findThreeThings.revealDelayMs` |
+| Action → return (“You are here”) | **Only** on spiral tap (`app/action.tsx`) |
 
 Triangle breath pattern (labels + spiral): **inhale 4s → hold 2s → exhale 5s → hold 2s**, ×3 cycles (~39s spiral timing). Both holds show the “hold / затримка” label.
 

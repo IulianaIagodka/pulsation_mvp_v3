@@ -22,6 +22,8 @@ export type OutcomesProfile = {
   recentInterventions: InterventionType[];
   /** Last “find 3 things” prompt set (0–6); avoids repeating the same combo back-to-back. */
   lastFindThreeVariantIndex?: number;
+  /** Shown once; after first spiral tap on onboarding. */
+  onboardingCompleted?: boolean;
 };
 
 export type InterventionDecision = {
