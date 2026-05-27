@@ -28,8 +28,6 @@ Pulsation
 
 Email на сторінках: `support@pulsation.app` — заміни в `docs/pages/*.html`, якщо потрібна інша адреса.
 
-**iPhone only:** `app.json` → `ios.supportsTablet: false` (без iPad-скрінів у Store). Після зміни — **новий** EAS iOS build і прив’язка до версії 1.0.0.
-
 ### Subtitle
 One gentle action to reset
 
