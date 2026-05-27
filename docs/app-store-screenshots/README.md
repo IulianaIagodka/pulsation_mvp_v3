@@ -1,29 +1,47 @@
-# App Store screenshots (iPhone)
+# App Store screenshots
 
-Готові PNG для завантаження в **App Store Connect** → **App Store** → версія → **Screenshots** → слот, який приймає **1284 × 2778** (портрет).
+## iPhone (1284 × 2778)
 
-| Файл | Екран (за порядком зйомки) |
-|------|----------------------------|
+Папка: **корінь** `docs/app-store-screenshots/`
+
+| Файл | Екран |
+|------|--------|
 | `01-onboarding-1284x2778.png` | Онбординг |
 | `02-trigger-1284x2778.png` | Trigger |
 | `03-action-1284x2778.png` | Action |
 | `04-return-1284x2778.png` | Return |
 | `05-about-1284x2778.png` | About |
 
-Джерело: симулятор **iPhone 16e**, 27.05.2026; масштабовано до **1284×2778** (`sips`).
+Connect → **Screenshots** → iPhone (слот **1284×2778** або з підказки форми).
 
-Якщо Connect вимагає **1242 × 2688**, у Terminal:
+---
 
-```bash
-cd docs/app-store-screenshots
-mkdir -p 1242x2688
-for f in *-1284x2778.png; do
-  sips -z 2688 1242 "$f" --out "1242x2688/${f/-1284x2778/-1242x2688}"
-done
-```
+## iPad — 13-inch Display (2064 × 2752)
+
+Папка: **`ipad-13-inch/`**
+
+| Файл | Екран |
+|------|--------|
+| `01-onboarding-2064x2752.png` | Онбординг |
+| `02-trigger-2064x2752.png` | Trigger |
+| `03-action-2064x2752.png` | Action |
+| `04-return-2064x2752.png` | Return |
+| `05-about-2064x2752.png` | About |
+
+Connect → **Screenshots** → **iPad** → **13-inch Display** → завантаж **01 → 05**.
+
+Якщо Connect відхилить — спробуй **`ipad-12.9-inch/`** (**2048 × 2732**).
+
+Джерело: масштаб з iPhone-скрінів (`sips`). Для ідеальної якості зніми **⌘S** у симуляторі **iPad Pro 13-inch** і заміни ці файли.
+
+---
+
+## Примітка: iPhone-only білд
+
+У `app.json` зараз **`supportsTablet: false`**. Після **нового** iOS build iPad-скріни можуть **не** знадобитися. Якщо Connect усе ще вимагає iPad (старий build) — використай **`ipad-13-inch/`**.
 
 Перевірка розміру:
 
 ```bash
-sips -g pixelWidth -g pixelHeight 01-onboarding-1284x2778.png
+sips -g pixelWidth -g pixelHeight docs/app-store-screenshots/ipad-13-inch/01-onboarding-2064x2752.png
 ```
