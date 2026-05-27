@@ -1,16 +1,17 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "expo-router";
 import { Animated, Easing, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
 import { CalmText } from "../src/design/components/CalmText";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
-import { FeetOnGroundSpiral } from "../src/design/components/FeetOnGroundSpiral";
-import { FindThreeThingsSpiral } from "../src/design/components/FindThreeThingsSpiral";
+import { SpiralFocus } from "../src/design/components/SpiralFocus";
 import { TriangleBreathSpiral } from "../src/design/components/TriangleBreathSpiral";
-import { activeLocale, interventionCopy, interventionGuidance, uiCopy } from "../src/modules/delivery-layer";
+import { ExplanationText } from "../src/design/components/ExplanationText";
+import { activeLocale, interventionGuidance, uiCopy } from "../src/modules/delivery-layer";
 import { registerInterventionOutcome } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
-import { colors, spacing, typography } from "../src/design/tokens";
-import { breathingRhythm } from "../src/design/animation-rhythm";
+import { colors, spacing } from "../src/design/tokens";
+import { breathingRhythm, spiralHintTiming } from "../src/design/animation-rhythm";
+import { startTriangleBreathHapticLoop } from "../src/services/haptic-regulation";
 
 const showDebugActionSelector = process.env.EXPO_PUBLIC_ENABLE_DEBUG_ACTION_SELECTOR === "true";
 
@@ -26,136 +27,180 @@ export default function ActionScreen() {
         : ["something round", "something soft", "something still"],
     [isUkrainian],
   );
-  const findThreeOpacities = useRef([
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-  ]).current;
   const inhaleOpacity = useRef(new Animated.Value(0)).current;
   const holdOpacity = useRef(new Animated.Value(0)).current;
   const exhaleOpacity = useRef(new Animated.Value(0)).current;
+  const holdAfterExhaleOpacity = useRef(new Animated.Value(0)).current;
+  const completionRef = useRef(false);
+  const isTransitioningRef = useRef(false);
+  const [showTriangleSpiralHint, setShowTriangleSpiralHint] = useState(false);
+
+  const completeAction = useCallback(() => {
+    if (completionRef.current) return;
+    completionRef.current = true;
+    isTransitioningRef.current = true;
+    registerInterventionOutcome(selected, true);
+    router.push("/return");
+  }, [router, selected]);
+  const completeActionRef = useRef(completeAction);
+  completeActionRef.current = completeAction;
 
   useEffect(() => {
-    if (selected !== "find_three_things") {
-      findThreeOpacities.forEach((value) => value.setValue(0));
-      return;
-    }
-
-    const showDelaysMs = breathingRhythm.findThreeThings.revealDelayMs;
-    const timers = showDelaysMs.map((delay, index) =>
-      setTimeout(() => {
-        Animated.timing(findThreeOpacities[index], {
-          toValue: 1,
-          duration: breathingRhythm.findThreeThings.revealDurationMs,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: true,
-        }).start();
-      }, delay),
-    );
-
-    return () => {
-      timers.forEach((timer) => clearTimeout(timer));
-    };
-  }, [findThreeOpacities, selected]);
+    completionRef.current = false;
+    isTransitioningRef.current = false;
+    setShowTriangleSpiralHint(false);
+  }, [selected]);
 
   useEffect(() => {
     if (selected !== "triangle_breath") {
       inhaleOpacity.setValue(0);
       holdOpacity.setValue(0);
       exhaleOpacity.setValue(0);
+      holdAfterExhaleOpacity.setValue(0);
       return;
     }
 
-    // Controlled pacing by count: words appear/disappear in one shared spot.
-    const triangleLoop = Animated.loop(
-      Animated.sequence([
+    const { inhaleMs, holdMs, exhaleMs, holdAfterExhaleMs, labelFadeMs } = breathingRhythm.triangleBreath;
+    const fade = labelFadeMs;
+    const phaseVisible = (phaseMs: number) => Math.max(0, phaseMs - fade * 2);
+
+    const oneCycle = Animated.sequence([
         Animated.timing(inhaleOpacity, {
           toValue: 1,
-          duration: breathingRhythm.triangleBreath.fadeDurationMs,
-          easing: Easing.inOut(Easing.quad),
+          duration: fade,
+          easing: Easing.out(Easing.quad),
           useNativeDriver: true,
         }),
-        Animated.delay(breathingRhythm.triangleBreath.visibleDurationMs),
+        Animated.delay(phaseVisible(inhaleMs)),
         Animated.timing(inhaleOpacity, {
           toValue: 0,
-          duration: breathingRhythm.triangleBreath.fadeDurationMs,
-          easing: Easing.inOut(Easing.quad),
+          duration: fade,
+          easing: Easing.in(Easing.quad),
           useNativeDriver: true,
         }),
         Animated.timing(holdOpacity, {
           toValue: 1,
-          duration: breathingRhythm.triangleBreath.fadeDurationMs,
-          easing: Easing.inOut(Easing.quad),
+          duration: fade,
+          easing: Easing.out(Easing.quad),
           useNativeDriver: true,
         }),
-        Animated.delay(breathingRhythm.triangleBreath.holdBridgeDelayMs),
+        Animated.delay(phaseVisible(holdMs)),
         Animated.timing(holdOpacity, {
           toValue: 0,
-          duration: breathingRhythm.triangleBreath.fadeDurationMs,
-          easing: Easing.inOut(Easing.quad),
+          duration: fade,
+          easing: Easing.in(Easing.quad),
           useNativeDriver: true,
         }),
         Animated.timing(exhaleOpacity, {
           toValue: 1,
-          duration: breathingRhythm.triangleBreath.fadeDurationMs,
-          easing: Easing.inOut(Easing.quad),
+          duration: fade,
+          easing: Easing.out(Easing.quad),
           useNativeDriver: true,
         }),
-        Animated.delay(breathingRhythm.triangleBreath.visibleDurationMs),
+        Animated.delay(phaseVisible(exhaleMs)),
         Animated.timing(exhaleOpacity, {
           toValue: 0,
-          duration: breathingRhythm.triangleBreath.fadeDurationMs,
-          easing: Easing.inOut(Easing.quad),
+          duration: fade,
+          easing: Easing.in(Easing.quad),
           useNativeDriver: true,
         }),
-        Animated.delay(breathingRhythm.triangleBreath.holdBridgeDelayMs),
-      ]),
+        Animated.timing(holdAfterExhaleOpacity, {
+          toValue: 1,
+          duration: fade,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.delay(phaseVisible(holdAfterExhaleMs)),
+        Animated.timing(holdAfterExhaleOpacity, {
+          toValue: 0,
+          duration: fade,
+          easing: Easing.in(Easing.quad),
+          useNativeDriver: true,
+        }),
+    ]);
+
+    const fullBreath = Animated.sequence(
+      Array.from({ length: breathingRhythm.triangleBreath.cycles }, () => oneCycle),
     );
 
-    triangleLoop.start();
+    let cancelled = false;
+    let settleTimer: ReturnType<typeof setTimeout> | undefined;
+    const stopHaptics = startTriangleBreathHapticLoop();
+    fullBreath.start(({ finished }) => {
+      if (!finished || completionRef.current || cancelled) return;
+      setShowTriangleSpiralHint(true);
+      settleTimer = setTimeout(() => {
+        completeActionRef.current();
+      }, breathingRhythm.actionAutoComplete.triangleBreathExtraMs);
+    });
+
     return () => {
-      triangleLoop.stop();
-      inhaleOpacity.setValue(0);
-      holdOpacity.setValue(0);
-      exhaleOpacity.setValue(0);
+      cancelled = true;
+      if (settleTimer) clearTimeout(settleTimer);
+      stopHaptics();
+      fullBreath.stop();
+      if (!isTransitioningRef.current) {
+        inhaleOpacity.setValue(0);
+        holdOpacity.setValue(0);
+        exhaleOpacity.setValue(0);
+        holdAfterExhaleOpacity.setValue(0);
+      }
     };
-  }, [exhaleOpacity, holdOpacity, inhaleOpacity, selected]);
-  const handleComplete = () => {
-    registerInterventionOutcome(selected, true);
-    router.push("/explanation");
-  };
+  }, [exhaleOpacity, holdAfterExhaleOpacity, holdOpacity, inhaleOpacity, selected]);
+
+  useEffect(() => {
+    if (selected === "triangle_breath") return;
+
+    let autoCompleteMs = breathingRhythm.actionAutoComplete.feetOnGroundMs;
+
+    if (selected === "find_three_things") {
+      const revealDelays = breathingRhythm.findThreeThings.revealDelayMs;
+      const lastRevealDelay = revealDelays[revealDelays.length - 1] ?? 0;
+      autoCompleteMs =
+        lastRevealDelay +
+        breathingRhythm.explanationText.fadeMs +
+        breathingRhythm.actionAutoComplete.findThreeThingsExtraMs;
+    }
+
+    const timer = setTimeout(() => {
+      completeAction();
+    }, autoCompleteMs);
+
+    return () => clearTimeout(timer);
+  }, [completeAction, selected]);
 
   return (
     <AnchoredSpiralScreen
       spiral={
-        selected === "feet_on_ground" ? (
-          <FeetOnGroundSpiral onPress={handleComplete} />
-        ) : selected === "triangle_breath" ? (
-          <TriangleBreathSpiral onPress={handleComplete} />
+        selected === "feet_on_ground" || selected === "find_three_things" ? (
+          <SpiralFocus onPress={completeAction} />
         ) : (
-          <FindThreeThingsSpiral onPress={handleComplete} />
+          <TriangleBreathSpiral onPress={completeAction} />
         )
       }
     >
       <View style={styles.content}>
-        <CalmText style={styles.title}>{interventionCopy[selected]}</CalmText>
         {selected === "find_three_things" ? (
           <View style={styles.sequenceWrap}>
-            <CalmText style={styles.body}>
+            <ExplanationText
+              delayMs={breathingRhythm.explanationText.primaryDelayMs}
+              style={styles.actionInstruction}
+            >
               {isUkrainian ? "Знайди три речі навколо себе:" : "Find three things around you:"}
-            </CalmText>
+            </ExplanationText>
             {findThreeQueue.map((item, index) => (
-              <Animated.View key={item} style={{ opacity: findThreeOpacities[index] }}>
-                <CalmText style={styles.sequenceItem}>{`• ${item}`}</CalmText>
-              </Animated.View>
+              <ExplanationText
+                key={item}
+                delayMs={breathingRhythm.findThreeThings.revealDelayMs[index]}
+                style={styles.findThreeLine}
+              >
+                {`• ${item}`}
+              </ExplanationText>
             ))}
           </View>
         ) : null}
         {selected === "triangle_breath" ? (
           <View style={styles.sequenceWrap}>
-            <CalmText style={styles.body}>
-              {isUkrainian ? "Слідуй за ритмом трикутника:" : "Follow the triangle rhythm:"}
-            </CalmText>
             <View style={styles.phaseWordLayer}>
               <Animated.View style={[styles.phaseWord, { opacity: inhaleOpacity }]}>
                 <CalmText style={styles.phaseLabel}>{isUkrainian ? "вдих" : "inhale"}</CalmText>
@@ -166,11 +211,17 @@ export default function ActionScreen() {
               <Animated.View style={[styles.phaseWord, { opacity: exhaleOpacity }]}>
                 <CalmText style={styles.phaseLabel}>{isUkrainian ? "видих" : "exhale"}</CalmText>
               </Animated.View>
+              <Animated.View style={[styles.phaseWord, { opacity: holdAfterExhaleOpacity }]}>
+                <CalmText style={styles.phaseLabel}>{isUkrainian ? "затримка" : "hold"}</CalmText>
+              </Animated.View>
             </View>
           </View>
         ) : null}
-        {selected === "feet_on_ground" ? <CalmText style={styles.body}>{interventionGuidance[selected].actionText}</CalmText> : null}
-        <CalmText style={styles.hint}>{uiCopy.spiralHint}</CalmText>
+        {selected === "feet_on_ground" ? (
+          <ExplanationText delayMs={breathingRhythm.explanationText.primaryDelayMs} style={styles.actionInstruction}>
+            {interventionGuidance[selected].actionText}
+          </ExplanationText>
+        ) : null}
         {__DEV__ && showDebugActionSelector ? (
           <View style={styles.debugRow}>
             <TouchableWithoutFeedback onPress={() => setSelected("feet_on_ground")}>
@@ -190,47 +241,66 @@ export default function ActionScreen() {
             </TouchableWithoutFeedback>
           </View>
         ) : null}
+        {selected === "triangle_breath" ? (
+          showTriangleSpiralHint ? (
+            <ExplanationText delayMs={0} style={styles.hintWrap}>
+              {uiCopy.spiralHint}
+            </ExplanationText>
+          ) : null
+        ) : (
+          <ExplanationText
+            delayMs={
+              selected === "feet_on_ground"
+                ? spiralHintTiming.actionAfterFeetInstructionMs
+                : spiralHintTiming.actionAfterFindThreeMs
+            }
+            style={styles.hintWrap}
+          >
+            {uiCopy.spiralHint}
+          </ExplanationText>
+        )}
       </View>
     </AnchoredSpiralScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  content: { alignItems: "center" },
-  title: { fontSize: typography.gentle, marginBottom: spacing.md, color: colors.textPrimary, textAlign: "center" },
-  body: { color: colors.textSecondary, textAlign: "center", fontSize: 16, lineHeight: 25 },
-  sequenceWrap: { alignItems: "center", minHeight: 128 },
-  sequenceItem: {
+  content: { alignItems: "center", width: "100%" },
+  actionInstruction: {
+    marginTop: spacing.md,
+    minHeight: 40,
+  },
+  findThreeLine: {
+    marginTop: spacing.sm,
+    minHeight: 36,
+  },
+  sequenceWrap: { alignItems: "center", width: "100%", minHeight: 128 },
+  phaseLabel: {
     color: colors.textSecondary,
     textAlign: "center",
-    fontSize: 16,
-    lineHeight: 26,
-  },
-  phaseLabel: {
-    color: colors.textPrimary,
-    textAlign: "center",
-    fontSize: 24,
-    lineHeight: 34,
+    fontSize: 14,
+    lineHeight: 22,
+    letterSpacing: 0.15,
+    width: "100%",
+    opacity: breathingRhythm.explanationText.textOpacity,
   },
   phaseWordLayer: {
     marginTop: spacing.sm,
     minHeight: 60,
-    minWidth: 180,
+    width: "100%",
     alignItems: "center",
     justifyContent: "center",
   },
   phaseWord: {
     position: "absolute",
+    left: 0,
+    right: 0,
+    width: "100%",
     alignItems: "center",
     justifyContent: "center",
   },
-  hint: {
+  hintWrap: {
     marginTop: spacing.md,
-    color: colors.textSecondary,
-    opacity: 0.38,
-    fontSize: 12,
-    letterSpacing: 0.4,
-    textAlign: "center",
   },
   debugRow: { marginTop: spacing.md, flexDirection: "row", gap: spacing.md },
   debugItem: { paddingVertical: spacing.xs },

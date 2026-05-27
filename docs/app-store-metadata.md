@@ -29,7 +29,7 @@ When you feel mentally overloaded, Pulsation offers a short, calming micro-inter
 - Triangle breath
 
 The experience is intentionally minimal:
-onboarding -> one prompt -> one action -> short explanation -> return.
+onboarding -> one prompt -> one action -> return ("You are here" with soft explanation).
 
 Why people use Pulsation:
 - Reset attention in under a minute
@@ -50,8 +50,8 @@ Feet on ground, Find 3 things, and Triangle breath.
 
 ### App Review Notes
 Pulsation is a mindfulness micro-intervention app with a minimal flow.
-Core path: onboarding -> prompt ("One action for you now?") -> one micro-action -> short explanation -> return screen.
-About is available from onboarding and from the prompt screen.
+Core path: onboarding -> prompt ("One action for you now?") -> one micro-action -> return screen with delayed explanation.
+About is available only from onboarding (footer link).
 No login is required. No test account is required.
 Complete the action by tapping the spiral on the action screen.
 
@@ -108,6 +108,6 @@ Pulsation створено для спокою, а не тиску.
 ### App Review Notes
 Pulsation — застосунок мікроінтервенцій усвідомленості з мінімальним флоу.
 Шлях: онбординг -> запит («Одна дія для тебе зараз?») -> одна мікроінтервенція -> коротке пояснення -> екран повернення.
-«Про застосунок» доступно з онбордингу та з екрана запиту.
+«Про застосунок» доступно лише з онбордингу (нижнє посилання).
 Логін не потрібен. Тестовий акаунт не потрібен.
 Завершення дії — торкнись спіралі на екрані дії.

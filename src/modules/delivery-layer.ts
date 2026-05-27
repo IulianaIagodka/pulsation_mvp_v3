@@ -36,12 +36,12 @@ const guidanceByLocale: Record<Locale, Record<InterventionType, Guidance>> = {
       actionText:
         "Find three things around you:\n- something round\n- something soft\n- something still",
       explanationText:
-        "Looking for shapes, textures or stillness\ngrounds your nervous system in the present",
+        "Looking for shapes, textures or stillness\ngrounds your nervous system\nin the present",
     },
     triangle_breath: {
-      actionText: "Follow a calm triangle rhythm: inhale, pause, exhale, each side unhurried",
+      actionText: "Follow a calm triangle rhythm: inhale 4, hold 2, exhale 5, hold 2 (x3, ~39s total)",
       explanationText:
-        "A simple breath pattern can quiet internal noise and help your nervous system return to balance",
+        "This short sequence is long enough\nto settle the nervous system\nwithout feeling like exercise",
     },
   },
   uk: {
@@ -53,11 +53,13 @@ const guidanceByLocale: Record<Locale, Record<InterventionType, Guidance>> = {
     find_three_things: {
       actionText:
         "Знайди поруч три речі:\n- щось кругле\n- щось м’яке\n- щось нерухоме",
-      explanationText: "Коли шукаєш форми, фактури чи нерухомість,\nнервова система м’яко повертається в теперішнє",
+      explanationText:
+        "Коли шукаєш форми, фактури чи нерухомість,\nнервова система м’яко повертається\nв теперішнє",
     },
     triangle_breath: {
-      actionText: "Дихай спокійним трикутником: вдих, пауза, видих — без поспіху",
-      explanationText: "Простий ритм дихання заспокоює й повертає відчуття рівноваги",
+      actionText: "Дихай спокійним трикутником: вдих 4, затримка 2, видих 5, затримка 2 (x3, ~39 с)",
+      explanationText:
+        "Це вже помітно заспокоює нервову систему,\nале ще не відчувається як вправа",
     },
   },
 };

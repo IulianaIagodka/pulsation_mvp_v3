@@ -1,6 +1,6 @@
 export const INACTIVITY_TRIGGER_MINUTES = 20;
 
-const blockedPathPrefixes = ["/action", "/explanation", "/return"];
+const blockedPathPrefixes = ["/action", "/return"];
 
 function parseOptionalEnvMinutes(raw: string | undefined): number | undefined {
   if (raw == null || String(raw).trim() === "") return undefined;

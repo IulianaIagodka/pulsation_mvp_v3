@@ -1,4 +1,15 @@
-export const colors = {
+/** Lighten a hex color toward white by `amount` (0–1). Background stays at base values. */
+function lighten(hex: string, amount: number): string {
+  const raw = hex.replace("#", "");
+  const r = parseInt(raw.slice(0, 2), 16);
+  const g = parseInt(raw.slice(2, 4), 16);
+  const b = parseInt(raw.slice(4, 6), 16);
+  const mix = (channel: number) => Math.round(channel + (255 - channel) * amount);
+  const toHex = (channel: number) => channel.toString(16).padStart(2, "0");
+  return `#${toHex(mix(r))}${toHex(mix(g))}${toHex(mix(b))}`;
+}
+
+const base = {
   backgroundPrimary: "#070D18",
   backgroundSecondary: "#0A1222",
   spiralOuter: "#2F4366",
@@ -10,6 +21,24 @@ export const colors = {
   textPrimary: "#BCC8DA",
   textSecondary: "#74839A",
   borderSoft: "#1E2F49",
+} as const;
+
+const spiralLift = 0.1;
+const textPrimaryLift = 0.18;
+const textSecondaryLift = 0.12;
+
+export const colors = {
+  backgroundPrimary: base.backgroundPrimary,
+  backgroundSecondary: base.backgroundSecondary,
+  spiralOuter: lighten(base.spiralOuter, spiralLift),
+  spiralInner: lighten(base.spiralInner, spiralLift),
+  spiralInnerAlt: lighten(base.spiralInnerAlt, spiralLift),
+  spiralRing: lighten(base.spiralRing, spiralLift),
+  surfacePrimary: base.surfacePrimary,
+  surfaceSecondary: base.surfaceSecondary,
+  textPrimary: lighten(base.textPrimary, textPrimaryLift),
+  textSecondary: lighten(base.textSecondary, textSecondaryLift),
+  borderSoft: base.borderSoft,
 } as const;
 
 export const spacing = {

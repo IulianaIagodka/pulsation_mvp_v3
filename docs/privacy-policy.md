@@ -1,6 +1,6 @@
 # Privacy Policy for Pulsation
 
-Last updated: May 21, 2026
+Last updated: May 27, 2026
 
 Pulsation ("the App") is a wellbeing mobile application that offers short, calming micro-actions.
 

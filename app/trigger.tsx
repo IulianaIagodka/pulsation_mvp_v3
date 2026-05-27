@@ -1,14 +1,15 @@
-import { useEffect } from "react";
-import { useRouter } from "expo-router";
+import { useCallback, useEffect } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
-import { CalmText } from "../src/design/components/CalmText";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
+import { ExplanationText } from "../src/design/components/ExplanationText";
 import { SpiralFocus } from "../src/design/components/SpiralFocus";
 import { uiCopy } from "../src/modules/delivery-layer";
 import { decideIntervention } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
-import { colors } from "../src/design/tokens";
+import { playTriggerHaptic } from "../src/services/haptic-regulation";
 import { InterventionType } from "../src/types/domain";
+import { breathingRhythm, spiralHintTiming } from "../src/design/animation-rhythm";
 
 const defaultIntervention: InterventionType = "find_three_things";
 
@@ -21,25 +22,29 @@ export default function TriggerScreen() {
     setSelected(selected);
   }, [setSelected]);
 
+  useFocusEffect(
+    useCallback(() => {
+      playTriggerHaptic();
+    }, []),
+  );
+
   return (
     <AnchoredSpiralScreen spiral={<SpiralFocus onPress={() => router.push("/action")} />}>
       <View style={styles.content}>
-        <CalmText style={styles.message}>{uiCopy.triggerPrompt}</CalmText>
-        <CalmText style={styles.hint}>{uiCopy.spiralHint}</CalmText>
+        <ExplanationText variant="main" delayMs={breathingRhythm.explanationText.primaryDelayMs}>
+          {uiCopy.triggerPrompt}
+        </ExplanationText>
+        <ExplanationText delayMs={spiralHintTiming.triggerAfterPromptMs} style={styles.hintWrap}>
+          {uiCopy.spiralHint}
+        </ExplanationText>
       </View>
     </AnchoredSpiralScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  content: { alignItems: "center" },
-  message: { color: colors.textPrimary, lineHeight: 29, textAlign: "center" },
-  hint: {
+  content: { alignItems: "center", width: "100%" },
+  hintWrap: {
     marginTop: 14,
-    color: colors.textSecondary,
-    opacity: 0.38,
-    fontSize: 12,
-    letterSpacing: 0.4,
-    textAlign: "center",
   },
 });

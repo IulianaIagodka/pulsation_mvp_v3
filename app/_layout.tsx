@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { InactivityTriggerListener } from "../src/components/InactivityTriggerListener";
 import { NotificationOpenListener } from "../src/components/NotificationOpenListener";
 import { configureInactivityNotifications } from "../src/services/inactivity-notification";
+import { breathingRhythm } from "../src/design/animation-rhythm";
 
 export default function Layout() {
   useEffect(() => {
@@ -22,6 +23,7 @@ export default function Layout() {
           headerShown: false,
           contentStyle: { backgroundColor: "#0D121E" },
           animation: "fade",
+          animationDuration: breathingRhythm.motion.screenFadeMs,
         }}
       />
     </>

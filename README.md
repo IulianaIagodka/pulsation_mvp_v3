@@ -8,7 +8,7 @@ Pulsation is a cross-platform mobile MVP that offers one gentle micro-action at 
 - Expo Router
 - Zustand
 - Expo SQLite
-- Reanimated
+- Reanimated (configured; core UI uses `Animated` API)
 - Jest
 
 ## Setup
@@ -42,11 +42,14 @@ Schema is defined in `src/data/schema.ts`.
 
 ## UX Flow
 
-1. Quiet onboarding (`app/index.tsx`): only background, spiral, and single text.
-2. Trigger prompt (`app/trigger.tsx`)
-3. One-action intervention screen (`app/action.tsx`)
-4. Explanation after done (`app/explanation.tsx`)
-5. Return flow (`app/return.tsx`)
+1. **Onboarding** (`app/index.tsx`): anchored spiral, calm main line (“Pulsation exists…”), delayed “tap the spiral” hint, optional **About** link in the footer (About is **only** here in the main flow).
+2. **Trigger** (`app/trigger.tsx`): same spiral slot; main prompt; spiral hint appears last (timed after main copy).
+3. **Action** (`app/action.tsx`): one micro-intervention (feet / find 3 / triangle breath). Instruction copy uses the same soft **explanation rhythm** as return. **Spiral is the same visual everywhere** (`src/design/spiral-visual.ts` + `SpiralRings`). Tap uses `Pressable` so touches work above the scroll layer (see `AnchoredSpiralScreen` `elevation`).
+4. **Return** (`app/return.tsx`): “You are here” plus follow-up explanation; spiral hint again last; tap spiral → onboarding.
+
+Stack navigation uses a calm **fade** between routes (`app/_layout.tsx`, `breathingRhythm.motion.screenFadeMs`).
+
+Standalone **About** screen: `app/about.tsx` (reachable from onboarding footer only).
 
 ## Design System
 
@@ -55,6 +58,25 @@ Dark minimal palette from technical requirements is implemented in `src/design/t
 - Background: `#0D121E`, `#0E1420`
 - Spiral: `#4F6B91`, `#2A3954` / `#233045`
 - Surfaces: `#141B2C`, `#1A2235`
+
+### Copy & motion (high level)
+
+| Piece | Where |
+| ----- | ----- |
+| Main line typography | `src/design/main-copy.ts` (matches onboarding tone where used) |
+| Soft explanation-style fades | `ExplanationText` + `breathingRhythm.explanationText` |
+| Gentle screen text entrance | `GentleTextTransition` (opacity only) |
+| Spiral hint timing (“tap the spiral”) | `spiralHintTiming` in `src/design/animation-rhythm.ts` — always **after** other text; on **triangle breath**, the hint appears **after 3 full cycles** (then a short hold before auto-advance — `actionAutoComplete.triangleBreathExtraMs`) |
+
+Triangle breath pattern (labels + spiral): **inhale 4s → hold 2s → exhale 5s → hold 2s**, ×3 cycles (~39s spiral timing). Both holds show the “hold / затримка” label.
+
+### Docs for release & QA
+
+- `docs/spiral-regression-checklist.md` — manual spiral / animation checks
+- `docs/app-store-metadata.md` — store copy (EN/UK)
+- `docs/RELEASE-CHECKLIST.md` — TestFlight → App Store checklist
+- `docs/TESTFLIGHT.md` — builds & submit
+- `docs/privacy-policy.md` — privacy policy text
 
 ## Intervention rotation
 
@@ -66,7 +88,7 @@ Each visit to the trigger screen (`/trigger`) picks the next intervention in ord
 If Pulsation was in the background for **20+ minutes**:
 
 1. A **local notification** is shown (“One action for you now?” / “Одна дія зараз?”).
-2. Reopening the app navigates to `/trigger` (not during action / explanation / return).
+2. Reopening the app navigates to `/trigger` (not during action / return).
 
 iOS will ask for notification permission the first time you background the app. After adding `expo-notifications`, run `npm run ios` once (not only Expo Go) so the native module is linked.
 
@@ -87,6 +109,14 @@ EXPO_PUBLIC_INACTIVITY_TRIGGER_MINUTES=1 EXPO_PUBLIC_SIMULATED_INACTIVE_MINUTES=
 ```
 
 Background once (even briefly), then return to the app.
+
+## Haptic regulation (iOS / Android)
+
+- **Trigger screen:** soft double-pulse when the screen appears.
+- **Triangle breath:** haptics follow inhale (4s) → hold (2s) → exhale (5s) → hold (2s), synced with spiral animation.
+- **Return screen:** grounding pulse on arrival.
+
+Works in silent mode on iPhone (Taptic Engine). Requires a dev build (`npm run ios`) — not Expo Go alone after native module changes.
 
 ## Native Integration TODO
 

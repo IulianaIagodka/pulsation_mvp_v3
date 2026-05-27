@@ -66,11 +66,13 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: "center",
     zIndex: 10,
+    elevation: 12,
   },
   scroll: { flex: 1 },
   scrollContent: {
     flexGrow: 1,
     paddingBottom: spacing.xl,
+    alignItems: "center",
   },
   scrollContentCentered: {
     justifyContent: "center",
@@ -90,5 +92,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: "center",
     zIndex: 5,
+    elevation: 4,
   },
 });

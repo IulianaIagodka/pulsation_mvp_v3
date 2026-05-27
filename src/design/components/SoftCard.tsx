@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 420,
     alignSelf: "center",
+    alignItems: "center",
     borderRadius: 0,
     backgroundColor: "transparent",
     padding: spacing.lg,

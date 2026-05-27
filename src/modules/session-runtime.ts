@@ -1,3 +1,5 @@
+import type { AppStateStatus } from "react-native";
+
 let currentState: "active" | "background" | "inactive" = "active";
 let activeStartedAt = Date.now();
 let accumulatedActiveMs = 0;
@@ -5,7 +7,11 @@ let backgroundStartedAt: number | null = null;
 let hasBeenBackgrounded = false;
 let pendingInactiveMinutes = 0;
 
-export function recordAppStateChange(nextState: "active" | "background" | "inactive") {
+export function recordAppStateChange(nextStateRaw: AppStateStatus) {
+  const nextState: "active" | "background" | "inactive" =
+    nextStateRaw === "active" || nextStateRaw === "background" || nextStateRaw === "inactive"
+      ? nextStateRaw
+      : currentState;
   const now = Date.now();
   if (currentState === "active" && nextState !== "active") {
     accumulatedActiveMs += Math.max(0, now - activeStartedAt);

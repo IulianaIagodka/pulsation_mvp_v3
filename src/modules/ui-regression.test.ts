@@ -1,4 +1,4 @@
-import { breathingRhythm, spiralLayout } from "../design/animation-rhythm";
+import { breathingRhythm, getTriangleBreathLabelCycleMs, getTriangleBreathTotalMs, spiralLayout } from "../design/animation-rhythm";
 
 describe("spiral layout regression checks", () => {
   it("keeps one shared spiral slot size", () => {
@@ -19,9 +19,24 @@ describe("spiral layout regression checks", () => {
     expect(third).toBeGreaterThan(second);
   });
 
-  it("keeps triangle breathing fade and hold timings positive", () => {
-    expect(breathingRhythm.triangleBreath.fadeDurationMs).toBeGreaterThan(0);
-    expect(breathingRhythm.triangleBreath.visibleDurationMs).toBeGreaterThan(0);
-    expect(breathingRhythm.triangleBreath.holdBridgeDelayMs).toBeGreaterThan(0);
+  it("keeps explanation text reveal timing calm and delayed", () => {
+    const e = breathingRhythm.explanationText;
+    expect(e.secondaryDelayMs).toBeGreaterThanOrEqual(2000);
+    expect(e.secondaryDelayMs).toBeLessThanOrEqual(3000);
+    expect(e.fadeMs).toBeGreaterThan(1000);
+    expect(e.textOpacity).toBeLessThanOrEqual(0.6);
+  });
+
+  it("keeps triangle breath cycle at 4-2-5-2 seconds for 3 cycles", () => {
+    const t = breathingRhythm.triangleBreath;
+    expect(t.cycles).toBe(3);
+    expect(t.inhaleMs).toBe(4000);
+    expect(t.holdMs).toBe(2000);
+    expect(t.exhaleMs).toBe(5000);
+    expect(t.holdAfterExhaleMs).toBe(2000);
+    expect(t.inhaleMs + t.holdMs + t.exhaleMs + t.holdAfterExhaleMs).toBe(13000);
+    expect(t.labelFadeMs).toBeGreaterThan(0);
+    expect(getTriangleBreathLabelCycleMs()).toBe(13000);
+    expect(getTriangleBreathTotalMs()).toBe(39000);
   });
 });

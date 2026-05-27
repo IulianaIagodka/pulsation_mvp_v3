@@ -37,7 +37,6 @@ describe("inactivity trigger", () => {
 
   it("blocks auto trigger during action flow screens", () => {
     expect(isPathBlockedForAutoTrigger("/action")).toBe(true);
-    expect(isPathBlockedForAutoTrigger("/explanation")).toBe(true);
     expect(isPathBlockedForAutoTrigger("/return")).toBe(true);
     expect(isPathBlockedForAutoTrigger("/trigger")).toBe(false);
     expect(isPathBlockedForAutoTrigger("/")).toBe(false);

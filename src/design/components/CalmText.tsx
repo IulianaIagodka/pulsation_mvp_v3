@@ -19,5 +19,8 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     fontWeight: "400",
     textAlign: "center",
+    width: "100%",
+    maxWidth: "100%",
+    flexShrink: 1,
   },
 });
