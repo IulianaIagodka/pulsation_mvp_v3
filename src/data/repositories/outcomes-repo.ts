@@ -34,6 +34,8 @@ export function getOutcomesProfile(): OutcomesProfile {
       preferredByHour: safeParseJson(row.preferred_by_hour, {}),
       completionRates: safeParseJson(row.completion_rates, {}),
       recentInterventions: safeParseJson(row.recent_interventions, []),
+      lastFindThreeVariantIndex:
+        row.last_find_three_variant != null ? Number(row.last_find_three_variant) : undefined,
     };
   } catch (error) {
     console.warn("[outcomes-repo] Failed to read outcomes profile:", error);
@@ -45,13 +47,14 @@ export function saveOutcomesProfile(profile: OutcomesProfile) {
   try {
     getDb().runSync(
       `INSERT OR REPLACE INTO outcomes_profile
-      (id, preferred_by_hour, completion_rates, recent_interventions, updated_at)
-      VALUES (?, ?, ?, ?, ?)`,
+      (id, preferred_by_hour, completion_rates, recent_interventions, last_find_three_variant, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?)`,
       [
         primaryId,
         JSON.stringify(profile.preferredByHour),
         JSON.stringify(profile.completionRates),
         JSON.stringify(profile.recentInterventions),
+        profile.lastFindThreeVariantIndex ?? null,
         Date.now(),
       ],
     );

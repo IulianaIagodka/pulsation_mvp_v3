@@ -11,6 +11,8 @@ export const breathingRhythm = {
   findThreeThings: {
     revealDelayMs: [1800, 7000, 12000] as const,
     revealDurationMs: 1200,
+    /** Pause after last line + hint before auto-advance to return (~7s after hint). */
+    pauseBeforeAdvanceMs: 7000,
   },
   triangleBreath: {
     cycles: 3,
@@ -23,9 +25,9 @@ export const breathingRhythm = {
   explanationText: {
     fadeMs: 2200,
     textOpacity: 0.52,
-    /** First line on return (You are here). */
+    /** Trigger / action first line. */
     primaryDelayMs: 0,
-    /** Follow-up explanation on return. */
+    /** Gap after return “You are here” before follow-up explanation. */
     secondaryDelayMs: 2500,
   },
   motion: {
@@ -33,9 +35,12 @@ export const breathingRhythm = {
     textFadeInMs: 1500,
     textFadeOutMs: 900,
   },
+  /** Return copy starts after route fade so it does not overlap action. */
+  returnScreen: {
+    primaryDelayMs: 650,
+  },
   actionAutoComplete: {
     feetOnGroundMs: 7000,
-    findThreeThingsExtraMs: 4000,
     /** After 3 breath cycles: time to show "tap the spiral" before auto-advance. */
     triangleBreathExtraMs: 3200,
   },
@@ -46,7 +51,10 @@ export const spiralHintTiming = {
   onboardingAfterMainMs: breathingRhythm.motion.textFadeInMs + 250,
   triggerAfterPromptMs: breathingRhythm.explanationText.fadeMs + 400,
   returnAfterFollowUpMs:
-    breathingRhythm.explanationText.secondaryDelayMs + breathingRhythm.explanationText.fadeMs + 400,
+    breathingRhythm.returnScreen.primaryDelayMs +
+    breathingRhythm.explanationText.secondaryDelayMs +
+    breathingRhythm.explanationText.fadeMs +
+    400,
   actionAfterFeetInstructionMs: breathingRhythm.explanationText.fadeMs + 400,
   actionAfterFindThreeMs:
     breathingRhythm.findThreeThings.revealDelayMs[2] + breathingRhythm.explanationText.fadeMs + 400,

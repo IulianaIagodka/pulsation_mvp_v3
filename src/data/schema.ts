@@ -33,6 +33,7 @@ export const schemaStatements = [
     preferred_by_hour TEXT NOT NULL,
     completion_rates TEXT NOT NULL,
     recent_interventions TEXT NOT NULL,
+    last_find_three_variant INTEGER,
     updated_at INTEGER NOT NULL
   );`,
 ] as const;

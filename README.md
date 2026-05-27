@@ -25,6 +25,8 @@ Pulsation is a cross-platform mobile MVP that offers one gentle micro-action at 
 - `src/modules/state-interpreter.ts`: context interpretation for adaptation
 - `src/modules/intervention-planner.ts`: intervention selection, anti-repetition rotation
 - `src/modules/delivery-layer.ts`: single-action copy mapping
+- `src/modules/find-three-variants.ts`: seven “find 3 things” prompt sets (shape · color · feel); no same set twice in a row
+- `src/services/find-three-flow.ts`: persists last find-3 variant in `outcomes_profile`
 - `src/modules/reflection-engine.ts`: lightweight outcome scoring
 - `src/modules/memory-update.ts`: profile memory updates
 
@@ -44,8 +46,8 @@ Schema is defined in `src/data/schema.ts`.
 
 1. **Onboarding** (`app/index.tsx`): anchored spiral, calm main line (“Pulsation exists…”), delayed “tap the spiral” hint, optional **About** link in the footer (About is **only** here in the main flow).
 2. **Trigger** (`app/trigger.tsx`): same spiral slot; main prompt; spiral hint appears last (timed after main copy).
-3. **Action** (`app/action.tsx`): one micro-intervention (feet / find 3 / triangle breath). Instruction copy uses the same soft **explanation rhythm** as return. **Spiral is the same visual everywhere** (`src/design/spiral-visual.ts` + `SpiralRings`). Tap uses `Pressable` so touches work above the scroll layer (see `AnchoredSpiralScreen` `elevation`).
-4. **Return** (`app/return.tsx`): “You are here” plus follow-up explanation; spiral hint again last; tap spiral → onboarding.
+3. **Action** (`app/action.tsx`): one micro-intervention (feet / find 3 / triangle breath). Instruction copy uses the same soft **explanation rhythm** as return. **Find 3 things** shows three simple cues (shape · color · feel) from **7 rotating sets** in `find-three-variants.ts` — the same set never repeats back-to-back (stored in SQLite). **Spiral is the same visual everywhere** (`src/design/spiral-visual.ts` + `SpiralRings`). Tap uses `Pressable` so touches work above the scroll layer (see `AnchoredSpiralScreen` `elevation`). Action → return uses **`router.replace`** (no duplicate return in the stack).
+4. **Return** (`app/return.tsx`): “You are here” (after route fade), then intervention-specific explanation, then “tap the spiral”; tap spiral → onboarding. Find 3 return line: *Looking around slowly helps you return to where you are now.*
 
 Stack navigation uses a calm **fade** between routes (`app/_layout.tsx`, `breathingRhythm.motion.screenFadeMs`).
 
@@ -67,6 +69,7 @@ Dark minimal palette from technical requirements is implemented in `src/design/t
 | Soft explanation-style fades | `ExplanationText` + `breathingRhythm.explanationText` |
 | Gentle screen text entrance | `GentleTextTransition` (opacity only) |
 | Spiral hint timing (“tap the spiral”) | `spiralHintTiming` in `src/design/animation-rhythm.ts` — always **after** other text; on **triangle breath**, the hint appears **after 3 full cycles** (then a short hold before auto-advance — `actionAutoComplete.triangleBreathExtraMs`) |
+| Find 3 staged lines + pause before return | `findThreeThings.revealDelayMs`, `pauseBeforeAdvanceMs` (~7s after hint) |
 
 Triangle breath pattern (labels + spiral): **inhale 4s → hold 2s → exhale 5s → hold 2s**, ×3 cycles (~39s spiral timing). Both holds show the “hold / затримка” label.
 
@@ -77,6 +80,7 @@ Triangle breath pattern (labels + spiral): **inhale 4s → hold 2s → exhale 5s
 - `docs/RELEASE-CHECKLIST.md` — TestFlight → App Store checklist
 - `docs/TESTFLIGHT.md` — builds & submit
 - `docs/privacy-policy.md` — privacy policy text
+- `docs/app-store-screenshots/` — iPhone screenshots at **1284×2778** for App Store Connect
 
 ## Intervention rotation
 

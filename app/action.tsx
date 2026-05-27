@@ -7,6 +7,8 @@ import { SpiralFocus } from "../src/design/components/SpiralFocus";
 import { TriangleBreathSpiral } from "../src/design/components/TriangleBreathSpiral";
 import { ExplanationText } from "../src/design/components/ExplanationText";
 import { activeLocale, interventionGuidance, uiCopy } from "../src/modules/delivery-layer";
+import { getFindThreeIntro, getFindThreeVariant } from "../src/modules/find-three-variants";
+import { assignNextFindThreeVariant } from "../src/services/find-three-flow";
 import { registerInterventionOutcome } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
 import { colors, spacing } from "../src/design/tokens";
@@ -19,14 +21,14 @@ export default function ActionScreen() {
   const router = useRouter();
   const setSelected = useAppStore((s) => s.setSelectedIntervention);
   const selected = useAppStore((s) => s.selectedIntervention) ?? "feet_on_ground";
-  const isUkrainian = activeLocale === "uk";
-  const findThreeQueue = useMemo(
-    () =>
-      isUkrainian
-        ? ["щось кругле", "щось м’яке", "щось нерухоме"]
-        : ["something round", "something soft", "something still"],
-    [isUkrainian],
-  );
+  const findThreeVariantIndex = useAppStore((s) => s.findThreeVariantIndex);
+  const setFindThreeVariantIndex = useAppStore((s) => s.setFindThreeVariantIndex);
+  const locale = activeLocale === "uk" ? "uk" : "en";
+  const isUkrainian = locale === "uk";
+  const findThreeQueue = useMemo(() => {
+    const index = findThreeVariantIndex ?? 0;
+    return [...getFindThreeVariant(index, locale).items];
+  }, [findThreeVariantIndex, locale]);
   const inhaleOpacity = useRef(new Animated.Value(0)).current;
   const holdOpacity = useRef(new Animated.Value(0)).current;
   const exhaleOpacity = useRef(new Animated.Value(0)).current;
@@ -40,7 +42,7 @@ export default function ActionScreen() {
     completionRef.current = true;
     isTransitioningRef.current = true;
     registerInterventionOutcome(selected, true);
-    router.push("/return");
+    router.replace("/return");
   }, [router, selected]);
   const completeActionRef = useRef(completeAction);
   completeActionRef.current = completeAction;
@@ -50,6 +52,11 @@ export default function ActionScreen() {
     isTransitioningRef.current = false;
     setShowTriangleSpiralHint(false);
   }, [selected]);
+
+  useEffect(() => {
+    if (selected !== "find_three_things") return;
+    setFindThreeVariantIndex(assignNextFindThreeVariant());
+  }, [selected, setFindThreeVariantIndex]);
 
   useEffect(() => {
     if (selected !== "triangle_breath") {
@@ -130,6 +137,7 @@ export default function ActionScreen() {
       if (!finished || completionRef.current || cancelled) return;
       setShowTriangleSpiralHint(true);
       settleTimer = setTimeout(() => {
+        if (cancelled || completionRef.current) return;
         completeActionRef.current();
       }, breathingRhythm.actionAutoComplete.triangleBreathExtraMs);
     });
@@ -154,12 +162,14 @@ export default function ActionScreen() {
     let autoCompleteMs = breathingRhythm.actionAutoComplete.feetOnGroundMs;
 
     if (selected === "find_three_things") {
-      const revealDelays = breathingRhythm.findThreeThings.revealDelayMs;
-      const lastRevealDelay = revealDelays[revealDelays.length - 1] ?? 0;
+      const { revealDelayMs, pauseBeforeAdvanceMs } = breathingRhythm.findThreeThings;
+      const lastRevealDelay = revealDelayMs[revealDelayMs.length - 1] ?? 0;
+      const hintLeadMs = 400;
       autoCompleteMs =
         lastRevealDelay +
         breathingRhythm.explanationText.fadeMs +
-        breathingRhythm.actionAutoComplete.findThreeThingsExtraMs;
+        hintLeadMs +
+        pauseBeforeAdvanceMs;
     }
 
     const timer = setTimeout(() => {
@@ -186,11 +196,11 @@ export default function ActionScreen() {
               delayMs={breathingRhythm.explanationText.primaryDelayMs}
               style={styles.actionInstruction}
             >
-              {isUkrainian ? "Знайди три речі навколо себе:" : "Find three things around you:"}
+              {getFindThreeIntro(locale)}
             </ExplanationText>
             {findThreeQueue.map((item, index) => (
               <ExplanationText
-                key={item}
+                key={`${findThreeVariantIndex ?? 0}-${index}`}
                 delayMs={breathingRhythm.findThreeThings.revealDelayMs[index]}
                 style={styles.findThreeLine}
               >

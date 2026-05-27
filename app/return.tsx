@@ -31,10 +31,15 @@ export default function ReturnScreen() {
       }
     >
       <View style={styles.content}>
-        <ExplanationText variant="main" delayMs={breathingRhythm.explanationText.primaryDelayMs}>
+        <ExplanationText variant="main" delayMs={breathingRhythm.returnScreen.primaryDelayMs}>
           {uiCopy.returnBody}
         </ExplanationText>
-        <ExplanationText delayMs={breathingRhythm.explanationText.secondaryDelayMs} style={styles.followUp}>
+        <ExplanationText
+          delayMs={
+            breathingRhythm.returnScreen.primaryDelayMs + breathingRhythm.explanationText.secondaryDelayMs
+          }
+          style={styles.followUp}
+        >
           {interventionGuidance[selected].explanationText}
         </ExplanationText>
         <ExplanationText delayMs={spiralHintTiming.returnAfterFollowUpMs} style={styles.hintWrap}>

@@ -33,10 +33,8 @@ const guidanceByLocale: Record<Locale, Record<InterventionType, Guidance>> = {
       explanationText: "Noticing the floor under you helps you settle",
     },
     find_three_things: {
-      actionText:
-        "Find three things around you:\n- something round\n- something soft\n- something still",
-      explanationText:
-        "Looking for shapes, textures or stillness\ngrounds your nervous system\nin the present",
+      actionText: "Find 3 things close to you",
+      explanationText: "Looking around slowly helps you return to where you are now.",
     },
     triangle_breath: {
       actionText: "Follow a calm triangle rhythm: inhale 4, hold 2, exhale 5, hold 2 (x3, ~39s total)",
@@ -51,10 +49,8 @@ const guidanceByLocale: Record<Locale, Record<InterventionType, Guidance>> = {
       explanationText: "Коли відчуваєш підлогу, легше заспокоїтись",
     },
     find_three_things: {
-      actionText:
-        "Знайди поруч три речі:\n- щось кругле\n- щось м’яке\n- щось нерухоме",
-      explanationText:
-        "Коли шукаєш форми, фактури чи нерухомість,\nнервова система м’яко повертається\nв теперішнє",
+      actionText: "Знайди 3 речі близько",
+      explanationText: "Повільний огляд навколо допомагає повернутись туди, де ти зараз.",
     },
     triangle_breath: {
       actionText: "Дихай спокійним трикутником: вдих 4, затримка 2, видих 5, затримка 2 (x3, ~39 с)",
