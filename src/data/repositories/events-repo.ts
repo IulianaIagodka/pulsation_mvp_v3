@@ -12,3 +12,16 @@ export function logEvent(eventType: string, payload: Record<string, unknown>) {
     console.warn("[events-repo] Failed to persist event:", eventType, error);
   }
 }
+
+export function countEventsByType(eventType: string): number {
+  try {
+    const row = getDb().getFirstSync<{ total: number }>(
+      "SELECT COUNT(*) AS total FROM events WHERE event_type = ?",
+      eventType,
+    );
+    return row?.total ?? 0;
+  } catch (error) {
+    console.warn("[events-repo] Failed to count events:", eventType, error);
+    return 0;
+  }
+}

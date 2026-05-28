@@ -2,7 +2,7 @@ import { InterventionType } from "../types/domain";
 import { getLocales } from "expo-localization";
 
 type Locale = "en" | "uk";
-type Guidance = { actionText: string; explanationText: string };
+type Guidance = { actionText: string };
 
 function resolveActiveLocale(): Locale {
   const primaryLocale = getLocales()[0];
@@ -30,35 +30,71 @@ const guidanceByLocale: Record<Locale, Record<InterventionType, Guidance>> = {
     feet_on_ground: {
       actionText:
         "Place your feet on the floor. Notice the pressure under them. Take one slow breath",
-      explanationText: "Noticing the floor under you helps you settle",
     },
     find_three_things: {
       actionText: "Find 3 things close to you",
-      explanationText: "Looking around slowly helps you return to where you are now.",
     },
     triangle_breath: {
       actionText: "Follow a calm triangle rhythm: inhale 4, hold 2, exhale 5, hold 2 (x3, ~39s total)",
-      explanationText:
-        "This short sequence is long enough\nto settle the nervous system\nwithout feeling like exercise",
     },
   },
   uk: {
     feet_on_ground: {
       actionText:
         "Постав ноги на підлогу. Відчуй опору під ними. Зроби один повільний видих",
-      explanationText: "Коли відчуваєш підлогу, легше заспокоїтись",
     },
     find_three_things: {
       actionText: "Знайди 3 речі близько",
-      explanationText: "Повільний огляд навколо допомагає повернутись туди, де ти зараз.",
     },
     triangle_breath: {
       actionText: "Дихай спокійним трикутником: вдих 4, затримка 2, видих 5, затримка 2 (x3, ~39 с)",
-      explanationText:
-        "Це вже помітно заспокоює нервову систему,\nале ще не відчувається як вправа",
     },
   },
 };
+
+const EXPLANATION_SHOW_CHANCE = 0.65;
+const MAX_CONSECUTIVE_HIDDEN_EXPLANATIONS = 2;
+
+const explanationPoolByLocale: Record<Locale, Record<InterventionType, readonly string[]>> = {
+  en: {
+    triangle_breath: [
+      "Slow breathing helps the body settle.",
+      "A slower rhythm can quiet internal noise.",
+      "A calm breath can help create space inside.",
+    ] as const,
+    feet_on_ground: [
+      "Feeling the ground under you can help create stability.",
+      "Small physical sensations help bring attention back.",
+      "Noticing pressure and weight can help you settle.",
+    ] as const,
+    find_three_things: [
+      "Looking around slowly helps attention settle.",
+      "Noticing nearby things can interrupt overload.",
+      "Simple sensory focus can help bring you back to the moment.",
+    ] as const,
+  },
+  uk: {
+    triangle_breath: [
+      "Повільне дихання допомагає тілу стишитись.",
+      "Повільніший ритм може приглушити внутрішній шум.",
+      "Спокійний подих створює трохи більше простору всередині.",
+    ] as const,
+    feet_on_ground: [
+      "Відчуття опори під ногами додає стійкості.",
+      "Малі тілесні відчуття м'яко повертають увагу.",
+      "Коли помічаєш тиск і вагу, легше стишитись.",
+    ] as const,
+    find_three_things: [
+      "Повільний погляд навколо допомагає увазі заспокоїтись.",
+      "Коли помічаєш речі поруч, напруга слабшає.",
+      "Проста увага до відчутного м'яко повертає в цей момент.",
+    ] as const,
+  },
+};
+
+let lastExplanationByIntervention: Partial<Record<InterventionType, string>> = {};
+let consecutiveHiddenExplanations = 0;
+let hasShownAnyReturnExplanation = false;
 
 const uiCopyByLocale: Record<
   Locale,
@@ -138,6 +174,29 @@ const uiCopyByLocale: Record<
 export const interventionCopy = interventionLabelsByLocale[activeLocale];
 export const interventionGuidance = guidanceByLocale[activeLocale];
 export const uiCopy = uiCopyByLocale[activeLocale];
+
+export function pickReturnExplanation(intervention: InterventionType): string | null {
+  const shouldHide = hasShownAnyReturnExplanation ? Math.random() > EXPLANATION_SHOW_CHANCE : false;
+  if (shouldHide && consecutiveHiddenExplanations < MAX_CONSECUTIVE_HIDDEN_EXPLANATIONS) {
+    consecutiveHiddenExplanations += 1;
+    return null;
+  }
+
+  const pool = explanationPoolByLocale[activeLocale][intervention];
+  if (pool.length === 0) return null;
+  if (pool.length === 1) return pool[0];
+
+  const last = lastExplanationByIntervention[intervention];
+  const filtered = last ? pool.filter((line) => line !== last) : [...pool];
+  const chosen = filtered[Math.floor(Math.random() * filtered.length)] ?? pool[0];
+  lastExplanationByIntervention = {
+    ...lastExplanationByIntervention,
+    [intervention]: chosen,
+  };
+  hasShownAnyReturnExplanation = true;
+  consecutiveHiddenExplanations = 0;
+  return chosen;
+}
 
 export function getDeliveryContent(intervention: InterventionType) {
   return {

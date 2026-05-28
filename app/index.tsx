@@ -11,6 +11,7 @@ import { uiCopy } from "../src/modules/delivery-layer";
 import { GentleTextTransition } from "../src/design/components/GentleTextTransition";
 import { breathingRhythm, spiralHintTiming } from "../src/design/animation-rhythm";
 import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
+import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
 import {
   hasCompletedOnboarding,
   markOnboardingCompleted,
@@ -31,6 +32,7 @@ export default function OnboardingScreen() {
     router.push("/trigger");
   }, [router]);
   useRegisterSpiralPress(onSpiralPress);
+  const spiralHint = useSpiralHintPresentation(spiralHintTiming.onboardingAfterMainMs);
 
   if (!gateChecked) {
     return null;
@@ -49,9 +51,11 @@ export default function OnboardingScreen() {
         >
           <CalmText style={styles.copy}>{uiCopy.onboardingLine}</CalmText>
         </GentleTextTransition>
-        <ExplanationText delayMs={spiralHintTiming.onboardingAfterMainMs} style={styles.hintWrap}>
-          {uiCopy.spiralHint}
-        </ExplanationText>
+        {spiralHint.shouldShow ? (
+          <ExplanationText delayMs={spiralHint.delayMs} style={styles.hintWrap} textOpacity={spiralHint.textOpacity}>
+            {uiCopy.spiralHint}
+          </ExplanationText>
+        ) : null}
       </View>
     </AnchoredSpiralScreen>
   );

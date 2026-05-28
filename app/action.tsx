@@ -12,6 +12,7 @@ import { registerInterventionOutcome } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
 import { colors, spacing } from "../src/design/tokens";
 import { breathingRhythm, spiralHintTiming } from "../src/design/animation-rhythm";
+import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
 
 const showDebugActionSelector = process.env.EXPO_PUBLIC_ENABLE_DEBUG_ACTION_SELECTOR === "true";
 
@@ -34,6 +35,12 @@ export default function ActionScreen() {
   const completionRef = useRef(false);
   const isTransitioningRef = useRef(false);
   const [showTriangleSpiralHint, setShowTriangleSpiralHint] = useState(false);
+  const nonTriangleHint = useSpiralHintPresentation(
+    selected === "feet_on_ground"
+      ? spiralHintTiming.actionAfterFeetInstructionMs
+      : spiralHintTiming.actionAfterFindThreeMs,
+  );
+  const triangleHint = useSpiralHintPresentation(0);
 
   const completeAction = useCallback(() => {
     if (completionRef.current) return;
@@ -160,7 +167,7 @@ export default function ActionScreen() {
               <ExplanationText
                 key={`${findThreeVariantIndex ?? 0}-${index}`}
                 delayMs={breathingRhythm.findThreeThings.revealDelayMs[index]}
-                style={styles.findThreeLine}
+                style={index === 0 ? styles.findThreeFirstLine : styles.findThreeLine}
               >
                 {`• ${item}`}
               </ExplanationText>
@@ -210,22 +217,17 @@ export default function ActionScreen() {
           </View>
         ) : null}
         {selected === "triangle_breath" ? (
-          showTriangleSpiralHint ? (
-            <ExplanationText delayMs={0} style={styles.hintWrap}>
+          showTriangleSpiralHint && triangleHint.shouldShow ? (
+            <ExplanationText delayMs={triangleHint.delayMs} style={styles.hintWrap} textOpacity={triangleHint.textOpacity}>
               {uiCopy.spiralHint}
             </ExplanationText>
           ) : null
         ) : (
-          <ExplanationText
-            delayMs={
-              selected === "feet_on_ground"
-                ? spiralHintTiming.actionAfterFeetInstructionMs
-                : spiralHintTiming.actionAfterFindThreeMs
-            }
-            style={styles.hintWrap}
-          >
-            {uiCopy.spiralHint}
-          </ExplanationText>
+          nonTriangleHint.shouldShow ? (
+            <ExplanationText delayMs={nonTriangleHint.delayMs} style={styles.hintWrap} textOpacity={nonTriangleHint.textOpacity}>
+              {uiCopy.spiralHint}
+            </ExplanationText>
+          ) : null
         )}
       </View>
     </AnchoredSpiralScreen>
@@ -239,8 +241,12 @@ const styles = StyleSheet.create({
     minHeight: 40,
   },
   findThreeLine: {
-    marginTop: spacing.sm,
-    minHeight: 36,
+    marginTop: 4,
+    minHeight: 30,
+  },
+  findThreeFirstLine: {
+    marginTop: 12,
+    minHeight: 30,
   },
   sequenceWrap: { alignItems: "center", width: "100%", minHeight: 128 },
   phaseLabel: {

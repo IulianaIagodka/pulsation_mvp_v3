@@ -9,14 +9,21 @@ type Props = PropsWithChildren<{
   delayMs?: number;
   style?: StyleProp<ViewStyle>;
   variant?: "main" | "explanation";
+  textOpacity?: number;
 }>;
 
 /**
  * Soft copy reveal: main lines match onboarding tone; explanation stays quieter.
  */
-export function ExplanationText({ children, delayMs = 0, style, variant = "explanation" }: Props) {
+export function ExplanationText({
+  children,
+  delayMs = 0,
+  style,
+  variant = "explanation",
+  textOpacity,
+}: Props) {
   const opacity = useRef(new Animated.Value(0)).current;
-  const { fadeMs, textOpacity } = breathingRhythm.explanationText;
+  const { fadeMs } = breathingRhythm.explanationText;
 
   useEffect(() => {
     opacity.setValue(0);
@@ -32,7 +39,8 @@ export function ExplanationText({ children, delayMs = 0, style, variant = "expla
     return () => clearTimeout(timer);
   }, [children, delayMs, fadeMs, opacity]);
 
-  const textStyle = variant === "main" ? styles.mainText : [styles.text, { opacity: textOpacity }];
+  const resolvedTextOpacity = textOpacity ?? breathingRhythm.explanationText.textOpacity;
+  const textStyle = variant === "main" ? styles.mainText : [styles.text, { opacity: resolvedTextOpacity }];
 
   return (
     <View style={[styles.wrap, style]}>
@@ -59,8 +67,8 @@ const styles = StyleSheet.create({
   text: {
     color: colors.textSecondary,
     textAlign: "center",
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: 13,
+    lineHeight: 20,
     letterSpacing: 0.15,
     width: "100%",
     maxWidth: "100%",

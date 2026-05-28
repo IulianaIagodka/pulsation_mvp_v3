@@ -22,7 +22,7 @@ export const breathingRhythm = {
   },
   explanationText: {
     fadeMs: 2200,
-    textOpacity: 0.52,
+    textOpacity: 0.46,
     /** Trigger / action first line. */
     primaryDelayMs: 0,
     /** Gap after return “You are here” before follow-up explanation. */

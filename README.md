@@ -44,10 +44,10 @@ Schema is defined in `src/data/schema.ts`.
 
 ## UX Flow
 
-1. **Onboarding** (`app/index.tsx`): anchored spiral, calm main line (“Pulsation exists…”), delayed “tap the spiral” hint, optional **About** link in the footer (About is **only** here in the main flow). Onboarding is shown once per install/profile.
-2. **Trigger** (`app/trigger.tsx`): same spiral slot; main prompt; spiral hint appears last (timed after main copy).
+1. **Onboarding** (`app/index.tsx`): anchored spiral, calm main line (“Pulsation exists…”), adaptive “tap the spiral” hint, optional **About** link in the footer (About is **only** here in the main flow). Onboarding is shown once per install/profile.
+2. **Trigger** (`app/trigger.tsx`): same spiral slot; main prompt; spiral hint appears last only when the adaptive hint system decides to show it.
 3. **Action** (`app/action.tsx`): one micro-intervention (feet / find 3 / triangle breath). Instruction copy uses the same soft **explanation rhythm** as return. **Find 3 things** shows three simple cues (shape · color · feel) from **7 rotating sets** in `find-three-variants.ts` — the same set never repeats back-to-back (stored in SQLite). **Spiral is the same visual everywhere** (`src/design/spiral-visual.ts` + `SpiralRings`). Tap uses `Pressable` so touches work above the scroll layer (see `AnchoredSpiralScreen` `elevation`). Action → return uses **`router.replace`** (no duplicate return in the stack).
-4. **Return** (`app/return.tsx`): “You are here” (after route fade), then intervention-specific explanation, then “tap the spiral”; tap spiral → trigger. Find 3 return line: *Looking around slowly helps you return to where you are now.*
+4. **Return** (`app/return.tsx`): “You are here” (after route fade), then intervention-specific explanation, then adaptive “tap the spiral” hint; tap spiral → trigger. Find 3 return line: *Looking around slowly helps you return to where you are now.*
 
 Stack navigation uses a calm **fade** between routes (`app/_layout.tsx`, `breathingRhythm.motion.screenFadeMs`).
 
@@ -68,7 +68,7 @@ Dark minimal palette from technical requirements is implemented in `src/design/t
 | Main line typography | `src/design/main-copy.ts` (matches onboarding tone where used) |
 | Soft explanation-style fades | `ExplanationText` + `breathingRhythm.explanationText` |
 | Gentle screen text entrance | `GentleTextTransition` (opacity only) |
-| Spiral hint timing (“tap the spiral”) | `spiralHintTiming` in `src/design/animation-rhythm.ts` — always **after** other text; on **triangle breath**, the hint appears **after 3 full cycles** |
+| Spiral hint timing (“tap the spiral”) | Base timing is in `spiralHintTiming` (`src/design/animation-rhythm.ts`), then adapted by `src/modules/spiral-hint-presentation.ts` + `src/services/spiral-hint.ts` based on spiral-tap familiarity (delay, opacity, occasional hide, eventual silence). On **triangle breath**, reveal still waits for **3 full cycles** before adaptation is applied. |
 | Find 3 staged lines | `findThreeThings.revealDelayMs` |
 | Action → return (“You are here”) | **Only** on spiral tap (`app/action.tsx`) |
 

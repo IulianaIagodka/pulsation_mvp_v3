@@ -10,6 +10,7 @@ import { useAppStore } from "../src/state/app-store";
 import { playTriggerHaptic } from "../src/services/haptic-regulation";
 import { InterventionType } from "../src/types/domain";
 import { breathingRhythm, spiralHintTiming } from "../src/design/animation-rhythm";
+import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
 
 const defaultIntervention: InterventionType = "find_three_things";
 
@@ -24,6 +25,7 @@ export default function TriggerScreen() {
 
   const onSpiralPress = useCallback(() => router.push("/action"), [router]);
   useRegisterSpiralPress(onSpiralPress);
+  const spiralHint = useSpiralHintPresentation(spiralHintTiming.triggerAfterPromptMs);
 
   useFocusEffect(
     useCallback(() => {
@@ -37,9 +39,11 @@ export default function TriggerScreen() {
         <ExplanationText variant="main" delayMs={breathingRhythm.explanationText.primaryDelayMs}>
           {uiCopy.triggerPrompt}
         </ExplanationText>
-        <ExplanationText delayMs={spiralHintTiming.triggerAfterPromptMs} style={styles.hintWrap}>
-          {uiCopy.spiralHint}
-        </ExplanationText>
+        {spiralHint.shouldShow ? (
+          <ExplanationText delayMs={spiralHint.delayMs} style={styles.hintWrap} textOpacity={spiralHint.textOpacity}>
+            {uiCopy.spiralHint}
+          </ExplanationText>
+        ) : null}
       </View>
     </AnchoredSpiralScreen>
   );
