@@ -26,6 +26,7 @@ npm-debug.*
 yarn-debug.*
 yarn-error.*
 .npm-cache/
+Pulsation.pdf
 
 # macOS
 .DS_Store
