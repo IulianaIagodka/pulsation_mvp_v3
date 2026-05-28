@@ -52,9 +52,6 @@ const guidanceByLocale: Record<Locale, Record<InterventionType, Guidance>> = {
   },
 };
 
-const EXPLANATION_SHOW_CHANCE = 0.65;
-const MAX_CONSECUTIVE_HIDDEN_EXPLANATIONS = 2;
-
 const explanationPoolByLocale: Record<Locale, Record<InterventionType, readonly string[]>> = {
   en: {
     triangle_breath: [
@@ -93,8 +90,6 @@ const explanationPoolByLocale: Record<Locale, Record<InterventionType, readonly 
 };
 
 let lastExplanationByIntervention: Partial<Record<InterventionType, string>> = {};
-let consecutiveHiddenExplanations = 0;
-let hasShownAnyReturnExplanation = false;
 
 const uiCopyByLocale: Record<
   Locale,
@@ -176,12 +171,6 @@ export const interventionGuidance = guidanceByLocale[activeLocale];
 export const uiCopy = uiCopyByLocale[activeLocale];
 
 export function pickReturnExplanation(intervention: InterventionType): string | null {
-  const shouldHide = hasShownAnyReturnExplanation ? Math.random() > EXPLANATION_SHOW_CHANCE : false;
-  if (shouldHide && consecutiveHiddenExplanations < MAX_CONSECUTIVE_HIDDEN_EXPLANATIONS) {
-    consecutiveHiddenExplanations += 1;
-    return null;
-  }
-
   const pool = explanationPoolByLocale[activeLocale][intervention];
   if (pool.length === 0) return null;
   if (pool.length === 1) return pool[0];
@@ -193,8 +182,6 @@ export function pickReturnExplanation(intervention: InterventionType): string | 
     ...lastExplanationByIntervention,
     [intervention]: chosen,
   };
-  hasShownAnyReturnExplanation = true;
-  consecutiveHiddenExplanations = 0;
   return chosen;
 }
 
