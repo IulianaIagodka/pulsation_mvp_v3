@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
 import { pickReturnExplanation, uiCopy } from "../src/modules/delivery-layer";
@@ -8,9 +8,11 @@ import { useAppStore } from "../src/state/app-store";
 import { breathingRhythm, spiralHintTiming } from "../src/design/animation-rhythm";
 import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
 import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
+import { scaleByWidth } from "../src/design/responsive";
 
 export default function ReturnScreen() {
   const router = useRouter();
+  const { width } = useWindowDimensions();
   const clear = useAppStore((s) => s.clearIntervention);
   const selected = useAppStore((s) => s.selectedIntervention) ?? "feet_on_ground";
   const [returnExplanation, setReturnExplanation] = useState<string | null>(null);
@@ -37,13 +39,17 @@ export default function ReturnScreen() {
             delayMs={
               breathingRhythm.returnScreen.primaryDelayMs + breathingRhythm.explanationText.secondaryDelayMs
             }
-            style={styles.followUp}
+            style={[styles.followUp, { marginTop: scaleByWidth(8, width) }]}
           >
             {returnExplanation}
           </ExplanationText>
         ) : null}
         {spiralHint.shouldShow ? (
-          <ExplanationText delayMs={spiralHint.delayMs} style={styles.hintWrap} textOpacity={spiralHint.textOpacity}>
+          <ExplanationText
+            delayMs={spiralHint.delayMs}
+            style={[styles.hintWrap, { marginTop: scaleByWidth(12, width) }]}
+            textOpacity={spiralHint.textOpacity}
+          >
             {uiCopy.spiralHint}
           </ExplanationText>
         ) : null}
@@ -59,10 +65,6 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     maxWidth: "100%",
   },
-  followUp: {
-    marginTop: 8,
-  },
-  hintWrap: {
-    marginTop: 12,
-  },
+  followUp: {},
+  hintWrap: {},
 });

@@ -1,8 +1,11 @@
 import { PropsWithChildren, ReactNode } from "react";
-import { ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { spiralLayout } from "../animation-rhythm";
 import { spacing } from "../tokens";
+import { clamp, scaleByWidth } from "../responsive";
+import { useAppStore } from "../../state/app-store";
+import { CalmText } from "./CalmText";
 import { CalmScreen } from "./CalmScreen";
 import { SoftCard } from "./SoftCard";
 
@@ -17,13 +20,16 @@ type Props = PropsWithChildren<{
 
 export function AnchoredSpiralScreen({ spiral, children, centerContent = false, footer }: Props) {
   const insets = useSafeAreaInsets();
-  const { height: windowHeight } = useWindowDimensions();
+  const { height: windowHeight, width: windowWidth } = useWindowDimensions();
+  const highContrastPreviewEnabled = useAppStore((s) => s.highContrastPreviewEnabled);
+  const setHighContrastPreviewEnabled = useAppStore((s) => s.setHighContrastPreviewEnabled);
 
   const contentHeight = windowHeight - insets.top - insets.bottom;
   const spiralTop = insets.top + contentHeight * spiralLayout.anchorRatio - spiralLayout.size / 2;
   const textPaddingTop = spiralTop + spiralLayout.size + spiralLayout.textGap;
-  const footerBottomInset = Math.max(insets.bottom, spacing.sm);
-  const scrollBottomPad = footer ? 52 + footerBottomInset : spacing.xl;
+  const footerBottomInset = Math.max(insets.bottom, scaleByWidth(spacing.sm, windowWidth));
+  const footerHeight = clamp(scaleByWidth(52, windowWidth), 48, 64);
+  const scrollBottomPad = footer ? footerHeight + footerBottomInset : scaleByWidth(spacing.xl, windowWidth);
 
   return (
     <CalmScreen flush>
@@ -54,6 +60,21 @@ export function AnchoredSpiralScreen({ spiral, children, centerContent = false, 
         {footer ? (
           <View pointerEvents="box-none" style={[styles.footer, { paddingBottom: footerBottomInset }]}>
             {footer}
+          </View>
+        ) : null}
+
+        {__DEV__ ? (
+          <View style={[styles.devToggleWrap, { top: insets.top + scaleByWidth(8, windowWidth) }]}>
+            <Pressable
+              onPress={() => setHighContrastPreviewEnabled(!highContrastPreviewEnabled)}
+              style={[styles.devToggle, highContrastPreviewEnabled && styles.devToggleActive]}
+              hitSlop={8}
+              accessibilityRole="button"
+            >
+              <CalmText style={styles.devToggleText}>
+                {highContrastPreviewEnabled ? "HC ON" : "HC"}
+              </CalmText>
+            </Pressable>
           </View>
         ) : null}
       </View>
@@ -96,5 +117,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     zIndex: 5,
     elevation: 4,
+  },
+  devToggleWrap: {
+    position: "absolute",
+    right: spacing.sm,
+    zIndex: 40,
+  },
+  devToggle: {
+    minHeight: 34,
+    minWidth: 52,
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.28)",
+    backgroundColor: "rgba(11,18,30,0.58)",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: spacing.sm,
+  },
+  devToggleActive: {
+    borderColor: "rgba(255,255,255,0.75)",
+    backgroundColor: "rgba(35,58,84,0.72)",
+  },
+  devToggleText: {
+    fontSize: 12,
+    opacity: 0.95,
+    letterSpacing: 0.2,
   },
 });

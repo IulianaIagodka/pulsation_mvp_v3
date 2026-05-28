@@ -1,6 +1,7 @@
-import { TouchableWithoutFeedback, View, StyleSheet } from "react-native";
+import { Pressable, View, StyleSheet } from "react-native";
 import { CalmText } from "./CalmText";
 import { colors, spacing } from "../tokens";
+import { useHighContrast } from "../../hooks/use-high-contrast";
 
 type Props = {
   label: string;
@@ -8,12 +9,14 @@ type Props = {
 };
 
 export function AboutFooterLink({ label, onPress }: Props) {
+  const highContrast = useHighContrast();
+
   return (
-    <TouchableWithoutFeedback onPress={onPress}>
+    <Pressable onPress={onPress} hitSlop={10} accessibilityRole="button">
       <View style={styles.wrap}>
-        <CalmText style={styles.text}>{label}</CalmText>
+        <CalmText style={[styles.text, highContrast && styles.textHighContrast]}>{label}</CalmText>
       </View>
-    </TouchableWithoutFeedback>
+    </Pressable>
   );
 }
 
@@ -21,6 +24,8 @@ const styles = StyleSheet.create({
   wrap: {
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
+    minHeight: 44,
+    justifyContent: "center",
   },
   text: {
     color: colors.textSecondary,
@@ -29,5 +34,9 @@ const styles = StyleSheet.create({
     letterSpacing: 0.35,
     textAlign: "center",
     textDecorationLine: "underline",
+  },
+  textHighContrast: {
+    color: colors.textPrimary,
+    opacity: 0.96,
   },
 });

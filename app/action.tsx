@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "expo-router";
-import { Animated, Easing, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
+import { Animated, Easing, StyleSheet, TouchableWithoutFeedback, View, useWindowDimensions } from "react-native";
 import { CalmText } from "../src/design/components/CalmText";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
@@ -13,11 +13,13 @@ import { useAppStore } from "../src/state/app-store";
 import { colors, spacing } from "../src/design/tokens";
 import { breathingRhythm, spiralHintTiming } from "../src/design/animation-rhythm";
 import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
+import { scaleByWidth } from "../src/design/responsive";
 
 const showDebugActionSelector = process.env.EXPO_PUBLIC_ENABLE_DEBUG_ACTION_SELECTOR === "true";
 
 export default function ActionScreen() {
   const router = useRouter();
+  const { width } = useWindowDimensions();
   const setSelected = useAppStore((s) => s.setSelectedIntervention);
   const selected = useAppStore((s) => s.selectedIntervention) ?? "feet_on_ground";
   const findThreeVariantIndex = useAppStore((s) => s.findThreeVariantIndex);
@@ -167,7 +169,10 @@ export default function ActionScreen() {
               <ExplanationText
                 key={`${findThreeVariantIndex ?? 0}-${index}`}
                 delayMs={breathingRhythm.findThreeThings.revealDelayMs[index]}
-                style={index === 0 ? styles.findThreeFirstLine : styles.findThreeLine}
+                style={[
+                  index === 0 ? styles.findThreeFirstLine : styles.findThreeLine,
+                  { marginTop: scaleByWidth(index === 0 ? 12 : 4, width) },
+                ]}
               >
                 {`• ${item}`}
               </ExplanationText>
@@ -241,11 +246,9 @@ const styles = StyleSheet.create({
     minHeight: 40,
   },
   findThreeLine: {
-    marginTop: 4,
     minHeight: 30,
   },
   findThreeFirstLine: {
-    marginTop: 12,
     minHeight: 30,
   },
   sequenceWrap: { alignItems: "center", width: "100%", minHeight: 128 },

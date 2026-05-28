@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Defs, RadialGradient, Rect, Stop } from "react-native-svg";
@@ -12,6 +12,9 @@ type Props = PropsWithChildren<{
 }>;
 
 export function CalmScreen({ children, centered = false, flush = false }: Props) {
+  const { width } = useWindowDimensions();
+  const horizontalPadding = Math.round(Math.max(spacing.md, Math.min(spacing.xl, width * 0.06)));
+
   return (
     <SafeAreaView style={styles.safe} edges={flush ? ["top", "left", "right"] : undefined}>
       <LinearGradient
@@ -32,7 +35,14 @@ export function CalmScreen({ children, centered = false, flush = false }: Props)
             <Rect x="0" y="0" width="100%" height="100%" fill="url(#vignette)" />
           </Svg>
         </View>
-        <View style={[styles.container, flush && styles.containerFlush, centered && styles.centered]}>
+        <View
+          style={[
+            styles.container,
+            { paddingHorizontal: horizontalPadding },
+            flush && styles.containerFlush,
+            centered && styles.centered,
+          ]}
+        >
           {children}
         </View>
       </LinearGradient>
@@ -44,7 +54,7 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.backgroundPrimary },
   gradient: { flex: 1 },
   overlay: { ...StyleSheet.absoluteFillObject },
-  container: { flex: 1, padding: spacing.lg },
+  container: { flex: 1, paddingVertical: spacing.lg },
   containerFlush: { padding: 0 },
   centered: { justifyContent: "center", alignItems: "center" },
 });

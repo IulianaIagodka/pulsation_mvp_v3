@@ -5,7 +5,6 @@ import { colors } from "./tokens";
 export const mainCopyTextStyle: TextStyle = {
   color: colors.textSecondary,
   fontSize: 17,
-  lineHeight: 22,
   fontWeight: "400",
   textAlign: "center",
   letterSpacing: 0.15,
