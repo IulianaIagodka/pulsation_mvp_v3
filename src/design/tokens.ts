@@ -23,9 +23,9 @@ const base = {
   borderSoft: "#1E2F49",
 } as const;
 
-const spiralLift = 0.1;
-const textPrimaryLift = 0.18;
-const textSecondaryLift = 0.12;
+const spiralLift = 0.2;
+const textPrimaryLift = 0.28;
+const textSecondaryLift = 0.24;
 
 export const colors = {
   backgroundPrimary: base.backgroundPrimary,

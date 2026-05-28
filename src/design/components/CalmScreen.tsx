@@ -18,7 +18,7 @@ export function CalmScreen({ children, centered = false, flush = false }: Props)
   return (
     <SafeAreaView style={styles.safe} edges={flush ? ["top", "left", "right"] : undefined}>
       <LinearGradient
-        colors={[colors.backgroundSecondary, colors.backgroundPrimary, "#060C17"]}
+        colors={[colors.backgroundSecondary, colors.backgroundPrimary, "#081021"]}
         start={{ x: 0.12, y: 0.06 }}
         end={{ x: 0.9, y: 0.96 }}
         style={styles.gradient}
@@ -28,8 +28,8 @@ export function CalmScreen({ children, centered = false, flush = false }: Props)
             <Defs>
               <RadialGradient id="vignette" cx="50%" cy="42%" r="72%">
                 <Stop offset="0%" stopColor="#000000" stopOpacity="0" />
-                <Stop offset="55%" stopColor="#000000" stopOpacity="0.04" />
-                <Stop offset="100%" stopColor="#000000" stopOpacity="0.42" />
+                <Stop offset="55%" stopColor="#000000" stopOpacity="0.02" />
+                <Stop offset="100%" stopColor="#000000" stopOpacity="0.28" />
               </RadialGradient>
             </Defs>
             <Rect x="0" y="0" width="100%" height="100%" fill="url(#vignette)" />

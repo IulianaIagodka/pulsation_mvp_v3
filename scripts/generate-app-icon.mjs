@@ -17,15 +17,15 @@ const s = (size * artScale) / base;
 const cx = size / 2;
 const cy = size / 2;
 const bg = "#0D121E";
-const ringColor = "#314765";
-const dotColor = "#162238";
+const ringColor = "#4D6C97";
+const dotColor = "#223451";
 
 const rings = [
-  { diameter: 136, opacity: 1, stroke: 1 },
-  { diameter: 110, opacity: 0.55, stroke: 1 },
-  { diameter: 86, opacity: 0.58, stroke: 1 },
-  { diameter: 62, opacity: 0.62, stroke: 1 },
-  { diameter: 38, opacity: 0.65, stroke: 1 },
+  { diameter: 136, opacity: 1, stroke: 1.15 },
+  { diameter: 110, opacity: 0.74, stroke: 1.15 },
+  { diameter: 86, opacity: 0.78, stroke: 1.15 },
+  { diameter: 62, opacity: 0.82, stroke: 1.15 },
+  { diameter: 38, opacity: 0.86, stroke: 1.15 },
 ];
 
 const ringMarkup = rings
@@ -42,7 +42,7 @@ const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
   <rect width="100%" height="100%" fill="${bg}"/>
   ${ringMarkup}
-  <circle cx="${cx}" cy="${cy}" r="${dotR}" fill="${dotColor}" opacity="0.8"/>
+  <circle cx="${cx}" cy="${cy}" r="${dotR}" fill="${dotColor}" opacity="0.95"/>
 </svg>`;
 
 writeFileSync(join(assetsDir, "icon.svg"), svg);

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <rect width="100%" height="100%" fill="#0D121E"/>
-  <circle cx="512" cy="512" r="386.25882352941176" fill="none" stroke="#314765" stroke-width="5.722352941176471" opacity="1"/>
-<circle cx="512" cy="512" r="311.86823529411765" fill="none" stroke="#314765" stroke-width="5.722352941176471" opacity="0.55"/>
-<circle cx="512" cy="512" r="243.2" fill="none" stroke="#314765" stroke-width="5.722352941176471" opacity="0.58"/>
-<circle cx="512" cy="512" r="174.53176470588235" fill="none" stroke="#314765" stroke-width="5.722352941176471" opacity="0.62"/>
-<circle cx="512" cy="512" r="105.86352941176472" fill="none" stroke="#314765" stroke-width="5.722352941176471" opacity="0.65"/>
-  <circle cx="512" cy="512" r="28.611764705882354" fill="#162238" opacity="0.8"/>
+  <circle cx="512" cy="512" r="385.8296470588235" fill="none" stroke="#4D6C97" stroke-width="6.580705882352941" opacity="1"/>
+<circle cx="512" cy="512" r="311.4390588235294" fill="none" stroke="#4D6C97" stroke-width="6.580705882352941" opacity="0.74"/>
+<circle cx="512" cy="512" r="242.77082352941176" fill="none" stroke="#4D6C97" stroke-width="6.580705882352941" opacity="0.78"/>
+<circle cx="512" cy="512" r="174.10258823529412" fill="none" stroke="#4D6C97" stroke-width="6.580705882352941" opacity="0.82"/>
+<circle cx="512" cy="512" r="105.43435294117648" fill="none" stroke="#4D6C97" stroke-width="6.580705882352941" opacity="0.86"/>
+  <circle cx="512" cy="512" r="28.611764705882354" fill="#223451" opacity="0.95"/>
 </svg>

@@ -11,7 +11,7 @@ export const spiralVisualStyles = StyleSheet.create({
     backgroundColor: "transparent",
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 1,
+    borderWidth: 1.15,
     borderColor: colors.spiralRing,
     shadowColor: "#000",
     shadowOpacity: 0.12,
@@ -25,7 +25,7 @@ export const spiralVisualStyles = StyleSheet.create({
     borderRadius: 55,
     borderWidth: 1,
     borderColor: colors.spiralRing,
-    opacity: 0.55,
+    opacity: 0.68,
   },
   ringXLHighContrast: {
     opacity: 0.55,
@@ -38,7 +38,7 @@ export const spiralVisualStyles = StyleSheet.create({
     borderRadius: 43,
     borderWidth: 1,
     borderColor: colors.spiralRing,
-    opacity: 0.58,
+    opacity: 0.72,
   },
   ringLHighContrast: {
     opacity: 0.58,
@@ -51,7 +51,7 @@ export const spiralVisualStyles = StyleSheet.create({
     borderRadius: 31,
     borderWidth: 1,
     borderColor: colors.spiralRing,
-    opacity: 0.62,
+    opacity: 0.76,
   },
   ringMHighContrast: {
     opacity: 0.62,
@@ -64,7 +64,7 @@ export const spiralVisualStyles = StyleSheet.create({
     borderRadius: 19,
     borderWidth: 1,
     borderColor: colors.spiralRing,
-    opacity: 0.65,
+    opacity: 0.8,
   },
   ringSHighContrast: {
     opacity: 0.65,
@@ -75,7 +75,7 @@ export const spiralVisualStyles = StyleSheet.create({
     height: 10,
     borderRadius: 5,
     backgroundColor: colors.spiralInner,
-    opacity: 0.8,
+    opacity: 0.92,
   },
   centerDotHighContrast: {
     opacity: 0.86,
