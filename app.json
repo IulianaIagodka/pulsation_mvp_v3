@@ -14,7 +14,7 @@
       "backgroundColor": "#0D121E"
     },
     "ios": {
-      "supportsTablet": false,
+      "supportsTablet": true,
       "bundleIdentifier": "com.maksym.pulsation",
       "buildNumber": "1",
       "infoPlist": {
