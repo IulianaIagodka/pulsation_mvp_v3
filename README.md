@@ -1,6 +1,6 @@
 # Pulsation MVP
 
-Pulsation is a cross-platform mobile MVP that offers one gentle micro-action at a time when you open the calm intervention flow. It uses on-device session context and local history to choose among three micro-interventions (it does not read other apps).
+Pulsation is a cross-platform mobile MVP that offers one gentle micro-action at a time when you open the calm intervention flow. It uses on-device session context and local history to choose among seven micro-interventions (it does not read other apps).
 
 ## Stack
 
@@ -23,7 +23,9 @@ Pulsation is a cross-platform mobile MVP that offers one gentle micro-action at 
 - `src/modules/trigger-engine.ts`: orchestration across safety + adaptive logic
 - `src/modules/eligibility-safety.ts`: hard safety rules (quiet hours, cap, cooldown, dismissal dampening)
 - `src/modules/state-interpreter.ts`: context interpretation for adaptation
-- `src/modules/intervention-planner.ts`: intervention selection, anti-repetition rotation
+- `src/modules/intervention-planner.ts`: adaptive intervention selection (time-of-day, completion rates, variety)
+- `src/modules/adaptive-scheduler.ts`: dynamic Pulsation interval from local engagement signals
+- `src/data/repositories/scheduling-profile-repo.ts`: persists scheduling profile (opens, completions, ignores)
 - `src/modules/delivery-layer.ts`: single-action copy mapping
 - `src/modules/find-three-variants.ts`: seven “find 3 things” prompt sets (shape · color · feel); no same set twice in a row
 - `src/services/find-three-flow.ts`: persists last find-3 variant in `outcomes_profile`
@@ -39,14 +41,15 @@ SQLite tables:
 - `post_intervention_effectiveness`
 - `safety_state`
 - `outcomes_profile`
+- `scheduling_profile`
 
-Schema is defined in `src/data/schema.ts`.
+Schema is defined in `src/data/schema.ts`. See `docs/adaptive-scheduling.md` for scheduling and personalization details.
 
 ## UX Flow
 
 1. **Onboarding** (`app/index.tsx`): anchored spiral, calm main line (“Pulsation exists…”), adaptive “tap the spiral” hint, optional **About** link in the footer (About is **only** here in the main flow). Onboarding is shown once per install/profile.
 2. **Trigger** (`app/trigger.tsx`): same spiral slot; main prompt; spiral hint appears last only when the adaptive hint system decides to show it.
-3. **Action** (`app/action.tsx`): one micro-intervention (feet / find 3 / triangle breath). Instruction copy uses the same soft **explanation rhythm** as return. **Find 3 things** shows three simple cues (shape · color · feel) from **7 rotating sets** in `find-three-variants.ts` — the same set never repeats back-to-back (stored in SQLite). **Spiral is the same visual everywhere** (`src/design/spiral-visual.ts` + `SpiralRings`). Tap uses `Pressable` so touches work above the scroll layer (see `AnchoredSpiralScreen` `elevation`). Action → return uses **`router.replace`** (no duplicate return in the stack).
+3. **Action** (`app/action.tsx`): one micro-intervention (feet / find 3 / triangle breath / relax jaw / drop shoulders / notice 3 sounds / press palms together). Instruction copy uses the same soft **explanation rhythm** as return. **Find 3 things** shows three simple cues (shape · color · feel) from **7 rotating sets** in `find-three-variants.ts` — the same set never repeats back-to-back (stored in SQLite). **Spiral is the same visual everywhere** (`src/design/spiral-visual.ts` + `SpiralRings`). Tap uses `Pressable` so touches work above the scroll layer (see `AnchoredSpiralScreen` `elevation`). Action → return uses **`router.replace`** (no duplicate return in the stack).
 4. **Return** (`app/return.tsx`): “You are here” (after route fade), then intervention-specific explanation, then adaptive “tap the spiral” hint; tap spiral → trigger. Find 3 return line: *Looking around slowly helps you return to where you are now.*
 
 Stack navigation uses a calm **fade** between routes (`app/_layout.tsx`, `breathingRhythm.motion.screenFadeMs`).
@@ -76,6 +79,7 @@ Triangle breath pattern (labels + spiral): **inhale 4s → hold 2s → exhale 5s
 
 ### Docs for release & QA
 
+- `docs/adaptive-scheduling.md` — adaptive interval + personalization design
 - `docs/spiral-regression-checklist.md` — manual spiral / animation checks
 - `docs/app-store-metadata.md` — store copy (EN/UK)
 - `docs/RELEASE-CHECKLIST.md` — TestFlight → App Store checklist
@@ -84,17 +88,27 @@ Triangle breath pattern (labels + spiral): **inhale 4s → hold 2s → exhale 5s
 - `docs/pages/` — GitHub Pages (Support + Privacy for App Store Connect)
 - `docs/app-store-screenshots/` — iPhone screenshots at **1284×2778** for App Store Connect
 
-## Intervention rotation
+## Intervention selection
 
-Each visit to the trigger screen (`/trigger`) picks the next intervention in order:
-`feet_on_ground` → `find_three_things` → `triangle_breath` → repeat.
+Each visit to `/trigger` picks **one of seven** micro-interventions via `intervention-planner.ts`:
 
-## Inactivity trigger
+- **Time-of-day pools** — morning grounding, daytime sensory, evening breathing/calm body, quieter night options
+- **Completion rates** — prefers actions you tend to complete (EMA in `memory-update.ts`)
+- **Variety roll** — occasionally suggests a less-used action
+- **Anti-repetition** — skips the last two shown actions
 
-If Pulsation was in the background for **20+ minutes**:
+Actions: feet on ground, find 3 things, triangle breath, relax jaw, drop shoulders, notice 3 sounds, press palms together.
 
-1. A **local notification** is shown (“One action for you now?” / “Одна дія для тебе зараз?”).
-2. Reopening the app navigates to `/trigger` (not during action / return).
+For QA only, set `EXPO_PUBLIC_TEST_ROTATE_INTERVENTIONS=true` to cycle through all seven in fixed order (`test-intervention-rotate.ts`).
+
+## Inactivity trigger (adaptive)
+
+When Pulsation is in the background, it schedules **one local invitation** after a **dynamic interval** (~20 min base, adapted by recent completions, ignores, and absence — see `docs/adaptive-scheduling.md`):
+
+1. A **local notification** may appear (“One action for you now?” / “Одна дія для тебе зараз?”).
+2. Reopening the app after the threshold navigates to `/trigger` (not during action / return), if eligibility passes (cooldown, daily cap, etc.).
+
+Timing adapts gently — it is not a fixed 20-minute reminder.
 
 iOS will ask for notification permission the first time you background the app. After adding `expo-notifications`, run `npm run ios` once (not only Expo Go) so the native module is linked.
 

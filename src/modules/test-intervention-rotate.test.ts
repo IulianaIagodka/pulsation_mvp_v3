@@ -1,3 +1,4 @@
+import { ALL_INTERVENTIONS } from "./intervention-planner";
 import {
   __testRotateInternals,
   isTestRotateModeEnabled,
@@ -12,10 +13,10 @@ describe("test intervention rotate", () => {
 
   it("cycles through all interventions in order", () => {
     process.env.EXPO_PUBLIC_TEST_ROTATE_INTERVENTIONS = "true";
-    expect(pickNextRotatingIntervention()).toBe("feet_on_ground");
-    expect(pickNextRotatingIntervention()).toBe("find_three_things");
-    expect(pickNextRotatingIntervention()).toBe("triangle_breath");
-    expect(pickNextRotatingIntervention()).toBe("feet_on_ground");
+    for (const intervention of ALL_INTERVENTIONS) {
+      expect(pickNextRotatingIntervention()).toBe(intervention);
+    }
+    expect(pickNextRotatingIntervention()).toBe(ALL_INTERVENTIONS[0]);
   });
 
   it("can be disabled explicitly", () => {

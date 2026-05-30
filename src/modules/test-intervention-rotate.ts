@@ -1,10 +1,7 @@
+import { ALL_INTERVENTIONS } from "./intervention-planner";
 import { InterventionType } from "../types/domain";
 
-const rotationOrder: InterventionType[] = [
-  "feet_on_ground",
-  "find_three_things",
-  "triangle_breath",
-];
+const rotationOrder: InterventionType[] = [...ALL_INTERVENTIONS];
 
 let rotationIndex = 0;
 

@@ -10,12 +10,21 @@ import { getFindThreeIntro, getFindThreeVariant } from "../src/modules/find-thre
 import { assignNextFindThreeVariant } from "../src/services/find-three-flow";
 import { registerInterventionOutcome } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
+import { InterventionType } from "../src/types/domain";
 import { colors, spacing } from "../src/design/tokens";
 import { breathingRhythm, spiralHintTiming } from "../src/design/animation-rhythm";
 import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
 import { scaleByWidth } from "../src/design/responsive";
 
 const showDebugActionSelector = process.env.EXPO_PUBLIC_ENABLE_DEBUG_ACTION_SELECTOR === "true";
+
+const SIMPLE_INSTRUCTION_INTERVENTIONS = new Set<InterventionType>([
+  "feet_on_ground",
+  "relax_jaw",
+  "drop_shoulders",
+  "notice_three_sounds",
+  "press_palms_together",
+]);
 
 export default function ActionScreen() {
   const router = useRouter();
@@ -38,9 +47,9 @@ export default function ActionScreen() {
   const isTransitioningRef = useRef(false);
   const [showTriangleSpiralHint, setShowTriangleSpiralHint] = useState(false);
   const nonTriangleHint = useSpiralHintPresentation(
-    selected === "feet_on_ground"
-      ? spiralHintTiming.actionAfterFeetInstructionMs
-      : spiralHintTiming.actionAfterFindThreeMs,
+    selected === "find_three_things"
+      ? spiralHintTiming.actionAfterFindThreeMs
+      : spiralHintTiming.actionAfterFeetInstructionMs,
   );
   const triangleHint = useSpiralHintPresentation(0);
 
@@ -197,28 +206,30 @@ export default function ActionScreen() {
             </View>
           </View>
         ) : null}
-        {selected === "feet_on_ground" ? (
+        {SIMPLE_INSTRUCTION_INTERVENTIONS.has(selected) ? (
           <ExplanationText delayMs={breathingRhythm.explanationText.primaryDelayMs} style={styles.actionInstruction}>
             {interventionGuidance[selected].actionText}
           </ExplanationText>
         ) : null}
         {__DEV__ && showDebugActionSelector ? (
           <View style={styles.debugRow}>
-            <TouchableWithoutFeedback onPress={() => setSelected("feet_on_ground")}>
-              <View style={styles.debugItem}>
-                <CalmText style={styles.debugText}>Feet</CalmText>
-              </View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => setSelected("find_three_things")}>
-              <View style={styles.debugItem}>
-                <CalmText style={styles.debugText}>Find 3</CalmText>
-              </View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => setSelected("triangle_breath")}>
-              <View style={styles.debugItem}>
-                <CalmText style={styles.debugText}>Triangle</CalmText>
-              </View>
-            </TouchableWithoutFeedback>
+            {(
+              [
+                ["feet_on_ground", "Feet"],
+                ["find_three_things", "Find 3"],
+                ["triangle_breath", "Triangle"],
+                ["relax_jaw", "Jaw"],
+                ["drop_shoulders", "Shoulders"],
+                ["notice_three_sounds", "Sounds"],
+                ["press_palms_together", "Palms"],
+              ] as const
+            ).map(([type, label]) => (
+              <TouchableWithoutFeedback key={type} onPress={() => setSelected(type)}>
+                <View style={styles.debugItem}>
+                  <CalmText style={styles.debugText}>{label}</CalmText>
+                </View>
+              </TouchableWithoutFeedback>
+            ))}
           </View>
         ) : null}
         {selected === "triangle_breath" ? (
@@ -279,7 +290,7 @@ const styles = StyleSheet.create({
   hintWrap: {
     marginTop: spacing.md,
   },
-  debugRow: { marginTop: spacing.md, flexDirection: "row", gap: spacing.md },
+  debugRow: { marginTop: spacing.md, flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: spacing.md },
   debugItem: { paddingVertical: spacing.xs },
   debugText: { color: colors.textSecondary, fontSize: 13 },
 });

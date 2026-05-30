@@ -6,6 +6,7 @@ import {
   recordAppStateChange,
 } from "../modules/session-runtime";
 import { isPathBlockedForAutoTrigger, shouldAutoOpenTrigger } from "../modules/inactivity-trigger";
+import { recordAppOpen } from "../data/repositories/scheduling-profile-repo";
 import {
   cancelInactivityNotification,
   scheduleInactivityNotification,
@@ -32,6 +33,7 @@ export function InactivityTriggerListener() {
       if (nextState !== "active") return;
 
       void cancelInactivityNotification();
+      recordAppOpen(Date.now());
 
       if (isPathBlockedForAutoTrigger(pathnameRef.current)) return;
 

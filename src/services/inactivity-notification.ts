@@ -1,6 +1,6 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
-import { getInactivityNotificationDelaySeconds } from "../modules/inactivity-trigger";
+import { getAdaptiveTriggerThresholdMinutes, getInactivityNotificationDelaySeconds } from "../modules/inactivity-trigger";
 import { uiCopy } from "../modules/delivery-layer";
 
 export const INACTIVITY_NOTIFICATION_ID = "pulsation-inactivity-trigger";
@@ -46,6 +46,8 @@ export async function scheduleInactivityNotification(): Promise<void> {
 
     await Notifications.cancelScheduledNotificationAsync(INACTIVITY_NOTIFICATION_ID);
 
+    const thresholdMinutes = getAdaptiveTriggerThresholdMinutes();
+
     await Notifications.scheduleNotificationAsync({
       identifier: INACTIVITY_NOTIFICATION_ID,
       content: {
@@ -55,7 +57,7 @@ export async function scheduleInactivityNotification(): Promise<void> {
       },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-        seconds: getInactivityNotificationDelaySeconds(),
+        seconds: getInactivityNotificationDelaySeconds(thresholdMinutes),
         repeats: false,
       },
     });

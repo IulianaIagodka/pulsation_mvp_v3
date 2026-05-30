@@ -84,7 +84,7 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 
 1. [ ] **Онбординг** — спіраль + «Pulsation існує, щоб повертати тебе до себе»
 2. [ ] **Trigger** — «Одна дія для тебе зараз?»
-3. [ ] **Action** — одна з дій (feet / find 3 / triangle breath; для find 3 — три прості підказки: форма · колір · відчуття)
+3. [ ] **Action** — одна з дій (feet / find 3 / triangle breath / relax jaw / drop shoulders / notice 3 sounds / press palms; для find 3 — три прості підказки: форма · колір · відчуття)
 4. [ ] **Return** — «Ти тут» + пояснення (для find 3: *Looking around slowly helps you return to where you are now.*)
 5. [ ] **About** (опційно) — лише з онбордингу → «Про застосунок»
 

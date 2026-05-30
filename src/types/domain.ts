@@ -1,4 +1,11 @@
-export type InterventionType = "feet_on_ground" | "find_three_things" | "triangle_breath";
+export type InterventionType =
+  | "feet_on_ground"
+  | "find_three_things"
+  | "triangle_breath"
+  | "relax_jaw"
+  | "drop_shoulders"
+  | "notice_three_sounds"
+  | "press_palms_together";
 
 export type UserSignal = {
   timestamp: number;
@@ -24,6 +31,17 @@ export type OutcomesProfile = {
   lastFindThreeVariantIndex?: number;
   /** Shown once; after first spiral tap on onboarding. */
   onboardingCompleted?: boolean;
+};
+
+/** Local engagement signals that drive adaptive Pulsation timing. */
+export type SchedulingProfile = {
+  lastAppOpenAt?: number;
+  lastCompletedAt?: number;
+  consecutiveIgnored: number;
+  totalCompleted: number;
+  completionsByType: Partial<Record<InterventionType, number>>;
+  completionsByHour: Partial<Record<number, number>>;
+  lastScheduledIntervalMinutes?: number;
 };
 
 export type InterventionDecision = {

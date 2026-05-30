@@ -37,4 +37,15 @@ export const schemaStatements = [
     onboarding_completed INTEGER NOT NULL DEFAULT 0,
     updated_at INTEGER NOT NULL
   );`,
+  `CREATE TABLE IF NOT EXISTS scheduling_profile (
+    id TEXT PRIMARY KEY NOT NULL,
+    last_app_open_at INTEGER,
+    last_completed_at INTEGER,
+    consecutive_ignored INTEGER NOT NULL DEFAULT 0,
+    total_completed INTEGER NOT NULL DEFAULT 0,
+    completions_by_type TEXT NOT NULL DEFAULT '{}',
+    completions_by_hour TEXT NOT NULL DEFAULT '{}',
+    last_scheduled_interval_minutes INTEGER,
+    updated_at INTEGER NOT NULL
+  );`,
 ] as const;

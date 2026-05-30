@@ -1,31 +1,40 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useRef } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
 import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
 import { uiCopy } from "../src/modules/delivery-layer";
 import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
-import { decideIntervention } from "../src/services/pulsation-flow";
+import { decideIntervention, registerPulsationDismissed } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
 import { playTriggerHaptic } from "../src/services/haptic-regulation";
-import { InterventionType } from "../src/types/domain";
 import { breathingRhythm, spiralHintTiming } from "../src/design/animation-rhythm";
 import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
 import { scaleByWidth } from "../src/design/responsive";
-
-const defaultIntervention: InterventionType = "find_three_things";
 
 export default function TriggerScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const setSelected = useAppStore((s) => s.setSelectedIntervention);
+  const wentToActionRef = useRef(false);
 
-  useEffect(() => {
-    const selected = decideIntervention() ?? defaultIntervention;
-    setSelected(selected);
-  }, [setSelected]);
+  useFocusEffect(
+    useCallback(() => {
+      wentToActionRef.current = false;
+      setSelected(decideIntervention());
 
-  const onSpiralPress = useCallback(() => router.push("/action"), [router]);
+      return () => {
+        if (!wentToActionRef.current) {
+          registerPulsationDismissed();
+        }
+      };
+    }, [setSelected]),
+  );
+
+  const onSpiralPress = useCallback(() => {
+    wentToActionRef.current = true;
+    router.push("/action");
+  }, [router]);
   useRegisterSpiralPress(onSpiralPress);
   const spiralHint = useSpiralHintPresentation(spiralHintTiming.triggerAfterPromptMs);
 

@@ -8,13 +8,13 @@ import { interpretState } from "./state-interpreter";
 export function runTriggerEngine(signal: Parameters<typeof checkEligibility>[0]): InterventionDecision {
   const safety = getSafetyState();
   const eligibility = checkEligibility(signal, safety);
-  if (!eligibility.eligible) {
-    return { shouldDeliver: false, reason: eligibility.reason };
-  }
-
   const outcomes = getOutcomesProfile();
   const interpreted = interpretState(signal, outcomes);
   const selected = planIntervention(interpreted);
+
+  if (!eligibility.eligible) {
+    return { shouldDeliver: false, reason: eligibility.reason, selected };
+  }
 
   return { shouldDeliver: true, selected };
 }
