@@ -93,7 +93,7 @@ Each visit to the trigger screen (`/trigger`) picks the next intervention in ord
 
 If Pulsation was in the background for **20+ minutes**:
 
-1. A **local notification** is shown (“One action for you now?” / “Одна дія зараз?”).
+1. A **local notification** is shown (“One action for you now?” / “Одна дія для тебе зараз?”).
 2. Reopening the app navigates to `/trigger` (not during action / return).
 
 iOS will ask for notification permission the first time you background the app. After adding `expo-notifications`, run `npm run ios` once (not only Expo Go) so the native module is linked.

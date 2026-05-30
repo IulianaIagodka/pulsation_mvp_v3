@@ -41,10 +41,10 @@ const guidanceByLocale: Record<Locale, Record<InterventionType, Guidance>> = {
   uk: {
     feet_on_ground: {
       actionText:
-        "Постав ноги на підлогу. Відчуй опору під ними. Зроби один повільний видих",
+        "Постав стопи на підлогу. Відчуй опору під ними. Зроби один повільний видих",
     },
     find_three_things: {
-      actionText: "Знайди 3 речі близько",
+      actionText: "Знайди 3 речі поруч",
     },
     triangle_breath: {
       actionText: "Дихай спокійним трикутником: вдих 4, затримка 2, видих 5, затримка 2 (x3, ~39 с)",
@@ -83,8 +83,8 @@ const explanationPoolByLocale: Record<Locale, Record<InterventionType, readonly 
     ] as const,
     find_three_things: [
       "Повільний погляд навколо допомагає увазі заспокоїтись.",
-      "Коли помічаєш речі поруч, напруга слабшає.",
-      "Проста увага до відчутного м'яко повертає в цей момент.",
+      "Коли помічаєш речі поруч, напруга спадає.",
+      "Проста увага до того, що відчуваєш, м'яко повертає в цей момент.",
     ] as const,
   },
 };
@@ -141,9 +141,9 @@ const uiCopyByLocale: Record<
   },
   uk: {
     onboardingLine: "Pulsation допомагає повернутися до себе",
-    triggerPrompt: "Одна дія зараз?",
+    triggerPrompt: "Одна дія для тебе зараз?",
     triggerPauseMessage: "Зараз не час. Можна просто побути",
-    triggerAccept: "Можу взяти цей момент",
+    triggerAccept: "Можу побути в цьому моменті",
     triggerDecline: "Зараз просто побуду",
     actionDone: "Цього достатньо",
     actionSkip: "Не цього разу",
@@ -152,7 +152,7 @@ const uiCopyByLocale: Record<
     returnAction: "Повернутися до тиші",
     spiralHint: "торкнись спіралі",
     inactivityNotificationTitle: "Pulsation",
-    inactivityNotificationBody: "Одна дія зараз?",
+    inactivityNotificationBody: "Одна дія для тебе зараз?",
     aboutLink: "Про застосунок",
     aboutTitle: "Про Pulsation",
     aboutParagraphs: [
