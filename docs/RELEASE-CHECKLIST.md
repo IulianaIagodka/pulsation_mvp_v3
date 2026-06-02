@@ -85,7 +85,7 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 1. [ ] **Онбординг** — спіраль + «Pulsation існує, щоб повертати тебе до себе»
 2. [ ] **Trigger** — «Одна дія для тебе зараз?»
 3. [ ] **Action** — одна з дій (feet / find 3 / triangle breath / relax jaw / drop shoulders / notice 3 sounds / press palms; для find 3 — три прості підказки: форма · колір · відчуття)
-4. [ ] **Return** — «Ти тут» + пояснення (для find 3: *Looking around slowly helps you return to where you are now.*)
+4. [ ] **Return** — «Ти тут» + коротке одно-реченнєве пояснення (варіанти ротуются).
 5. [ ] **About** (опційно) — лише з онбордингу → «Про застосунок»
 
 Готові PNG **1284×2778** (якщо вже зняті): `docs/app-store-screenshots/` + `README` у тій папці.
@@ -179,8 +179,8 @@ npm audit --omit=dev
 - [ ] **Expo compatibility:** `npx expo-doctor` без критичних fail
 - [ ] **Security:** `npm audit --omit=dev` переглянуто; high/critical відсутні або задокументовані з планом fix
 
-Поточний зафіксований стан (локальна перевірка 2026-05-28):
-- `npm test` ✅ (11/11 suites pass)
+Поточний зафіксований стан (локальна перевірка 2026-06-02):
+- `npm test` ✅ (15/15 suites pass)
 - `npx tsc --noEmit` ✅
 - `npx expo-doctor` ✅ (18/18 checks passed)
 - `npm audit --omit=dev` ⚠️ 14 moderate вразливостей (high/critical немає), залишок у Expo transitive deps; повний fix вимагає major upgrade до Expo 56 (`npm audit fix --force`)
@@ -193,6 +193,10 @@ npm audit --omit=dev
 - [ ] 15+ взаємодій: хінт не показується
 - [ ] Перехід між tier-ами без різких UX-стрибків, без “tutorial completed” відчуття
 - [ ] `triangle_breath`: хінт не з’являється раніше завершення 3 циклів дихання
+- [ ] `triangle_breath`: haptic на старт вдиху та видиху
+- [ ] `find_three`: спіраль не завершує дію, поки не показані всі 3 буліти
+- [ ] `return`: **Keep this one for me** не показується повторно для вже збереженої дії
+- [ ] Онбординг: **tap the spiral**, без «one action for you» на першому екрані
 - [ ] Контраст і читабельність у темній темі залишаються комфортними
 
 ---

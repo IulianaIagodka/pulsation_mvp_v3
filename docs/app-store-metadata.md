@@ -77,12 +77,13 @@ Feet on ground, Find 3 things, Triangle breath, Relax your jaw, Drop your should
 
 ### App Review Notes
 Pulsation is a wellbeing app with a minimal flow.
-Core path: onboarding -> prompt ("One action for you now?") -> one micro-action -> return ("You are here" + short explanation).
+Core path: onboarding (tap the spiral) -> trigger prompt -> one micro-action -> return ("You are here" + short explanation).
+Optional "Keep this one for me" on return saves local preference for that intervention (button not shown again for saved actions).
 About is available only from onboarding (footer link).
 No account/login is required. No test account is required.
 Data stays on device (local SQLite storage only).
 Notifications are local reminders only (gentle inactivity reminder, no marketing push backend).
-Complete the action by tapping the spiral on the action screen.
+Complete the action by tapping the spiral on the action screen (find-3: all three cues must appear first).
 
 ---
 
@@ -140,9 +141,10 @@ Pulsation створено для спокою, а не тиску.
 
 ### App Review Notes
 Pulsation — застосунок добробуту з мінімальним флоу.
-Шлях: онбординг -> запит («Одна дія для тебе зараз?») -> одна м'яка дія -> повернення («Ти тут» + коротке пояснення).
+Шлях: онбординг (торкнись спіралі) -> запит -> одна м'яка дія -> повернення («Ти тут» + коротке пояснення).
+Опційно «Залиши для мене» на return зберігає вподобання локально (кнопка не показується знову для збережених дій).
 «Про застосунок» доступно лише з онбордингу (нижнє посилання).
 Логін/акаунт не потрібен. Тестовий акаунт не потрібен.
 Дані залишаються на пристрої (лише локальне збереження у SQLite).
 Сповіщення — лише локальні нагадування про м'яке повернення після неактивності (без маркетингового push-бекенду).
-Завершення дії — торкнись спіралі на екрані дії.
+Завершення дії — торкнись спіралі на екрані дії (знайди 3: спочатку всі три підказки).

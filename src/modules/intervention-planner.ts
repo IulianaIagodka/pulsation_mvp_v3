@@ -1,16 +1,8 @@
 import { InterventionType } from "../types/domain";
+import { ALL_INTERVENTIONS } from "../interventions/registry";
 import { InterpretedState } from "./state-interpreter";
 
-export const ALL_INTERVENTIONS: readonly InterventionType[] = [
-  "feet_on_ground",
-  "find_three_things",
-  "triangle_breath",
-  "relax_jaw",
-  "drop_shoulders",
-  "notice_three_sounds",
-  "press_palms_together",
-] as const;
-
+export { ALL_INTERVENTIONS } from "../interventions/registry";
 /** Morning grounding, daytime sensory awareness, evening breathing + calm body. */
 export const TIME_OF_DAY_POOLS = {
   morning: [
@@ -29,6 +21,24 @@ export type PlannerOptions = {
   random?: () => number;
 };
 
+export type PreferenceWeightConfig = {
+  baseWeight: number;
+  thresholds: readonly { minScore: number; weight: number }[];
+};
+
+/**
+ * Converts local preference score to weighted-random strength.
+ * Keeps every intervention eligible with at least `baseWeight`.
+ */
+export const preferenceWeightConfig: PreferenceWeightConfig = {
+  baseWeight: 1,
+  thresholds: [
+    { minScore: 3, weight: 2 },
+    { minScore: 6, weight: 3 },
+    { minScore: 10, weight: 4 },
+  ],
+};
+
 function poolForHour(hour: number): readonly InterventionType[] {
   if (hour >= 5 && hour < 11) return TIME_OF_DAY_POOLS.morning;
   if (hour >= 11 && hour < 17) return TIME_OF_DAY_POOLS.daytime;
@@ -36,19 +46,50 @@ function poolForHour(hour: number): readonly InterventionType[] {
   return TIME_OF_DAY_POOLS.night;
 }
 
-/** Picks one action from the time-of-day pool (weighted evenly within the pool). */
+function scoreToWeight(score: number | undefined, config: PreferenceWeightConfig = preferenceWeightConfig): number {
+  const safeScore = Number.isFinite(score) ? Math.max(0, Number(score)) : 0;
+  let weight = config.baseWeight;
+  for (const step of config.thresholds) {
+    if (safeScore >= step.minScore) weight = step.weight;
+  }
+  return Math.max(1, weight);
+}
+
+function weightedRandomPick(
+  candidates: readonly InterventionType[],
+  scores: Partial<Record<InterventionType, number>>,
+  random: () => number,
+): InterventionType | undefined {
+  if (candidates.length === 0) return undefined;
+  const weighted = candidates.map((intervention) => ({
+    intervention,
+    weight: scoreToWeight(scores[intervention]),
+  }));
+  const total = weighted.reduce((sum, item) => sum + item.weight, 0);
+  if (total <= 0) return weighted[0]?.intervention;
+
+  let roll = random() * total;
+  for (const item of weighted) {
+    roll -= item.weight;
+    if (roll <= 0) return item.intervention;
+  }
+  return weighted[weighted.length - 1]?.intervention;
+}
+
+/** Picks one action from the time-of-day pool with subtle local preference weighting. */
 export function getTimeOfDayPreference(
   hour: number,
   random: () => number = Math.random,
+  scores: Partial<Record<InterventionType, number>> = {},
 ): InterventionType | undefined {
   const pool = poolForHour(hour);
-  const index = Math.floor(random() * pool.length);
-  return pool[index];
+  return weightedRandomPick(pool, scores, random);
 }
 
 export function planIntervention(state: InterpretedState, options?: PlannerOptions): InterventionType {
   const random = options?.random ?? Math.random;
   const recentLast2 = state.recentInterventions.slice(-2);
+  const nonRecentInterventions = ALL_INTERVENTIONS.filter((i) => !recentLast2.includes(i));
 
   if (random() < 0.15) {
     const leastUsed = [...ALL_INTERVENTIONS].sort((a, b) => {
@@ -60,7 +101,7 @@ export function planIntervention(state: InterpretedState, options?: PlannerOptio
     if (varietyPick) return varietyPick;
   }
 
-  const timePref = getTimeOfDayPreference(state.hour, random);
+  const timePref = getTimeOfDayPreference(state.hour, random, state.preferenceScores ?? {});
   if (timePref && !recentLast2.includes(timePref) && random() < 0.65) {
     return timePref;
   }
@@ -74,6 +115,14 @@ export function planIntervention(state: InterpretedState, options?: PlannerOptio
     const bRate = state.completionRates[b] ?? 0.5;
     return bRate - aRate;
   });
+
+  // Final fallback: weighted random biased by learned local preference scores.
+  const weightedPick = weightedRandomPick(
+    nonRecentInterventions.length > 0 ? nonRecentInterventions : sorted,
+    state.preferenceScores ?? {},
+    random,
+  );
+  if (weightedPick) return weightedPick;
 
   const nonRecent = sorted.find((i) => !recentLast2.includes(i));
   return nonRecent ?? sorted[0];

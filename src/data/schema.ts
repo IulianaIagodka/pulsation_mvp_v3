@@ -32,6 +32,7 @@ export const schemaStatements = [
     id TEXT PRIMARY KEY NOT NULL,
     preferred_by_hour TEXT NOT NULL,
     completion_rates TEXT NOT NULL,
+    preference_scores TEXT NOT NULL DEFAULT '{}',
     recent_interventions TEXT NOT NULL,
     last_find_three_variant INTEGER,
     onboarding_completed INTEGER NOT NULL DEFAULT 0,

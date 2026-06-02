@@ -24,12 +24,16 @@ Use this checklist before release whenever animation/layout is changed.
 ## Animation stability
 
 - [ ] Confirm there is no visible vertical “bounce” while the spiral breathes (only scale/opacity).
-- [ ] On `find_three_things`, verify three lines fade in (shape · color · feel) with staged delays (`findThreeThings.revealDelayMs`).
+- [ ] On `find_three_things`, verify three bullets appear one at a time (tap or every 2s, `findThreeThings.autoRevealIntervalMs`).
 - [ ] Run find 3 **twice in a row** (via trigger rotation): prompt set should **change** (7 variants in `find-three-variants.ts`; same set not twice in a row).
-- [ ] After the third line and “tap the spiral”, **tap the spiral** to reach return — no auto-advance.
-- [ ] On return after find 3, explanation matches: *Looking around slowly helps you return to where you are now.*
+- [ ] On **find 3**, spiral tap **before** all bullets are shown only reveals the next bullet (does not go to return).
+- [ ] After all three bullets (and optional “tap the spiral” hint), spiral tap goes to return — no auto-advance.
+- [ ] On return after find 3, explanation is a short single sentence and rotates across variants.
 - [ ] Action → return: only **one** return screen (back does not land on return again); copy on return starts after fade (`returnScreen.primaryDelayMs`).
 - [ ] On `triangle_breath`, verify phase words (`inhale` / `hold` / `exhale`) crossfade gently; **both** holds show “hold / затримка”.
+- [ ] On `triangle_breath`, feel haptic at **inhale start** and **exhale start** (device build, not Expo Go only).
+- [ ] On return, **Keep this one for me** fades out on tap; second visit with same intervention does **not** show the button again.
+- [ ] Onboarding shows **tap the spiral**, not “one action for you now?”.
 
 ## Automated safety net
 

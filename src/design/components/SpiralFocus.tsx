@@ -7,8 +7,17 @@ type Props = { onPress?: () => void; startDelayMs?: number };
 
 export function SpiralFocus({ onPress, startDelayMs = 0 }: Props) {
   const scale = useRef(new Animated.Value(1)).current;
-  const opacity = useRef(new Animated.Value(0.94)).current;
-  const { inhaleMs, holdMs, exhaleMs, scaleExhale, scaleInhale } = breathingRhythm.spiral;
+  const opacity = useRef(new Animated.Value(breathingRhythm.spiral.opacityExhale)).current;
+  const {
+    inhaleMs,
+    holdMs,
+    exhaleMs,
+    postExhaleHoldMs,
+    scaleExhale,
+    scaleInhale,
+    opacityExhale,
+    opacityInhale,
+  } = breathingRhythm.spiral;
 
   useEffect(() => {
     let loop: Animated.CompositeAnimation | null = null;
@@ -19,13 +28,13 @@ export function SpiralFocus({ onPress, startDelayMs = 0 }: Props) {
             Animated.timing(scale, {
               toValue: scaleInhale,
               duration: inhaleMs,
-              easing: Easing.inOut(Easing.quad),
+              easing: Easing.out(Easing.quad),
               useNativeDriver: true,
             }),
             Animated.timing(opacity, {
-              toValue: 1,
+              toValue: opacityInhale,
               duration: inhaleMs,
-              easing: Easing.inOut(Easing.quad),
+              easing: Easing.out(Easing.quad),
               useNativeDriver: true,
             }),
           ]),
@@ -33,13 +42,13 @@ export function SpiralFocus({ onPress, startDelayMs = 0 }: Props) {
             Animated.timing(scale, {
               toValue: scaleInhale,
               duration: holdMs,
-              easing: Easing.inOut(Easing.quad),
+              easing: Easing.linear,
               useNativeDriver: true,
             }),
             Animated.timing(opacity, {
-              toValue: 1,
+              toValue: opacityInhale,
               duration: holdMs,
-              easing: Easing.inOut(Easing.quad),
+              easing: Easing.linear,
               useNativeDriver: true,
             }),
           ]),
@@ -47,13 +56,27 @@ export function SpiralFocus({ onPress, startDelayMs = 0 }: Props) {
             Animated.timing(scale, {
               toValue: scaleExhale,
               duration: exhaleMs,
-              easing: Easing.inOut(Easing.quad),
+              easing: Easing.in(Easing.quad),
               useNativeDriver: true,
             }),
             Animated.timing(opacity, {
-              toValue: 0.94,
+              toValue: opacityExhale,
               duration: exhaleMs,
-              easing: Easing.inOut(Easing.quad),
+              easing: Easing.in(Easing.quad),
+              useNativeDriver: true,
+            }),
+          ]),
+          Animated.parallel([
+            Animated.timing(scale, {
+              toValue: scaleExhale,
+              duration: postExhaleHoldMs,
+              easing: Easing.linear,
+              useNativeDriver: true,
+            }),
+            Animated.timing(opacity, {
+              toValue: opacityExhale,
+              duration: postExhaleHoldMs,
+              easing: Easing.linear,
               useNativeDriver: true,
             }),
           ]),
@@ -66,7 +89,19 @@ export function SpiralFocus({ onPress, startDelayMs = 0 }: Props) {
       clearTimeout(startTimer);
       loop?.stop();
     };
-  }, [exhaleMs, holdMs, inhaleMs, opacity, scale, scaleExhale, scaleInhale, startDelayMs]);
+  }, [
+    exhaleMs,
+    holdMs,
+    inhaleMs,
+    opacity,
+    opacityExhale,
+    opacityInhale,
+    postExhaleHoldMs,
+    scale,
+    scaleExhale,
+    scaleInhale,
+    startDelayMs,
+  ]);
 
   const content = <SpiralRings opacity={opacity} scale={scale} />;
 

@@ -4,6 +4,7 @@ export type InterpretedState = {
   hour: number;
   preferredByHour?: InterventionType;
   completionRates: Partial<Record<InterventionType, number>>;
+  preferenceScores: Partial<Record<InterventionType, number>>;
   recentInterventions: InterventionType[];
   signalWeight: number;
 };
@@ -16,6 +17,7 @@ export function interpretState(signal: UserSignal, outcomes: OutcomesProfile): I
     hour,
     preferredByHour: outcomes.preferredByHour[hour],
     completionRates: outcomes.completionRates,
+    preferenceScores: outcomes.preferenceScores ?? {},
     recentInterventions: outcomes.recentInterventions,
     signalWeight,
   };

@@ -43,7 +43,7 @@ const guidanceByLocale: Record<Locale, Record<InterventionType, Guidance>> = {
       actionText: "Find 3 things close to you",
     },
     triangle_breath: {
-      actionText: "Follow a calm triangle rhythm: inhale 4, hold 2, exhale 5, hold 2 (x3, ~39s total)",
+      actionText: "Follow a calm triangle rhythm: inhale 4, hold 2, exhale 5 (x3, ~33s total)",
     },
     relax_jaw: {
       actionText: "Relax your jaw. Let it soften. Take one slow breath",
@@ -61,25 +61,25 @@ const guidanceByLocale: Record<Locale, Record<InterventionType, Guidance>> = {
   uk: {
     feet_on_ground: {
       actionText:
-        "Постав стопи на підлогу. Відчуй тиск під стопами. Зроби один повільний видих",
+        "Постав стопи на підлогу. Відчуй тиск під ними. Дихай",
     },
     find_three_things: {
       actionText: "Знайди 3 речі поруч",
     },
     triangle_breath: {
-      actionText: "Дихай спокійним трикутником: вдих 4, затримка 2, видих 5, затримка 2 (x3, ~39 с)",
+      actionText: "Дихай спокійним трикутником: вдих 4, затримка 2, видих 5 (x3, ~33 с)",
     },
     relax_jaw: {
-      actionText: "Розслаб щелепу. Відпусти напругу. Зроби один повільний видих",
+      actionText: "Розслаб щелепу. Відпусти напругу. Дихай",
     },
     drop_shoulders: {
-      actionText: "Опусти плечі. Відчуй, як відпускає",
+      actionText: "Опусти плечі. Відчуй їх вагу. Дихай",
     },
     notice_three_sounds: {
-      actionText: "Почуй 3 звуки навколо — близькі, далекі, ледь чутні",
+      actionText: "Поміть 3 звуки навколо — близькі, далекі, ледь чутні",
     },
     press_palms_together: {
-      actionText: "М'яко склади долоні разом. Відчуй тепло та тиск",
+      actionText: "М'яко склади долоні разом. Відчуй тепло та тиск. Дихай",
     },
   },
 };
@@ -87,86 +87,117 @@ const guidanceByLocale: Record<Locale, Record<InterventionType, Guidance>> = {
 const explanationPoolByLocale: Record<Locale, Record<InterventionType, readonly string[]>> = {
   en: {
     feet_on_ground: [
-      "Feeling the ground beneath you creates stability. Contact brings your attention back to the body.",
-      "Noticing pressure under your feet steadies you. Physical contact helps attention return.",
-      "The floor supports you. Sensation in your feet helps your mind settle.",
+      "Feeling the ground under your feet helps you feel grounded.",
+      "Noticing pressure under your feet helps your attention return.",
+      "Feeling your feet on the floor helps your mind settle.",
     ] as const,
     find_three_things: [
-      "Noticing nearby objects helps settle attention. It eases mental overwhelm.",
-      "Looking slowly at things around you steadies attention. It quiets the noise in your head.",
-      "Simple focus on what's nearby helps attention settle. It interrupts inner chatter.",
+      "Noticing nearby objects helps calm your attention.",
+      "Looking slowly around helps quiet mental noise.",
+      "Simple focus on nearby things interrupts inner noise.",
     ] as const,
     triangle_breath: [
-      "A slower breathing rhythm helps the body settle. It helps your nervous system settle.",
-      "Slow breathing helps the body quiet down. A calmer rhythm creates space inside.",
-      "Following a slower breath rhythm helps the body settle. It softens tension inside.",
+      "A slower breathing rhythm helps your body settle.",
+      "Slow breathing quiets the body and creates inner space.",
+      "Following a slower breath rhythm softens tension.",
     ] as const,
     relax_jaw: [
-      "Releasing jaw tension can quiet the rest of the body. A small release in the jaw can ease tension throughout.",
-      "Softening the jaw helps your whole body settle. A small release in the face shifts overall tension.",
-      "Letting the jaw loosen helps the body settle. It can change how tension feels in the body.",
+      "Releasing your jaw helps the whole body relax.",
+      "Softening the jaw reduces overall tension.",
+      "Loosening the jaw changes how tension feels in the body.",
     ] as const,
     drop_shoulders: [
-      "Letting shoulders drop reduces stored physical tension. The body can soften.",
-      "Dropping the shoulders eases stored tension. You may feel a little lighter.",
-      "Feeling the shoulders release eases tension you're holding there. The body moves toward ease.",
+      "Letting your shoulders drop reduces stored tension.",
+      "Dropping your shoulders can make your body feel lighter.",
+      "Feeling your shoulders release helps the body soften.",
     ] as const,
     notice_three_sounds: [
-      "Listening to surrounding sounds steadies attention. It interrupts looping thoughts.",
-      "Hearing sounds near and far steadies attention. It breaks looping mental patterns.",
-      "Tuning into ambient sounds settles attention. It quiets repetitive inner noise.",
+      "Listening to sounds around you helps focus your attention.",
+      "Hearing near and far sounds helps break thought loops.",
+      "Tuning into ambient sounds quiets repetitive inner noise.",
     ] as const,
     press_palms_together: [
-      "Gentle pressure in the hands helps you feel grounded. It brings attention back into the body.",
-      "Feeling warmth and pressure between the palms helps you feel grounded. It brings attention into the body.",
-      "Noticing contact between the hands creates stability. Attention returns through physical sensation.",
+      "Gentle pressure in your palms helps you feel grounded.",
+      "Warmth and pressure between your palms bring attention back to the body.",
+      "Noticing contact between your hands creates a sense of stability.",
     ] as const,
   },
   uk: {
     feet_on_ground: [
-      "Відчуття опори під ногами додає стійкості. Увага повертається через контакт із підлогою.",
-      "Коли помічаєш тиск під стопами, легше стояти на землі. Тіло м'яко повертає увагу.",
-      "Підлога тримає. Відчуття в стопах допомагає заспокоїтись.",
+      "Відчуття опори під ногами допомагає відчути стійкість.",
+      "Коли помічаєш тиск під стопами, увага повертається.",
+      "Відчуття стоп на підлозі допомагає заспокоїти думки.",
     ] as const,
     find_three_things: [
-      "Коли помічаєш речі поруч, увага заспокоюється. Це зменшує зайвий шум у голові.",
-      "Повільний погляд на речі навколо повертає увагу. Це полегшує розгулянулість.",
-      "Проста увага до речей поруч заспокоює. Це перериває внутрішній шум.",
+      "Коли помічаєш речі поруч, увага заспокоюється.",
+      "Повільний погляд навколо допомагає зменшити шум у голові.",
+      "Проста увага до речей поруч перериває внутрішній шум.",
     ] as const,
     triangle_breath: [
-      "Повільний ритм дихання допомагає тілу заспокоїтись. Це дає простір нервовій системі.",
-      "Повільне дихання допомагає тілу заспокоїтись. Спокійніший ритм створює простір всередині.",
-      "Коли слідуєш повільнішому ритму дихання, тіло заспокоюється. Це пом'якшує внутрішню напругу.",
+      "Повільніший ритм дихання допомагає тілу заспокоїтись.",
+      "Повільне дихання заспокоює тіло й створює внутрішній простір.",
+      "Слідування повільнішому ритму дихання пом'якшує напругу.",
     ] as const,
     relax_jaw: [
-      "Коли відпускає напруга в щелепі, решта тіла заспокоюється. Маленьке розслаблення в обличчі зменшує загальну напругу.",
-      "Коли щелепа пом'якшується, все тіло заспокоюється. Невелике розслаблення в обличчі змінює напругу в тілі.",
-      "Коли щелепа розслаблюється, тіло заспокоюється. Розслаблення в обличчі змінює відчуття напруги.",
+      "Коли відпускаєш щелепу, розслабляється все тіло.",
+      "Пом'якшення щелепи зменшує загальну напругу.",
+      "Розслаблення щелепи змінює відчуття напруги в тілі.",
     ] as const,
     drop_shoulders: [
-      "Коли плечі опускаються, зникає накопичена напруга. Тіло стає легшим.",
-      "Коли опускаєш плечі, відпускає накопичена напруга. Тіло може перейти в м'якший стан.",
-      "Коли відчуваєш, як плечі відпускають, зменшується напруга в них. Тіло відпускає.",
+      "Коли опускаєш плечі, зменшується накопичена напруга.",
+      "Коли опускаєш плечі, тіло може відчути легкість.",
+      "Коли відчуваєш, як плечі відпускають, тіло м'якшає.",
     ] as const,
     notice_three_sounds: [
-      "Слухання звуків навколо повертає увагу. Це перериває зациклені думки.",
-      "Коли чуєш звуки близько і далеко, увага фіксується. Це збиває хід думок.",
-      "Коли вловлюєш звуки навколо, увага заспокоюється. Це перериває внутрішній монолог.",
+      "Слухання звуків навколо допомагає стабілізувати увагу.",
+      "Коли чуєш близькі й далекі звуки, легше вийти з кола думок.",
+      "Коли вловлюєш звуки довкола, стихає повторюваний внутрішній шум.",
     ] as const,
     press_palms_together: [
-      "М'який тиск у долонях дає відчуття опори. Увага повертається в тіло.",
-      "Коли відчуваєш тепло і тиск між долонями, з'являється опора. Увага повертається в тіло.",
-      "Коли помічаєш контакт між долонями, з'являється стійкість. Увага повертається через тілесне відчуття.",
+      "М'який тиск у долонях дає відчуття опори.",
+      "Тепло й тиск між долонями повертають увагу в тіло.",
+      "Коли помічаєш контакт між долонями, з'являється відчуття стійкості.",
     ] as const,
   },
 };
 
 let lastExplanationByIntervention: Partial<Record<InterventionType, string>> = {};
 
+export type TriangleBreathPhaseLabels = {
+  breatheIn: string;
+  hold: string;
+  breatheOut: string;
+};
+
+const triangleBreathCopyByLocale: Record<
+  Locale,
+  { intro: string; phases: TriangleBreathPhaseLabels }
+> = {
+  en: {
+    intro: "Take 3 deep breaths. Follow the triangle.",
+    phases: {
+      breatheIn: "Breathe in",
+      hold: "hold",
+      breatheOut: "Breathe out",
+    },
+  },
+  uk: {
+    intro: "Зроби 3 цикли дихання. Слідуй за трикутником.",
+    phases: {
+      breatheIn: "Вдихни",
+      hold: "затримка",
+      breatheOut: "Видихни",
+    },
+  },
+};
+
 const uiCopyByLocale: Record<
   Locale,
   {
     onboardingLine: string;
+    extendedIntroBody: string;
+    extendedFlowLine: string;
+    extendedSamplePrompt: string;
     triggerPrompt: string;
     triggerPauseMessage: string;
     triggerAccept: string;
@@ -174,6 +205,8 @@ const uiCopyByLocale: Record<
     actionDone: string;
     actionSkip: string;
     explanationContinue: string;
+    keepForMe: string;
+    keepForMeHint: string;
     returnBody: string;
     returnAction: string;
     spiralHint: string;
@@ -188,6 +221,10 @@ const uiCopyByLocale: Record<
 > = {
   en: {
     onboardingLine: "Pulsation exists to bring you back to yourself",
+    extendedIntroBody:
+      "When everything around you feels like too much, Pulsation invites you to one small action — grounding, breath, or noticing what's near.",
+    extendedFlowLine: "One gentle prompt. One moment for yourself. A quiet return.",
+    extendedSamplePrompt: "tap the spiral",
     triggerPrompt: "One action for you now?",
     triggerPauseMessage: "Not now. You can continue gently",
     triggerAccept: "I can take this moment",
@@ -195,6 +232,8 @@ const uiCopyByLocale: Record<
     actionDone: "This feels complete",
     actionSkip: "Not this time",
     explanationContinue: "I will carry this with me",
+    keepForMe: "Keep this one for me",
+    keepForMeHint: "Saves your preference for next time",
     returnBody: "You are here",
     returnAction: "Return to stillness",
     spiralHint: "tap the spiral",
@@ -213,6 +252,10 @@ const uiCopyByLocale: Record<
   },
   uk: {
     onboardingLine: "Pulsation допомагає повернутися до себе",
+    extendedIntroBody:
+      "Коли всього навколо стає забагато, Pulsation запрошує до однієї маленької дії — опора, дихання або увага до того, що поруч.",
+    extendedFlowLine: "Одне м'яке запрошення. Один момент для себе. Тихе повернення.",
+    extendedSamplePrompt: "торкнись спіралі",
     triggerPrompt: "Одна дія для тебе зараз?",
     triggerPauseMessage: "Зараз не час. Можна просто побути",
     triggerAccept: "Можу побути в цьому моменті",
@@ -220,6 +263,8 @@ const uiCopyByLocale: Record<
     actionDone: "Цього достатньо",
     actionSkip: "Не цього разу",
     explanationContinue: "Візьму це з собою",
+    keepForMe: "Залиши для мене",
+    keepForMeHint: "Збереже твоє вподобання на наступний раз",
     returnBody: "Ти тут",
     returnAction: "Повернутися до тиші",
     spiralHint: "торкнись спіралі",
@@ -241,6 +286,11 @@ const uiCopyByLocale: Record<
 export const interventionCopy = interventionLabelsByLocale[activeLocale];
 export const interventionGuidance = guidanceByLocale[activeLocale];
 export const uiCopy = uiCopyByLocale[activeLocale];
+export const triangleBreathCopy = triangleBreathCopyByLocale[activeLocale];
+
+export function getTriangleBreathPhaseLabels(): TriangleBreathPhaseLabels {
+  return triangleBreathCopy.phases;
+}
 
 export function pickReturnExplanation(intervention: InterventionType): string | null {
   const pool = explanationPoolByLocale[activeLocale][intervention];
@@ -255,11 +305,4 @@ export function pickReturnExplanation(intervention: InterventionType): string | 
     [intervention]: chosen,
   };
   return chosen;
-}
-
-export function getDeliveryContent(intervention: InterventionType) {
-  return {
-    title: interventionCopy[intervention],
-    prompt: uiCopy.triggerPrompt,
-  };
 }

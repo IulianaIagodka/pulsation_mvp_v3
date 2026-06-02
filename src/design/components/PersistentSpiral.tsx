@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Animated, Easing, Pressable, StyleSheet } from "react-native";
-import { breathingRhythm } from "../animation-rhythm";
+import { breathingRhythm, getTriangleBreathIntroDelayMs } from "../animation-rhythm";
 import { SpiralRings } from "./SpiralRings";
 
 export type SpiralAnimationMode = "calm" | "triangle";
@@ -16,7 +16,7 @@ type Props = {
  */
 export function PersistentSpiral({ mode, onPress }: Props) {
   const scale = useRef(new Animated.Value(1)).current;
-  const opacity = useRef(new Animated.Value(0.94)).current;
+  const opacity = useRef(new Animated.Value(breathingRhythm.spiral.opacityExhale)).current;
   const runningRef = useRef<Animated.CompositeAnimation | null>(null);
 
   useEffect(() => {
@@ -24,20 +24,29 @@ export function PersistentSpiral({ mode, onPress }: Props) {
     runningRef.current = null;
 
     if (mode === "calm") {
-      const { inhaleMs, holdMs, exhaleMs, scaleExhale, scaleInhale } = breathingRhythm.spiral;
+      const {
+        inhaleMs,
+        holdMs,
+        exhaleMs,
+        postExhaleHoldMs,
+        scaleExhale,
+        scaleInhale,
+        opacityExhale,
+        opacityInhale,
+      } = breathingRhythm.spiral;
       const loop = Animated.loop(
         Animated.sequence([
           Animated.parallel([
             Animated.timing(scale, {
               toValue: scaleInhale,
               duration: inhaleMs,
-              easing: Easing.inOut(Easing.quad),
+              easing: Easing.out(Easing.quad),
               useNativeDriver: true,
             }),
             Animated.timing(opacity, {
-              toValue: 1,
+              toValue: opacityInhale,
               duration: inhaleMs,
-              easing: Easing.inOut(Easing.quad),
+              easing: Easing.out(Easing.quad),
               useNativeDriver: true,
             }),
           ]),
@@ -45,13 +54,13 @@ export function PersistentSpiral({ mode, onPress }: Props) {
             Animated.timing(scale, {
               toValue: scaleInhale,
               duration: holdMs,
-              easing: Easing.inOut(Easing.quad),
+              easing: Easing.linear,
               useNativeDriver: true,
             }),
             Animated.timing(opacity, {
-              toValue: 1,
+              toValue: opacityInhale,
               duration: holdMs,
-              easing: Easing.inOut(Easing.quad),
+              easing: Easing.linear,
               useNativeDriver: true,
             }),
           ]),
@@ -59,13 +68,27 @@ export function PersistentSpiral({ mode, onPress }: Props) {
             Animated.timing(scale, {
               toValue: scaleExhale,
               duration: exhaleMs,
-              easing: Easing.inOut(Easing.quad),
+              easing: Easing.in(Easing.quad),
               useNativeDriver: true,
             }),
             Animated.timing(opacity, {
-              toValue: 0.94,
+              toValue: opacityExhale,
               duration: exhaleMs,
-              easing: Easing.inOut(Easing.quad),
+              easing: Easing.in(Easing.quad),
+              useNativeDriver: true,
+            }),
+          ]),
+          Animated.parallel([
+            Animated.timing(scale, {
+              toValue: scaleExhale,
+              duration: postExhaleHoldMs,
+              easing: Easing.linear,
+              useNativeDriver: true,
+            }),
+            Animated.timing(opacity, {
+              toValue: opacityExhale,
+              duration: postExhaleHoldMs,
+              easing: Easing.linear,
               useNativeDriver: true,
             }),
           ]),
@@ -74,20 +97,20 @@ export function PersistentSpiral({ mode, onPress }: Props) {
       runningRef.current = loop;
       loop.start();
     } else {
-      const { inhaleMs, holdMs, exhaleMs, holdAfterExhaleMs } = breathingRhythm.triangleBreath;
-      const { scaleExhale, scaleInhale } = breathingRhythm.spiral;
+      const { inhaleMs, holdMs, exhaleMs } = breathingRhythm.triangleBreath;
+      const { scaleExhale, scaleInhale, opacityExhale, opacityInhale } = breathingRhythm.spiral;
       const oneCycle = Animated.sequence([
         Animated.parallel([
           Animated.timing(scale, {
             toValue: scaleInhale,
             duration: inhaleMs,
-            easing: Easing.inOut(Easing.quad),
+            easing: Easing.out(Easing.quad),
             useNativeDriver: true,
           }),
           Animated.timing(opacity, {
-            toValue: 1,
+            toValue: opacityInhale,
             duration: inhaleMs,
-            easing: Easing.inOut(Easing.quad),
+            easing: Easing.out(Easing.quad),
             useNativeDriver: true,
           }),
         ]),
@@ -96,23 +119,31 @@ export function PersistentSpiral({ mode, onPress }: Props) {
           Animated.timing(scale, {
             toValue: scaleExhale,
             duration: exhaleMs,
-            easing: Easing.inOut(Easing.quad),
+            easing: Easing.in(Easing.quad),
             useNativeDriver: true,
           }),
           Animated.timing(opacity, {
-            toValue: 0.94,
+            toValue: opacityExhale,
             duration: exhaleMs,
-            easing: Easing.inOut(Easing.quad),
+            easing: Easing.in(Easing.quad),
             useNativeDriver: true,
           }),
         ]),
-        Animated.delay(holdAfterExhaleMs),
       ]);
       const fullBreath = Animated.sequence(
         Array.from({ length: breathingRhythm.triangleBreath.cycles }, () => oneCycle),
       );
-      runningRef.current = fullBreath;
-      fullBreath.start();
+      const introDelayMs = getTriangleBreathIntroDelayMs();
+      const startId = setTimeout(() => {
+        runningRef.current = fullBreath;
+        fullBreath.start();
+      }, introDelayMs);
+
+      return () => {
+        clearTimeout(startId);
+        runningRef.current?.stop();
+        runningRef.current = null;
+      };
     }
 
     return () => {

@@ -1,4 +1,4 @@
-import { ALL_INTERVENTIONS } from "./intervention-planner";
+import { ALL_INTERVENTIONS } from "../interventions/registry";
 import { InterventionType } from "../types/domain";
 
 const rotationOrder: InterventionType[] = [...ALL_INTERVENTIONS];

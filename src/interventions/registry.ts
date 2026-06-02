@@ -1,0 +1,79 @@
+import { spiralHintTiming } from "../design/animation-rhythm";
+
+export type InterventionPresentation = "simple" | "find_three" | "triangle_breath";
+
+type InterventionEntry = {
+  id: string;
+  presentation: InterventionPresentation;
+  spiralHintDelayMs: number;
+  debugLabel: string;
+};
+
+export const INTERVENTION_REGISTRY = [
+  {
+    id: "feet_on_ground",
+    presentation: "simple",
+    spiralHintDelayMs: spiralHintTiming.actionAfterFeetInstructionMs,
+    debugLabel: "Feet",
+  },
+  {
+    id: "find_three_things",
+    presentation: "find_three",
+    spiralHintDelayMs: spiralHintTiming.actionAfterFindThreeMs,
+    debugLabel: "Find 3",
+  },
+  {
+    id: "triangle_breath",
+    presentation: "triangle_breath",
+    spiralHintDelayMs: spiralHintTiming.actionAfterFeetInstructionMs,
+    debugLabel: "Triangle",
+  },
+  {
+    id: "relax_jaw",
+    presentation: "simple",
+    spiralHintDelayMs: spiralHintTiming.actionAfterFeetInstructionMs,
+    debugLabel: "Jaw",
+  },
+  {
+    id: "drop_shoulders",
+    presentation: "simple",
+    spiralHintDelayMs: spiralHintTiming.actionAfterFeetInstructionMs,
+    debugLabel: "Shoulders",
+  },
+  {
+    id: "notice_three_sounds",
+    presentation: "simple",
+    spiralHintDelayMs: spiralHintTiming.actionAfterFeetInstructionMs,
+    debugLabel: "Sounds",
+  },
+  {
+    id: "press_palms_together",
+    presentation: "simple",
+    spiralHintDelayMs: spiralHintTiming.actionAfterFeetInstructionMs,
+    debugLabel: "Palms",
+  },
+] as const satisfies readonly InterventionEntry[];
+
+export type InterventionType = (typeof INTERVENTION_REGISTRY)[number]["id"];
+
+export const ALL_INTERVENTIONS: readonly InterventionType[] = INTERVENTION_REGISTRY.map((entry) => entry.id);
+
+export const DEFAULT_INTERVENTION: InterventionType = ALL_INTERVENTIONS[0]!;
+
+const registryById = new Map<InterventionType, (typeof INTERVENTION_REGISTRY)[number]>(
+  INTERVENTION_REGISTRY.map((entry) => [entry.id, entry]),
+);
+
+export function getIntervention(id: InterventionType) {
+  const entry = registryById.get(id);
+  if (!entry) throw new Error(`Unknown intervention: ${id}`);
+  return entry;
+}
+
+export function isSimpleInstruction(id: InterventionType): boolean {
+  return getIntervention(id).presentation === "simple";
+}
+
+export function getActionSpiralHintDelayMs(id: InterventionType): number {
+  return getIntervention(id).spiralHintDelayMs;
+}

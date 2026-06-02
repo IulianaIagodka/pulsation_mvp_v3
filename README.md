@@ -23,6 +23,7 @@ Pulsation is a cross-platform mobile MVP that offers one gentle micro-action at 
 - `src/modules/trigger-engine.ts`: orchestration across safety + adaptive logic
 - `src/modules/eligibility-safety.ts`: hard safety rules (quiet hours, cap, cooldown, dismissal dampening)
 - `src/modules/state-interpreter.ts`: context interpretation for adaptation
+- `src/interventions/registry.ts`: intervention catalog (presentation mode, hint timing, defaults)
 - `src/modules/intervention-planner.ts`: adaptive intervention selection (time-of-day, completion rates, variety)
 - `src/modules/adaptive-scheduler.ts`: dynamic Pulsation interval from local engagement signals
 - `src/data/repositories/scheduling-profile-repo.ts`: persists scheduling profile (opens, completions, ignores)
@@ -47,10 +48,10 @@ Schema is defined in `src/data/schema.ts`. See `docs/adaptive-scheduling.md` for
 
 ## UX Flow
 
-1. **Onboarding** (`app/index.tsx`): anchored spiral, calm main line (“Pulsation exists…”), adaptive “tap the spiral” hint, optional **About** link in the footer (About is **only** here in the main flow). Onboarding is shown once per install/profile.
-2. **Trigger** (`app/trigger.tsx`): same spiral slot; main prompt; spiral hint appears last only when the adaptive hint system decides to show it.
-3. **Action** (`app/action.tsx`): one micro-intervention (feet / find 3 / triangle breath / relax jaw / drop shoulders / notice 3 sounds / press palms together). Instruction copy uses the same soft **explanation rhythm** as return. **Find 3 things** shows three simple cues (shape · color · feel) from **7 rotating sets** in `find-three-variants.ts` — the same set never repeats back-to-back (stored in SQLite). **Spiral is the same visual everywhere** (`src/design/spiral-visual.ts` + `SpiralRings`). Tap uses `Pressable` so touches work above the scroll layer (see `AnchoredSpiralScreen` `elevation`). Action → return uses **`router.replace`** (no duplicate return in the stack).
-4. **Return** (`app/return.tsx`): “You are here” (after route fade), then intervention-specific explanation, then adaptive “tap the spiral” hint; tap spiral → trigger. Find 3 return line: *Looking around slowly helps you return to where you are now.*
+1. **Onboarding** (`app/index.tsx`): short or extended first-install flow (`ShortOnboardingFlow` / `ExtendedOnboardingFlow`). Anchored spiral, calm main line, then “tap the spiral” (not “one action for you” on onboarding). Optional **About** footer link (About is **only** here in the main flow). Shown once per install/profile (`extendedOnboardingCompleted`).
+2. **Trigger** (`app/trigger.tsx`): same spiral slot; main prompt (“One action for you now?”); adaptive spiral hint when the hint system decides to show it.
+3. **Action** (`app/action.tsx`): one micro-intervention (feet / find 3 / triangle breath / relax jaw / drop shoulders / notice 3 sounds / press palms together). Instruction copy uses the same soft **explanation rhythm** as return. **Find 3 things** shows three cues from **7 rotating sets** (`find-three-variants.ts`); same set never repeats back-to-back. Until all three bullets are visible, **spiral tap reveals the next bullet** instead of completing the action. **Triangle breath**: soft haptic at inhale start and light haptic at exhale start (`startTriangleBreathHapticLoop`). **Spiral is the same visual everywhere** (`spiral-visual.ts` + `SpiralRings`). Action → return uses **`router.replace`**.
+4. **Return** (`app/return.tsx`): “You are here”, then a short intervention-specific explanation (3 rotating variants), then optional **Keep this one for me** (hidden for interventions already saved via `keptInterventions` in SQLite). Adaptive “tap the spiral” hint; tap spiral → trigger.
 
 Stack navigation uses a calm **fade** between routes (`app/_layout.tsx`, `breathingRhythm.motion.screenFadeMs`).
 
@@ -72,8 +73,9 @@ Dark minimal palette from technical requirements is implemented in `src/design/t
 | Soft explanation-style fades | `ExplanationText` + `breathingRhythm.explanationText` |
 | Gentle screen text entrance | `GentleTextTransition` (opacity only) |
 | Spiral hint timing (“tap the spiral”) | Base timing is in `spiralHintTiming` (`src/design/animation-rhythm.ts`), then adapted by `src/modules/spiral-hint-presentation.ts` + `src/services/spiral-hint.ts` based on spiral-tap familiarity (delay, opacity, occasional hide, eventual silence). On **triangle breath**, reveal still waits for **3 full cycles** before adaptation is applied. |
-| Find 3 staged lines | `findThreeThings.revealDelayMs` |
-| Action → return (“You are here”) | **Only** on spiral tap (`app/action.tsx`) |
+| Find 3 sequential bullets | `findThreeThings.autoRevealIntervalMs` |
+| Action → return (“You are here”) | Spiral tap on action (`app/action.tsx`); find 3 requires all bullets first |
+| Keep for me | `app/return.tsx` + `src/services/adaptive-preferences.ts` (`keptInterventions`) |
 
 Triangle breath pattern (labels + spiral): **inhale 4s → hold 2s → exhale 5s → hold 2s**, ×3 cycles (~39s spiral timing). Both holds show the “hold / затримка” label.
 
@@ -132,8 +134,10 @@ Background once (even briefly), then return to the app.
 
 ## Haptic regulation (iOS / Android)
 
-- **Trigger screen only:** soft double-pulse when “One action for you now?” appears.
-- **Action and Return screens:** no haptic feedback.
+- **Trigger:** soft double-pulse when the prompt appears.
+- **Triangle breath:** one pulse at inhale start, one at exhale start.
+- **Keep this one for me:** subtle selection feedback on tap.
+- **Return:** grounding arrival pulse when the screen appears.
 
 Works in silent mode on iPhone (Taptic Engine). Requires a dev build (`npm run ios`) — not Expo Go alone after native module changes.
 

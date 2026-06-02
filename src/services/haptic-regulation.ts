@@ -62,27 +62,13 @@ export function playReturnHaptic() {
   })();
 }
 
-async function playInhaleHapticExpansion() {
-  const { inhaleMs } = breathingRhythm.triangleBreath;
-  const steps = 4;
-  const stepMs = inhaleMs / steps;
-  for (let i = 0; i < steps; i += 1) {
-    await softImpact();
-    if (i < steps - 1) await delay(stepMs);
-  }
-}
-
-async function playExhaleHapticFade() {
-  const { exhaleMs } = breathingRhythm.triangleBreath;
-  await lightImpact();
-  await delay(exhaleMs * 0.38);
-  await softImpact();
-  await delay(exhaleMs * 0.38);
-  await subtleSelection();
+/** Subtle confirmation for secondary button taps. */
+export function playKeepForMeHaptic() {
+  void subtleSelection();
 }
 
 /**
- * Triangle breath haptics: inhale pulses → silence → exhale fade → silence.
+ * Triangle breath haptics: one pulse on inhale start and one on exhale start.
  * Returns stop() to cancel between screens.
  */
 export function startTriangleBreathHapticLoop(): () => void {
@@ -99,18 +85,21 @@ export function startTriangleBreathHapticLoop(): () => void {
     });
 
   const runCycle = async () => {
-    const { cycles, holdMs, holdAfterExhaleMs } = breathingRhythm.triangleBreath;
+    const { cycles, inhaleMs, holdMs, exhaleMs } = breathingRhythm.triangleBreath;
     for (let cycle = 0; cycle < cycles && !cancelled; cycle += 1) {
-      await playInhaleHapticExpansion();
+      await softImpact();
+      if (cancelled) return;
+
+      await wait(inhaleMs);
       if (cancelled) return;
 
       await wait(holdMs);
       if (cancelled) return;
 
-      await playExhaleHapticFade();
+      await lightImpact();
       if (cancelled) return;
 
-      await wait(holdAfterExhaleMs);
+      await wait(exhaleMs);
     }
   };
 

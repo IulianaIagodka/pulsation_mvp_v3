@@ -8,11 +8,16 @@ import {
 } from "../data/repositories/scheduling-profile-repo";
 import { getSafetyState, saveSafetyState } from "../data/repositories/safety-repo";
 import { InterventionType } from "../types/domain";
+import { DEFAULT_INTERVENTION } from "../interventions/registry";
 import { collectSignal } from "../modules/signal-collector";
 import { calculateEffectiveness } from "../modules/reflection-engine";
 import { runTriggerEngine } from "../modules/trigger-engine";
 import { updateMemory } from "../modules/memory-update";
 import { getSchedulingExplanation } from "../modules/inactivity-trigger";
+import {
+  isTestRotateModeEnabled,
+  pickNextRotatingIntervention,
+} from "../modules/test-intervention-rotate";
 
 export function bootstrapPulsation() {
   try {
@@ -23,6 +28,10 @@ export function bootstrapPulsation() {
 }
 
 export function decideIntervention(): InterventionType {
+  if (isTestRotateModeEnabled()) {
+    return pickNextRotatingIntervention();
+  }
+
   try {
     bootstrapPulsation();
     const signal = collectSignal();
@@ -32,10 +41,10 @@ export function decideIntervention(): InterventionType {
       ...decision,
       scheduling: getSchedulingExplanation(),
     });
-    return decision.selected ?? "feet_on_ground";
+    return decision.selected ?? DEFAULT_INTERVENTION;
   } catch (error) {
     console.warn("[pulsation-flow] Failed to decide intervention:", error);
-    return "feet_on_ground";
+    return DEFAULT_INTERVENTION;
   }
 }
 

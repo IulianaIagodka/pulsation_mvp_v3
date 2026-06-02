@@ -16,6 +16,7 @@ const baseState: InterpretedState = {
     notice_three_sounds: 0.5,
     press_palms_together: 0.5,
   },
+  preferenceScores: {},
   recentInterventions: [],
   signalWeight: 0.5,
 };
@@ -72,5 +73,20 @@ describe("planIntervention", () => {
     };
     const pick = planIntervention(state, { random: () => 0.9 });
     expect(pick).toBe("triangle_breath");
+  });
+
+  it("biases weighted random toward higher scored interventions", () => {
+    const state: InterpretedState = {
+      ...baseState,
+      hour: 1,
+      preferredByHour: undefined,
+      recentInterventions: [],
+      preferenceScores: {
+        feet_on_ground: 0,
+        press_palms_together: 10,
+      },
+    };
+    const pick = planIntervention(state, { random: () => 0.99 });
+    expect(pick).toBe("press_palms_together");
   });
 });

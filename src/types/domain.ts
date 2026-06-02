@@ -1,12 +1,6 @@
-export type InterventionType =
-  | "feet_on_ground"
-  | "find_three_things"
-  | "triangle_breath"
-  | "relax_jaw"
-  | "drop_shoulders"
-  | "notice_three_sounds"
-  | "press_palms_together";
+import type { InterventionType } from "../interventions/registry";
 
+export type { InterventionType };
 export type UserSignal = {
   timestamp: number;
   distractingSessionMinutes: number;
@@ -26,11 +20,17 @@ export type SafetyState = {
 export type OutcomesProfile = {
   preferredByHour: Partial<Record<number, InterventionType>>;
   completionRates: Partial<Record<InterventionType, number>>;
+  /** Lightweight local affinity signal used for weighted random picks. */
+  preferenceScores: Partial<Record<InterventionType, number>>;
+  /** Interventions the user saved via "Keep this one for me". */
+  keptInterventions?: InterventionType[];
   recentInterventions: InterventionType[];
   /** Last “find 3 things” prompt set (0–6); avoids repeating the same combo back-to-back. */
   lastFindThreeVariantIndex?: number;
-  /** Shown once; after first spiral tap on onboarding. */
+  /** Legacy flag; set on first spiral tap from onboarding. */
   onboardingCompleted?: boolean;
+  /** First install: multi-step intro completed. */
+  extendedOnboardingCompleted?: boolean;
 };
 
 /** Local engagement signals that drive adaptive Pulsation timing. */
