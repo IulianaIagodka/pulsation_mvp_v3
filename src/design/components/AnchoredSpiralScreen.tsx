@@ -44,12 +44,12 @@ export function AnchoredSpiralScreen({
   const contentHeight = windowHeight - insets.top - insets.bottom;
   const spiralTop = insets.top + contentHeight * spiralLayout.anchorRatio - spiralLayout.size / 2;
   const spiralHintZoneHeight = spiralHint
-    ? clamp(scaleByWidth(40, windowWidth) * fontScale, 36, 128)
+    ? clamp(scaleByWidth(40, windowWidth) * fontScale, 36, 168)
     : 0;
   const textPaddingTop = spiralTop + spiralLayout.size + spiralLayout.textGap + spiralHintZoneHeight;
   const footerBottomInset = Math.max(insets.bottom, scaleByWidth(spacing.sm, windowWidth));
   const footerLinkCount = (hidePathsLink ? 0 : 1) + (footer ? 1 : 0);
-  const footerRowHeight = clamp(scaleByWidth(44, windowWidth) * fontScale, 44, 100);
+  const footerRowHeight = clamp(scaleByWidth(44, windowWidth) * fontScale, 44, 132);
   const footerHeight = footerLinkCount > 0 ? footerRowHeight * footerLinkCount + scaleByWidth(spacing.xs, windowWidth) : 0;
   const scrollBottomPad =
     footerLinkCount > 0 ? footerHeight + footerBottomInset : scaleByWidth(spacing.xl, windowWidth);

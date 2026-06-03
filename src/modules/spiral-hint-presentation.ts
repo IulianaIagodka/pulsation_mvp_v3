@@ -30,7 +30,7 @@ export function getSpiralHintPresentation(
     return {
       shouldShow: true,
       delayMs: baseDelayMs,
-      textOpacity: 0.52,
+      textOpacity: 0.58,
     };
   }
 
@@ -44,7 +44,7 @@ export function getSpiralHintPresentation(
     return {
       shouldShow: shouldShowSubtleHint(spiralTapCount, screenSalt),
       delayMs: baseDelayMs + 2800,
-      textOpacity: 0.24,
+      textOpacity: 0.34,
     };
   }
 
@@ -53,13 +53,13 @@ export function getSpiralHintPresentation(
     return {
       shouldShow: true,
       delayMs: baseDelayMs + tierDelay,
-      textOpacity: 0.38,
+      textOpacity: 0.46,
     };
   }
 
   return {
     shouldShow: true,
     delayMs: baseDelayMs,
-    textOpacity: 0.52,
+    textOpacity: 0.58,
   };
 }

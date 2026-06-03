@@ -1,4 +1,5 @@
 import { Pressable, View, StyleSheet } from "react-native";
+import { legibleOpacity } from "../accessibility";
 import { CalmText } from "./CalmText";
 import { colors, spacing } from "../tokens";
 import { useHighContrast } from "../../hooks/use-high-contrast";
@@ -10,11 +11,20 @@ type Props = {
 
 export function CalmActionButton({ label, onPress }: Props) {
   const highContrast = useHighContrast();
+  const linkOpacity = legibleOpacity(1, highContrast, "muted");
 
   return (
     <Pressable onPress={onPress} hitSlop={10} accessibilityRole="button">
       <View style={styles.link}>
-        <CalmText style={[styles.linkText, highContrast && styles.linkTextHighContrast]}>{label}</CalmText>
+        <CalmText
+          style={[
+            styles.linkText,
+            { opacity: linkOpacity },
+            highContrast && styles.linkTextHighContrast,
+          ]}
+        >
+          {label}
+        </CalmText>
       </View>
     </Pressable>
   );

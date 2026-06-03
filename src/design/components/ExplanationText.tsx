@@ -1,5 +1,6 @@
 import { PropsWithChildren, useEffect, useRef } from "react";
 import { Animated, Easing, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { legibleOpacity } from "../accessibility";
 import { breathingRhythm } from "../animation-rhythm";
 import { mainCopyTextStyle, spiralHintTextStyle } from "../main-copy";
 import { colors, spacing } from "../tokens";
@@ -42,7 +43,8 @@ export function ExplanationText({
   }, [children, delayMs, fadeMs, opacity]);
 
   const resolvedTextOpacity = textOpacity ?? breathingRhythm.explanationText.textOpacity;
-  const effectiveOpacity = highContrast ? Math.max(0.78, resolvedTextOpacity) : resolvedTextOpacity;
+  const tone = variant === "hint" ? "hint" : "muted";
+  const effectiveOpacity = legibleOpacity(resolvedTextOpacity, highContrast, tone);
   const textStyle =
     variant === "main"
       ? [styles.mainText, highContrast && styles.mainTextHighContrast]
@@ -66,7 +68,6 @@ const styles = StyleSheet.create({
     width: "100%",
     alignSelf: "stretch",
     alignItems: "center",
-    minHeight: 48,
     justifyContent: "center",
   },
   wrapHint: {

@@ -38,6 +38,8 @@ import {
   getTriangleBreathIntroDelayMs,
 } from "../src/design/animation-rhythm";
 import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
+import { legibleOpacity } from "../src/design/accessibility";
+import { useHighContrast } from "../src/hooks/use-high-contrast";
 import { scaleByWidth } from "../src/design/responsive";
 import { startTriangleBreathHapticLoop } from "../src/services/haptic-regulation";
 
@@ -46,6 +48,12 @@ const showDebugActionSelector = process.env.EXPO_PUBLIC_ENABLE_DEBUG_ACTION_SELE
 export default function ActionScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
+  const highContrast = useHighContrast();
+  const phaseLabelOpacity = legibleOpacity(
+    breathingRhythm.explanationText.textOpacity,
+    highContrast,
+    "muted",
+  );
   const setSelected = useAppStore((s) => s.setSelectedIntervention);
   const selected = useAppStore((s) => s.selectedIntervention) ?? DEFAULT_INTERVENTION;
   const presentation = getIntervention(selected).presentation;
@@ -300,13 +308,19 @@ export default function ActionScreen() {
             </ExplanationText>
             <View style={[styles.phaseWordLayer, { marginTop: scaleByWidth(12, width) }]}>
               <Animated.View style={[styles.phaseWord, { opacity: inhaleOpacity }]}>
-                <CalmText style={styles.phaseLabel}>{phaseLabels.breatheIn}</CalmText>
+                <CalmText style={[styles.phaseLabel, { opacity: phaseLabelOpacity }, highContrast && styles.phaseLabelHighContrast]}>
+                  {phaseLabels.breatheIn}
+                </CalmText>
               </Animated.View>
               <Animated.View style={[styles.phaseWord, { opacity: holdOpacity }]}>
-                <CalmText style={styles.phaseLabel}>{phaseLabels.hold}</CalmText>
+                <CalmText style={[styles.phaseLabel, { opacity: phaseLabelOpacity }, highContrast && styles.phaseLabelHighContrast]}>
+                  {phaseLabels.hold}
+                </CalmText>
               </Animated.View>
               <Animated.View style={[styles.phaseWord, { opacity: exhaleOpacity }]}>
-                <CalmText style={styles.phaseLabel}>{phaseLabels.breatheOut}</CalmText>
+                <CalmText style={[styles.phaseLabel, { opacity: phaseLabelOpacity }, highContrast && styles.phaseLabelHighContrast]}>
+                  {phaseLabels.breatheOut}
+                </CalmText>
               </Animated.View>
             </View>
           </View>
@@ -369,7 +383,9 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     letterSpacing: 0.15,
     width: "100%",
-    opacity: breathingRhythm.explanationText.textOpacity,
+  },
+  phaseLabelHighContrast: {
+    color: colors.textPrimary,
   },
   phaseWordLayer: {
     marginTop: spacing.sm,
