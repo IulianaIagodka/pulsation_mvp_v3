@@ -27,13 +27,15 @@ import { useAppStore } from "../src/state/app-store";
 import {
   ALL_INTERVENTIONS,
   DEFAULT_INTERVENTION,
-  getActionSpiralHintDelayMs,
   getIntervention,
   isSimpleInstruction,
 } from "../src/interventions/registry";
 import { colors, spacing } from "../src/design/tokens";
 import {
   breathingRhythm,
+  getFindThreeSpiralHintDelayMs,
+  getFlowSpiralHintDelayAfterRevealMs,
+  getFlowSpiralHintDelayMs,
   getFindThreeIntroDelayMs,
   getTriangleBreathIntroDelayMs,
 } from "../src/design/animation-rhythm";
@@ -76,12 +78,13 @@ export default function ActionScreen() {
   const findThreeIntroTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const findThreeAllRevealed =
     presentation === "find_three" && findThreeRevealedCount >= findThreeQueue.length;
-  const spiralHintDelayMs =
-    presentation === "find_three"
-      ? breathingRhythm.explanationText.fadeMs + 400
-      : getActionSpiralHintDelayMs(selected);
-  const nonTriangleHint = useSpiralHintPresentation(spiralHintDelayMs);
-  const triangleHint = useSpiralHintPresentation(0);
+  const hintAfterRevealMs = getFlowSpiralHintDelayAfterRevealMs();
+  const simpleHintDelayMs = getFlowSpiralHintDelayMs(breathingRhythm.explanationText.primaryDelayMs);
+  const findThreeHintDelayMs = getFindThreeSpiralHintDelayMs(findThreeQueue.length);
+  const nonTriangleHint = useSpiralHintPresentation(
+    presentation === "find_three" ? findThreeHintDelayMs : simpleHintDelayMs,
+  );
+  const triangleHint = useSpiralHintPresentation(hintAfterRevealMs);
 
   const completeAction = useCallback(() => {
     if (completionRef.current) return;
@@ -253,10 +256,15 @@ export default function ActionScreen() {
 
   const underSpiralHint =
     presentation === "triangle_breath" ? (
-      <SpiralUnderHint presentation={triangleHint} visible={showTriangleSpiralHint} />
+      <SpiralUnderHint
+        presentation={triangleHint}
+        delayMs={hintAfterRevealMs}
+        visible={showTriangleSpiralHint}
+      />
     ) : (
       <SpiralUnderHint
         presentation={nonTriangleHint}
+        delayMs={presentation === "find_three" ? hintAfterRevealMs : simpleHintDelayMs}
         visible={presentation === "find_three" ? findThreeAllRevealed : true}
       />
     );

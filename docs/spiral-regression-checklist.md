@@ -14,11 +14,12 @@ Use this checklist before release whenever animation/layout is changed.
 
 - [ ] Tap the spiral on **each** flow screen and verify navigation / completion (spiral is wrapped in `Pressable`; layer has `zIndex` + `elevation`).
 - [ ] If tap feels dead, check Android: spiral layer should stay **above** the `ScrollView` hit target (`AnchoredSpiralScreen` spiral `elevation`).
-- [ ] **About** on onboarding footer; **Show my paths** / **Мої шляхи** on all anchored screens (opens `app/paths.tsx`).
+- [ ] **About** on onboarding footer only; **Show my paths** / **Мої шляхи** only on **trigger** and **return** (opens `app/paths.tsx`).
 
-## Copy order (“tap the spiral” under the spiral)
+## Copy order (“tap the spiral”)
 
-- [ ] On onboarding, trigger, action (feet / find 3), return: “tap the spiral” / “торкнись спіралі” appears **under the spiral** (small hint), after main copy on that screen (see `spiralHintTiming`).
+- [ ] On **onboarding**: “How it works:” + four steps; **Tap the spiral — it's the button here** appears **inline last** (after all steps, `getOnboardingSpiralHintDelayMs`).
+- [ ] On trigger, action (feet / find 3), return: short “tap the spiral” / “торкнись спіралі” **under the spiral**, **after** all screen copy (`getFlowSpiralHintDelayMs` / gated reveal on find 3 & triangle).
 - [ ] For the **first 3 completed cycles**, the hint is visible on **every** flow screen (no random hide per screen).
 - [ ] On **triangle breath**, the under-spiral hint appears only **after 3 complete breath cycles**; spiral animates during intro + triangle rhythm.
 - [ ] On return, **Save this for me** / **Збережи це для мене** sits below the explanation block (smaller hint style).
@@ -36,7 +37,8 @@ Use this checklist before release whenever animation/layout is changed.
 - [ ] On `triangle_breath`, feel haptic at **inhale start** and **exhale start** (device build, not Expo Go only).
 - [ ] On return, **Save this for me** fades out on tap; second visit with same intervention does **not** show the button again.
 - [ ] With **Accessibility XXL** text size, onboarding scrolls; About / paths footer links remain reachable.
-- [ ] Onboarding shows **tap the spiral**, not “one action for you now?”.
+- [ ] Onboarding shows **How it works** steps + **tap the spiral** last; not “one action for you now?” on first screen.
+- [ ] Under-spiral hint is **closer to the spiral** and **farther from** main text on trigger / action / return (`hintOverlap`, `hintToContentGap`).
 
 ## Automated safety net
 

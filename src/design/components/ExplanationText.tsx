@@ -1,5 +1,5 @@
 import { PropsWithChildren, useEffect, useRef } from "react";
-import { Animated, Easing, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { Animated, Easing, StyleProp, StyleSheet, View, ViewStyle, type EasingFunction } from "react-native";
 import { legibleOpacity } from "../accessibility";
 import { breathingRhythm } from "../animation-rhythm";
 import { mainCopyTextStyle, spiralHintTextStyle } from "../main-copy";
@@ -9,6 +9,10 @@ import { CalmText } from "./CalmText";
 
 type Props = PropsWithChildren<{
   delayMs?: number;
+  /** Defaults to `breathingRhythm.explanationText.fadeMs`. */
+  fadeMs?: number;
+  /** Defaults to `Easing.out(Easing.quad)`. */
+  fadeEasing?: EasingFunction;
   style?: StyleProp<ViewStyle>;
   variant?: "main" | "explanation" | "hint";
   textOpacity?: number;
@@ -20,12 +24,13 @@ type Props = PropsWithChildren<{
 export function ExplanationText({
   children,
   delayMs = 0,
+  fadeMs = breathingRhythm.explanationText.fadeMs,
+  fadeEasing = Easing.out(Easing.quad),
   style,
   variant = "explanation",
   textOpacity,
 }: Props) {
   const opacity = useRef(new Animated.Value(0)).current;
-  const { fadeMs } = breathingRhythm.explanationText;
   const highContrast = useHighContrast();
 
   useEffect(() => {
@@ -34,13 +39,13 @@ export function ExplanationText({
       Animated.timing(opacity, {
         toValue: 1,
         duration: fadeMs,
-        easing: Easing.out(Easing.quad),
+        easing: fadeEasing,
         useNativeDriver: true,
       }).start();
     }, delayMs);
 
     return () => clearTimeout(timer);
-  }, [children, delayMs, fadeMs, opacity]);
+  }, [children, delayMs, fadeEasing, fadeMs, opacity]);
 
   const resolvedTextOpacity = textOpacity ?? breathingRhythm.explanationText.textOpacity;
   const tone = variant === "hint" ? "hint" : "muted";
@@ -75,6 +80,9 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     alignItems: "center",
     paddingHorizontal: spacing.sm,
+    marginTop: 0,
+    paddingTop: 0,
+    paddingBottom: 0,
   },
   inner: {
     width: "100%",

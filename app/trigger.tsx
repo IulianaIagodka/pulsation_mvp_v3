@@ -9,7 +9,7 @@ import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
 import { decideIntervention, registerPulsationDismissed } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
 import { playTriggerHaptic } from "../src/services/haptic-regulation";
-import { breathingRhythm, spiralHintTiming } from "../src/design/animation-rhythm";
+import { breathingRhythm, getFlowSpiralHintDelayMs } from "../src/design/animation-rhythm";
 import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
 
 export default function TriggerScreen() {
@@ -35,7 +35,8 @@ export default function TriggerScreen() {
     router.push("/action");
   }, [router]);
   useRegisterSpiralPress(onSpiralPress);
-  const spiralHint = useSpiralHintPresentation(spiralHintTiming.triggerAfterPromptMs);
+  const hintDelayMs = getFlowSpiralHintDelayMs(breathingRhythm.explanationText.primaryDelayMs);
+  const spiralHint = useSpiralHintPresentation(hintDelayMs);
 
   useFocusEffect(
     useCallback(() => {
@@ -44,7 +45,10 @@ export default function TriggerScreen() {
   );
 
   return (
-    <AnchoredSpiralScreen spiralHint={<SpiralUnderHint presentation={spiralHint} />}>
+    <AnchoredSpiralScreen
+      showPathsLink
+      spiralHint={<SpiralUnderHint presentation={spiralHint} delayMs={hintDelayMs} />}
+    >
       <View style={styles.content}>
         <ExplanationText variant="main" delayMs={breathingRhythm.explanationText.primaryDelayMs}>
           {uiCopy.triggerPrompt}

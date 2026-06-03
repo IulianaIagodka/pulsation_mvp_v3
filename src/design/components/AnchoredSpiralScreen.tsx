@@ -22,8 +22,8 @@ type Props = PropsWithChildren<{
   footer?: ReactNode;
   /** Quiet label directly under the spiral (e.g. “tap the spiral”). */
   spiralHint?: ReactNode;
-  /** Hide the global “Show my paths” link (e.g. if unused). */
-  hidePathsLink?: boolean;
+  /** Show “Show my paths” in the footer (trigger + return only). */
+  showPathsLink?: boolean;
 }>;
 
 export function AnchoredSpiralScreen({
@@ -32,7 +32,7 @@ export function AnchoredSpiralScreen({
   centerContent = false,
   footer,
   spiralHint,
-  hidePathsLink = false,
+  showPathsLink = false,
 }: Props) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -43,12 +43,16 @@ export function AnchoredSpiralScreen({
 
   const contentHeight = windowHeight - insets.top - insets.bottom;
   const spiralTop = insets.top + contentHeight * spiralLayout.anchorRatio - spiralLayout.size / 2;
-  const spiralHintZoneHeight = spiralHint
-    ? clamp(scaleByWidth(40, windowWidth) * fontScale, 36, 168)
+  const spiralHintLineHeight = spiralHint
+    ? clamp(Math.round(scaleByWidth(16, windowWidth) * fontScale), 14, 56)
     : 0;
-  const textPaddingTop = spiralTop + spiralLayout.size + spiralLayout.textGap + spiralHintZoneHeight;
+  const hintPullUp = spiralHint ? scaleByWidth(spiralLayout.hintOverlap, windowWidth) : 0;
+  const hintToContent = scaleByWidth(spiralLayout.hintToContentGap, windowWidth);
+  const textPaddingTop = spiralHint
+    ? spiralTop + spiralLayout.size + hintPullUp + spiralHintLineHeight + hintToContent
+    : spiralTop + spiralLayout.size + spiralLayout.textGap;
   const footerBottomInset = Math.max(insets.bottom, scaleByWidth(spacing.sm, windowWidth));
-  const footerLinkCount = (hidePathsLink ? 0 : 1) + (footer ? 1 : 0);
+  const footerLinkCount = (showPathsLink ? 1 : 0) + (footer ? 1 : 0);
   const footerRowHeight = clamp(scaleByWidth(44, windowWidth) * fontScale, 44, 132);
   const footerHeight = footerLinkCount > 0 ? footerRowHeight * footerLinkCount + scaleByWidth(spacing.xs, windowWidth) : 0;
   const scrollBottomPad =
@@ -58,7 +62,7 @@ export function AnchoredSpiralScreen({
     footerLinkCount > 0 ? (
       <View style={styles.footerStack}>
         {footer}
-        {!hidePathsLink ? (
+        {showPathsLink ? (
           <AboutFooterLink label={uiCopy.pathsLink} onPress={() => router.push("/paths")} />
         ) : null}
       </View>
@@ -79,8 +83,11 @@ export function AnchoredSpiralScreen({
             style={[
               styles.spiralHintLayer,
               {
-                top: spiralTop + spiralLayout.size + scaleByWidth(6, windowWidth),
-                minHeight: spiralHintZoneHeight,
+                top:
+                  spiralTop +
+                  spiralLayout.size +
+                  scaleByWidth(spiralLayout.hintOverlap, windowWidth),
+                height: spiralHintLineHeight,
               },
             ]}
           >
@@ -104,7 +111,14 @@ export function AnchoredSpiralScreen({
           keyboardShouldPersistTaps="handled"
           alwaysBounceVertical={false}
         >
-          <SoftCard style={[styles.cardTightTop, centerContent && styles.cardCentered]}>{children}</SoftCard>
+          <SoftCard
+            style={[
+              spiralHint ? styles.cardBelowHint : styles.cardTightTop,
+              centerContent && styles.cardCentered,
+            ]}
+          >
+            {children}
+          </SoftCard>
         </ScrollView>
 
         {pinnedFooter ? (
@@ -163,6 +177,9 @@ const styles = StyleSheet.create({
   },
   cardTightTop: {
     paddingTop: spacing.xs,
+  },
+  cardBelowHint: {
+    paddingTop: 0,
   },
   cardCentered: {
     flexGrow: 1,

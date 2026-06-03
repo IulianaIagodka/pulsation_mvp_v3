@@ -9,8 +9,8 @@ import { DEFAULT_INTERVENTION } from "../src/interventions/registry";
 import { useAppStore } from "../src/state/app-store";
 import {
   breathingRhythm,
+  getFlowSpiralHintDelayMs,
   getReturnKeepForMeDelayMs,
-  spiralHintTiming,
 } from "../src/design/animation-rhythm";
 import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
 import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
@@ -71,14 +71,18 @@ export default function ReturnScreen() {
     router.replace("/trigger");
   }, [clear, persistEngagement, router]);
   useRegisterSpiralPress(onSpiralPress);
-  const spiralHint = useSpiralHintPresentation(spiralHintTiming.returnAfterFollowUpMs);
+  const lastLineDelayMs = returnExplanation
+    ? breathingRhythm.returnScreen.primaryDelayMs + breathingRhythm.explanationText.secondaryDelayMs
+    : breathingRhythm.returnScreen.primaryDelayMs;
+  const hintDelayMs = getFlowSpiralHintDelayMs(lastLineDelayMs);
+  const spiralHint = useSpiralHintPresentation(hintDelayMs);
   const keepForMeDelayMs = useMemo(
     () =>
       getReturnKeepForMeDelayMs({
         spiralHintShows: spiralHint.shouldShow,
-        spiralHintDelayMs: spiralHint.delayMs,
+        spiralHintDelayMs: hintDelayMs,
       }),
-    [spiralHint.delayMs, spiralHint.shouldShow],
+    [hintDelayMs, spiralHint.shouldShow],
   );
   const keepForMeHintText = useMemo(() => uiCopy.keepForMeHint, [uiCopy.keepForMeHint]);
 
@@ -110,7 +114,10 @@ export default function ReturnScreen() {
   );
 
   return (
-    <AnchoredSpiralScreen spiralHint={<SpiralUnderHint presentation={spiralHint} />}>
+    <AnchoredSpiralScreen
+      showPathsLink
+      spiralHint={<SpiralUnderHint presentation={spiralHint} delayMs={hintDelayMs} />}
+    >
       <View style={styles.content}>
         <ExplanationText variant="main" delayMs={breathingRhythm.returnScreen.primaryDelayMs}>
           {uiCopy.returnBody}

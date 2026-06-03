@@ -1,24 +1,23 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
 import { ExtendedOnboardingFlow } from "../src/design/components/ExtendedOnboardingFlow";
-import { ShortOnboardingFlow } from "../src/design/components/ShortOnboardingFlow";
 import { hasCompletedExtendedOnboarding } from "../src/services/onboarding-gate";
 
 export default function OnboardingScreen() {
+  const router = useRouter();
   const [gateChecked, setGateChecked] = useState(false);
-  const [showExtended, setShowExtended] = useState(true);
 
   useEffect(() => {
-    setShowExtended(!hasCompletedExtendedOnboarding());
+    if (hasCompletedExtendedOnboarding()) {
+      router.replace("/trigger");
+      return;
+    }
     setGateChecked(true);
-  }, []);
+  }, [router]);
 
   if (!gateChecked) {
     return null;
   }
 
-  if (showExtended) {
-    return <ExtendedOnboardingFlow />;
-  }
-
-  return <ShortOnboardingFlow />;
+  return <ExtendedOnboardingFlow />;
 }

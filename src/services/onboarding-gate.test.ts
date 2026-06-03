@@ -65,4 +65,14 @@ describe("onboarding-gate", () => {
     });
     expect(hasCompletedOnboarding()).toBe(true);
   });
+
+  it("persists extendedOnboardingCompleted when legacy onboarding is marked", () => {
+    markOnboardingCompleted();
+    expect(saveOutcomesProfile).toHaveBeenCalledWith(
+      expect.objectContaining({
+        extendedOnboardingCompleted: true,
+        onboardingCompleted: true,
+      }),
+    );
+  });
 });

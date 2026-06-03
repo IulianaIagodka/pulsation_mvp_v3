@@ -25,5 +25,9 @@ export function hasCompletedOnboarding(): boolean {
 export function markOnboardingCompleted(): void {
   bootstrapPulsation();
   const profile = getOutcomesProfile();
-  saveOutcomesProfile({ ...profile, onboardingCompleted: true });
+  saveOutcomesProfile({
+    ...profile,
+    onboardingCompleted: true,
+    extendedOnboardingCompleted: true,
+  });
 }

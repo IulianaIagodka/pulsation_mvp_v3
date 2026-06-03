@@ -30,8 +30,17 @@ function ensureOutcomesProfileColumns() {
   ];
 
   missingColumnSql.forEach(({ column, sql }) => {
-    if (!existing.has(column)) {
+    if (existing.has(column)) {
+      return;
+    }
+    try {
       db.execSync(sql);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (message.includes("duplicate column")) {
+        return;
+      }
+      console.warn(`[db] Failed to add outcomes_profile.${column}:`, error);
     }
   });
 }

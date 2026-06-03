@@ -45,21 +45,75 @@ export const breathingRhythm = {
   },
 } as const;
 
+/** Calm reveal for onboarding “How it works” block (other screens keep `explanationText`). */
+export const onboardingRhythm = {
+  fadeMs: 1800,
+  afterHeadlineMs: 480,
+  stepGapMs: 320,
+} as const;
+
+function getOnboardingStepGapMs(): number {
+  return onboardingRhythm.fadeMs + onboardingRhythm.stepGapMs;
+}
+
+function getOnboardingSubtitleDelayMs(): number {
+  return breathingRhythm.motion.textFadeInMs + onboardingRhythm.afterHeadlineMs;
+}
+
+/** Delay for onboarding subtitle (0) and each step line (1…n). */
+export function getOnboardingExplanationDelayMs(lineIndex: number): number {
+  const subtitleDelay = getOnboardingSubtitleDelayMs();
+  if (lineIndex === 0) {
+    return subtitleDelay;
+  }
+  return subtitleDelay + getOnboardingStepGapMs() * lineIndex;
+}
+
+/** Onboarding: “tap the spiral” after all steps (or after headline on short flow). */
+export function getOnboardingSpiralHintDelayMs(stepCount: number): number {
+  const { fadeMs } = onboardingRhythm;
+  const { textFadeInMs } = breathingRhythm.motion;
+  const stepGap = getOnboardingStepGapMs();
+  const subtitleDelay = getOnboardingSubtitleDelayMs();
+
+  if (stepCount === 0) {
+    return textFadeInMs + fadeMs + stepGap;
+  }
+
+  const lastStepDelayMs = subtitleDelay + stepGap * stepCount;
+  return lastStepDelayMs + fadeMs + stepGap;
+}
+
+const flowHintGapMs = 400;
+
+/** Flow screens: hint starts after the last line finishes fading. */
+export function getFlowSpiralHintDelayMs(lastLineDelayMs: number): number {
+  return lastLineDelayMs + breathingRhythm.explanationText.fadeMs + flowHintGapMs;
+}
+
+/** Hint after the last find-three bullet begins appearing. */
+export function getFindThreeSpiralHintDelayMs(bulletCount: number): number {
+  const intervals = Math.max(0, bulletCount - 1);
+  const lastBulletDelayMs =
+    getFindThreeIntroDelayMs() + breathingRhythm.findThreeThings.autoRevealIntervalMs * intervals;
+  return getFlowSpiralHintDelayMs(lastBulletDelayMs);
+}
+
+/** Delay from mount when gated content (e.g. all bullets) just became visible. */
+export function getFlowSpiralHintDelayAfterRevealMs(): number {
+  return breathingRhythm.explanationText.fadeMs + flowHintGapMs;
+}
+
 /** "Tap the spiral" delays — always after other copy on that screen (derive from rhythm). */
 export const spiralHintTiming = {
-  onboardingAfterMainMs: breathingRhythm.motion.textFadeInMs + 250,
-  triggerAfterPromptMs: breathingRhythm.explanationText.fadeMs + 400,
-  returnAfterFollowUpMs:
-    breathingRhythm.returnScreen.primaryDelayMs +
-    breathingRhythm.explanationText.secondaryDelayMs +
-    breathingRhythm.explanationText.fadeMs +
-    400,
-  actionAfterFeetInstructionMs: breathingRhythm.explanationText.fadeMs + 400,
-  actionAfterFindThreeMs:
-    getFindThreeIntroDelayMs() +
-    breathingRhythm.findThreeThings.autoRevealIntervalMs * 2 +
-    breathingRhythm.explanationText.fadeMs +
-    400,
+  onboardingAfterMainMs: getOnboardingSpiralHintDelayMs(0),
+  triggerAfterPromptMs: getFlowSpiralHintDelayMs(breathingRhythm.explanationText.primaryDelayMs),
+  returnAfterFollowUpMs: getFlowSpiralHintDelayMs(
+    breathingRhythm.returnScreen.primaryDelayMs + breathingRhythm.explanationText.secondaryDelayMs,
+  ),
+  returnAfterBodyMs: getFlowSpiralHintDelayMs(breathingRhythm.returnScreen.primaryDelayMs),
+  actionAfterFeetInstructionMs: getFlowSpiralHintDelayMs(breathingRhythm.explanationText.primaryDelayMs),
+  actionAfterFindThreeMs: getFindThreeSpiralHintDelayMs(3),
 } as const;
 
 /** Return screen: "Save this for me" always after the last visible line (hint or follow-up). */
@@ -80,8 +134,12 @@ export const spiralLayout = {
   size: 136,
   /** Vertical anchor: fraction of content area below safe area (0.5 = true center). */
   anchorRatio: 0.36,
-  /** Gap between spiral bottom edge and first text line (px). */
+  /** Gap between spiral bottom edge and first scroll text line when no under-spiral hint (px). */
   textGap: 12,
+  /** Visual offset: negative pulls hint up under the spiral rings (px). */
+  hintOverlap: -22,
+  /** Gap from hint bottom to first scroll line (px). */
+  hintToContentGap: 52,
   slotMinHeight: 160,
 } as const;
 

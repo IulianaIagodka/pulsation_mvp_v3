@@ -82,7 +82,7 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 
 Порядок у App Store (зверху вниз):
 
-1. [ ] **Онбординг** — спіраль + «Pulsation існує, щоб повертати тебе до себе»
+1. [ ] **Онбординг** — спіраль + «How it works:» / «Як це працює:» + кроки + «Tap the spiral» в кінці
 2. [ ] **Trigger** — «Одна дія для тебе зараз?»
 3. [ ] **Action** — одна з дій (feet / find 3 / triangle breath / relax jaw / drop shoulders / notice 3 sounds / press palms; для find 3 — три прості підказки: форма · колір · відчуття)
 4. [ ] **Return** — «Ти тут» + коротке одно-реченнєве пояснення (варіанти ротуются).
@@ -180,7 +180,8 @@ npm audit --omit=dev
 - [ ] **Security:** `npm audit --omit=dev` переглянуто; high/critical відсутні або задокументовані з планом fix
 
 Поточний зафіксований стан (локальна перевірка 2026-06-02):
-- `npm test` ✅ (15/15 suites pass)
+- `npm test` ✅ (17/17 suites, 67 tests)
+- iOS `buildNumber` у `app.json`: **20** (попередній реліз у Store — build 19)
 - `npx tsc --noEmit` ✅
 - `npx expo-doctor` ✅ (18/18 checks passed)
 - `npm audit --omit=dev` ⚠️ 14 moderate вразливостей (high/critical немає), залишок у Expo transitive deps; повний fix вимагає major upgrade до Expo 56 (`npm audit fix --force`)
@@ -188,7 +189,7 @@ npm audit --omit=dev
 ### D2. UX/UI перевірка для adaptive spiral hint
 
 - [ ] Перші **3 завершені цикли**: «торкнись спіралі» під спіраллю на **кожному** екрані флоу
-- [ ] **Мої шляхи** / paths: сьогодні + збережені дії відкриваються з footer
+- [ ] **Мої шляхи** / paths: лише на trigger і return (сьогодні + збережені дії)
 - [ ] 1–3 взаємодії (після 3 циклів — по tap count): хінт видимий одразу, стандартна виразність
 - [ ] 4–7 взаємодій: хінт приходить пізніше (прибл. +2.2…2.8с), менш контрастний
 - [ ] 8–15 взаємодій: хінт з’являється лише інколи, дуже тихий
@@ -198,7 +199,8 @@ npm audit --omit=dev
 - [ ] `triangle_breath`: haptic на старт вдиху та видиху
 - [ ] `find_three`: спіраль не завершує дію, поки не показані всі 3 буліти
 - [ ] `return`: **Збережи це для мене** / Save this for me не показується повторно для вже збереженої дії
-- [ ] Онбординг: **tap the spiral**, без «one action for you» на першому екрані
+- [ ] Онбординг: **How it works** + **tap the spiral** останнім (inline), без «one action for you» на першому екрані
+- [ ] Підказка під спіраллю на trigger/return: ближче до кілець, далі від тексту
 - [ ] Контраст і читабельність у темній темі залишаються комфортними
 
 ---

@@ -195,9 +195,9 @@ const uiCopyByLocale: Record<
   Locale,
   {
     onboardingLine: string;
-    extendedIntroBody: string;
-    extendedFlowLine: string;
-    extendedSamplePrompt: string;
+    onboardingSubtitle: string;
+    onboardingSteps: readonly [string, string, string, string];
+    onboardingSpiralHint: string;
     triggerPrompt: string;
     triggerPauseMessage: string;
     triggerAccept: string;
@@ -228,10 +228,14 @@ const uiCopyByLocale: Record<
 > = {
   en: {
     onboardingLine: "Pulsation exists to bring you back to yourself",
-    extendedIntroBody:
-      "When everything around you feels like too much, Pulsation invites you to one small action — grounding, breath, or noticing what's near.",
-    extendedFlowLine: "One gentle prompt. One moment for yourself. A quiet return.",
-    extendedSamplePrompt: "tap the spiral",
+    onboardingSubtitle: "How it works:",
+    onboardingSteps: [
+      "Simply exists in the background",
+      "One gentle invitation",
+      "One small action for you",
+      "A quiet return — «you are here»",
+    ] as const,
+    onboardingSpiralHint: "Tap the spiral — it's the button here",
     triggerPrompt: "One action for you now?",
     triggerPauseMessage: "Not now. You can continue gently",
     triggerAccept: "I can take this moment",
@@ -267,10 +271,14 @@ const uiCopyByLocale: Record<
   },
   uk: {
     onboardingLine: "Pulsation допомагає повернутися до себе",
-    extendedIntroBody:
-      "Коли всього навколо стає забагато, Pulsation запрошує до однієї маленької дії — опора, дихання або увага до того, що поруч.",
-    extendedFlowLine: "Одне м'яке запрошення. Один момент для себе. Тихе повернення.",
-    extendedSamplePrompt: "торкнись спіралі",
+    onboardingSubtitle: "Як це працює:",
+    onboardingSteps: [
+      "Просто існує у фоні",
+      "Одне м’яке запрошення",
+      "Одна маленька дія для тебе",
+      "Коротке повернення — «ти тут»",
+    ] as const,
+    onboardingSpiralHint: "Торкнися спіралі — це кнопка тут",
     triggerPrompt: "Одна дія для тебе зараз?",
     triggerPauseMessage: "Зараз не час. Можна просто побути",
     triggerAccept: "Можу побути в цьому моменті",
