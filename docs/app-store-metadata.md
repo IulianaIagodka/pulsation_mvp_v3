@@ -77,8 +77,8 @@ Feet on ground, Find 3 things, Triangle breath, Relax your jaw, Drop your should
 
 ### What's New (1.0.1 — resubmission after review)
 - Clearer onboarding: **How it works** with four short steps; **Tap the spiral — it's the button here** appears last.
-- **Show my paths** on trigger and return (today's actions + saved preferences, local only).
-- **Save this for me** on return (renamed from earlier copy).
+- **Show my paths** on trigger only (today's actions + saved preferences, local only); fades in with **One action for you**.
+- **Save this for me** on return → **Saved** (not shown again for saved actions).
 - Spiral hint placement and timing improved on all flow screens.
 - Accessibility: Dynamic Type up to XXL, scrollable onboarding.
 
@@ -90,8 +90,8 @@ This build (1.0.1) addresses the minimum functionality feedback: clearer onboard
 
 Pulsation is a wellbeing app with a minimal flow.
 Core path: onboarding (How it works + tap the spiral as the button) -> trigger prompt -> one micro-action -> return ("You are here" + short explanation).
-Optional "Save this for me" on return saves local preference for that intervention (button not shown again for saved actions).
-"Show my paths" on trigger and return shows local stats only (no account).
+Optional "Save this for me" on return saves local preference (label becomes **Saved**; button not shown on later visits for saved actions).
+"Show my paths" on trigger only shows local stats (no account); appears with the main prompt.
 About is available only from onboarding (footer link).
 No account/login is required. No test account is required.
 Data stays on device (local SQLite storage only).
@@ -154,8 +154,8 @@ Pulsation створено для спокою, а не тиску.
 
 ### What's New (1.0.1 — повторна подача після рев’ю)
 - Онбординг: **Як це працює:** + чотири кроки; **Торкнися спіралі — це кнопка тут** з’являється останнім.
-- **Мої шляхи** на trigger і return (сьогодні + збережені дії, лише локально).
-- **Збережи це для мене** на return.
+- **Мої шляхи** лише на trigger (сьогодні + збережені дії, локально); з’являється разом із **Одна дія для тебе**.
+- **Збережи це для мене** на return → **Збережено** (не показується знову для збережених дій).
 - Підказка під спіраллю та таймінг на всіх екранах флоу.
 - Доступність: Dynamic Type до XXL, прокручуваний онбординг.
 
@@ -167,8 +167,8 @@ Pulsation створено для спокою, а не тиску.
 
 Pulsation — застосунок добробуту з мінімальним флоу.
 Шлях: онбординг (Як це працює + торкнись спіралі як кнопка) -> запит -> одна м'яка дія -> повернення («Ти тут» + коротке пояснення).
-Опційно «Збережи це для мене» на return зберігає вподобання локально (кнопка не показується знову для збережених дій).
-«Мої шляхи» на trigger і return — лише локальна статистика (без акаунта).
+Опційно «Збережи це для мене» на return зберігає вподобання локально (після натискання — **Збережено**; на наступних візитах для збережених дій не показується).
+«Мої шляхи» лише на trigger — локальна статистика (без акаунта); з’являється разом із головним текстом.
 «Про застосунок» доступно лише з онбордингу (нижнє посилання).
 Логін/акаунт не потрібен. Тестовий акаунт не потрібен.
 Дані залишаються на пристрої (лише локальне збереження у SQLite).

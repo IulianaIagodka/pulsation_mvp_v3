@@ -11,33 +11,14 @@ describe("spiral hint progression", () => {
     expect(hint.textOpacity).toBe(0.58);
   });
 
-  it("shows fully for early visits", () => {
+  it("stops showing after 3 completed cycles regardless of tap count", () => {
     const hint = getSpiralHintPresentation(2, 1200, 1, SPIRAL_HINT_FULL_CYCLES);
-    expect(hint.shouldShow).toBe(true);
-    expect(hint.delayMs).toBe(1200);
-    expect(hint.textOpacity).toBe(0.58);
+    expect(hint.shouldShow).toBe(false);
+    expect(hint.textOpacity).toBe(0);
   });
 
-  it("softens and delays in middle range", () => {
-    const hint = getSpiralHintPresentation(4, 1000, 0, SPIRAL_HINT_FULL_CYCLES);
-    expect(hint.shouldShow).toBe(true);
-    expect(hint.delayMs).toBeGreaterThanOrEqual(3200);
-    expect(hint.delayMs).toBeLessThanOrEqual(3800);
-    expect(hint.textOpacity).toBe(0.46);
-  });
-
-  it("shows subtly only sometimes in late range", () => {
-    const visible = getSpiralHintPresentation(8, 1000, 0, SPIRAL_HINT_FULL_CYCLES);
-    const hidden = getSpiralHintPresentation(9, 1000, 0, SPIRAL_HINT_FULL_CYCLES);
-
-    expect(visible.delayMs).toBe(3800);
-    expect(visible.textOpacity).toBe(0.34);
-    expect(visible.shouldShow).toBe(true);
-    expect(hidden.shouldShow).toBe(false);
-  });
-
-  it("disappears for long-term users", () => {
-    const hint = getSpiralHintPresentation(20, 800, 1, SPIRAL_HINT_FULL_CYCLES);
+  it("stays hidden for long-term users", () => {
+    const hint = getSpiralHintPresentation(20, 800, 1, SPIRAL_HINT_FULL_CYCLES + 4);
     expect(hint.shouldShow).toBe(false);
   });
 });

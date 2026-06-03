@@ -1,17 +1,22 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "expo-router";
-import { Animated, Easing, Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
+import { useFocusEffect, usePathname, useRouter } from "expo-router";
+import { Animated, Easing, StyleSheet, View } from "react-native";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
+import { AboutFooterLink } from "../src/design/components/AboutFooterLink";
+import { CalmText } from "../src/design/components/CalmText";
 import { ExplanationText } from "../src/design/components/ExplanationText";
-import { SpiralUnderHint } from "../src/design/components/SpiralUnderHint";
 import { pickReturnExplanation, uiCopy } from "../src/modules/delivery-layer";
 import { DEFAULT_INTERVENTION } from "../src/interventions/registry";
 import { useAppStore } from "../src/state/app-store";
 import {
-  breathingRhythm,
+  copyReveal,
+  getAuxiliaryCopyDelayMs,
   getFlowSpiralHintDelayMs,
+  getMainCopyDelayMs,
   getReturnKeepForMeDelayMs,
 } from "../src/design/animation-rhythm";
+import { legibleOpacity } from "../src/design/accessibility";
+import { useHighContrast } from "../src/hooks/use-high-contrast";
 import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
 import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
 import {
@@ -20,22 +25,35 @@ import {
   registerExplanationEngagement,
 } from "../src/services/adaptive-preferences";
 import { playKeepForMeHaptic } from "../src/services/haptic-regulation";
-import { spacing } from "../src/design/tokens";
-import { scaleByWidth } from "../src/design/responsive";
+import { colors, spacing } from "../src/design/tokens";
+import { goToTrigger } from "../src/navigation/go-to-trigger";
 
 export default function ReturnScreen() {
   const router = useRouter();
-  const { width } = useWindowDimensions();
+  const pathname = usePathname();
+  const highContrast = useHighContrast();
   const clear = useAppStore((s) => s.clearIntervention);
   const selected = useAppStore((s) => s.selectedIntervention) ?? DEFAULT_INTERVENTION;
-  const [returnExplanation, setReturnExplanation] = useState<string | null>(null);
+  const [returnExplanation, setReturnExplanation] = useState(() => pickReturnExplanation(selected));
+  const [isInterventionKept, setIsInterventionKept] = useState(() => hasKeptIntervention(selected));
   const [showKeepForMe, setShowKeepForMe] = useState(false);
-  const [showKeepForMeHint, setShowKeepForMeHint] = useState(false);
-  const [isKeepForMeFading, setIsKeepForMeFading] = useState(false);
+  const [keepForMeSavedThisVisit, setKeepForMeSavedThisVisit] = useState(false);
+  const [keepForMeFocusEpoch, setKeepForMeFocusEpoch] = useState(0);
+  const keepForMeDismissedRef = useRef(false);
   const enteredAtRef = useRef<number>(Date.now());
   const keepForMeTappedRef = useRef(false);
   const engagementSavedRef = useRef(false);
-  const keepForMeOpacity = useRef(new Animated.Value(1)).current;
+  const keepForMeOpacity = useRef(new Animated.Value(0)).current;
+
+  const mainCopyDelayMs = getMainCopyDelayMs();
+  const returnCopyEndDelayMs = getAuxiliaryCopyDelayMs(mainCopyDelayMs);
+  const keepForMeDelayMs = getReturnKeepForMeDelayMs(mainCopyDelayMs);
+  const hintDelayMs = getFlowSpiralHintDelayMs(returnCopyEndDelayMs);
+  const spiralHintPresentation = useSpiralHintPresentation(hintDelayMs);
+  const spiralHintSlot = useMemo(
+    () => ({ presentation: spiralHintPresentation, delayMs: hintDelayMs }),
+    [spiralHintPresentation, hintDelayMs],
+  );
 
   const persistEngagement = useCallback(() => {
     if (engagementSavedRef.current) return;
@@ -47,64 +65,61 @@ export default function ReturnScreen() {
   }, [selected]);
 
   const onKeepForMePress = useCallback(() => {
-    if (isKeepForMeFading) return;
+    if (keepForMeDismissedRef.current) return;
+    keepForMeDismissedRef.current = true;
     keepForMeTappedRef.current = true;
     markInterventionKept(selected);
+    persistEngagement();
     playKeepForMeHaptic();
-    setIsKeepForMeFading(true);
-    Animated.timing(keepForMeOpacity, {
-      toValue: 0,
-      duration: 260,
-      easing: Easing.out(Easing.quad),
-      useNativeDriver: true,
-    }).start(() => {
-      setShowKeepForMe(false);
-      setShowKeepForMeHint(false);
-      setIsKeepForMeFading(false);
-      keepForMeOpacity.setValue(1);
-    });
-  }, [isKeepForMeFading, keepForMeOpacity, selected]);
+    setKeepForMeSavedThisVisit(true);
+  }, [persistEngagement, selected]);
 
   const onSpiralPress = useCallback(() => {
     persistEngagement();
     clear();
-    router.replace("/trigger");
-  }, [clear, persistEngagement, router]);
+    goToTrigger(router, pathname);
+  }, [clear, pathname, persistEngagement, router]);
   useRegisterSpiralPress(onSpiralPress);
-  const lastLineDelayMs = returnExplanation
-    ? breathingRhythm.returnScreen.primaryDelayMs + breathingRhythm.explanationText.secondaryDelayMs
-    : breathingRhythm.returnScreen.primaryDelayMs;
-  const hintDelayMs = getFlowSpiralHintDelayMs(lastLineDelayMs);
-  const spiralHint = useSpiralHintPresentation(hintDelayMs);
-  const keepForMeDelayMs = useMemo(
-    () =>
-      getReturnKeepForMeDelayMs({
-        spiralHintShows: spiralHint.shouldShow,
-        spiralHintDelayMs: hintDelayMs,
-      }),
-    [hintDelayMs, spiralHint.shouldShow],
-  );
-  const keepForMeHintText = useMemo(() => uiCopy.keepForMeHint, [uiCopy.keepForMeHint]);
 
-  useEffect(() => {
-    enteredAtRef.current = Date.now();
-    keepForMeTappedRef.current = false;
-    engagementSavedRef.current = false;
-    setShowKeepForMe(false);
-    setShowKeepForMeHint(false);
-    setIsKeepForMeFading(false);
-    keepForMeOpacity.setValue(1);
-    setReturnExplanation(pickReturnExplanation(selected));
-  }, [keepForMeOpacity, selected]);
-
-  useEffect(() => {
-    if (!returnExplanation || hasKeptIntervention(selected)) {
+  useFocusEffect(
+    useCallback(() => {
+      enteredAtRef.current = Date.now();
+      keepForMeTappedRef.current = false;
+      keepForMeDismissedRef.current = false;
+      engagementSavedRef.current = false;
+      setReturnExplanation(pickReturnExplanation(selected));
+      setIsInterventionKept(hasKeptIntervention(selected));
       setShowKeepForMe(false);
+      setKeepForMeSavedThisVisit(false);
+      keepForMeOpacity.setValue(0);
+      setKeepForMeFocusEpoch((epoch) => epoch + 1);
+    }, [keepForMeOpacity, selected]),
+  );
+
+  useEffect(() => {
+    if (isInterventionKept) {
+      setShowKeepForMe(false);
+      keepForMeOpacity.setValue(0);
       return;
     }
-    const timer = setTimeout(() => setShowKeepForMe(true), keepForMeDelayMs);
+
+    keepForMeOpacity.setValue(0);
+    const timer = setTimeout(() => {
+      if (hasKeptIntervention(selected)) {
+        setIsInterventionKept(true);
+        return;
+      }
+      setShowKeepForMe(true);
+      Animated.timing(keepForMeOpacity, {
+        toValue: 1,
+        duration: copyReveal.fadeMs,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }).start();
+    }, keepForMeDelayMs);
+
     return () => clearTimeout(timer);
-  }, [keepForMeDelayMs, returnExplanation, selected]);
+  }, [keepForMeDelayMs, keepForMeOpacity, selected, isInterventionKept, keepForMeFocusEpoch]);
 
   useEffect(
     () => () => {
@@ -113,85 +128,67 @@ export default function ReturnScreen() {
     [persistEngagement],
   );
 
+  const savedLabelOpacity = legibleOpacity(0.52, highContrast, "faint");
+
+  const keepForMeFooter =
+    showKeepForMe && !isInterventionKept ? (
+      <Animated.View style={[styles.keepFooter, { opacity: keepForMeOpacity }]}>
+        {keepForMeSavedThisVisit ? (
+          <CalmText
+            style={[
+              styles.keepSavedLabel,
+              { opacity: savedLabelOpacity },
+              highContrast && styles.keepSavedLabelHighContrast,
+            ]}
+          >
+            {uiCopy.keepForMeSaved}
+          </CalmText>
+        ) : (
+          <AboutFooterLink label={uiCopy.keepForMe} onPress={onKeepForMePress} />
+        )}
+      </Animated.View>
+    ) : null;
+
   return (
     <AnchoredSpiralScreen
-      showPathsLink
-      spiralHint={<SpiralUnderHint presentation={spiralHint} delayMs={hintDelayMs} />}
+      centerContent
+      footer={keepForMeFooter}
+      spiralHint={spiralHintSlot}
     >
-      <View style={styles.content}>
-        <ExplanationText variant="main" delayMs={breathingRhythm.returnScreen.primaryDelayMs}>
-          {uiCopy.returnBody}
-        </ExplanationText>
-        {returnExplanation ? (
-          <>
-            <ExplanationText
-              delayMs={
-                breathingRhythm.returnScreen.primaryDelayMs + breathingRhythm.explanationText.secondaryDelayMs
-              }
-              style={[styles.followUp, { marginTop: scaleByWidth(8, width) }]}
-            >
-              {returnExplanation}
-            </ExplanationText>
-          </>
-        ) : null}
-        {showKeepForMe && returnExplanation ? (
-          <Animated.View style={{ width: "100%", opacity: keepForMeOpacity }}>
-            {showKeepForMeHint ? (
-              <ExplanationText
-                variant="hint"
-                delayMs={0}
-                style={[styles.keepHintWrap, { marginTop: scaleByWidth(8, width) }]}
-                textOpacity={breathingRhythm.explanationText.textOpacity}
-              >
-                {keepForMeHintText}
-              </ExplanationText>
-            ) : null}
-            <Pressable
-              onPress={onKeepForMePress}
-              onHoverIn={() => setShowKeepForMeHint(true)}
-              onHoverOut={() => setShowKeepForMeHint(false)}
-              onFocus={() => setShowKeepForMeHint(true)}
-              onBlur={() => setShowKeepForMeHint(false)}
-              disabled={isKeepForMeFading}
-              accessibilityRole="button"
-              accessibilityLabel={uiCopy.keepForMe}
-              hitSlop={8}
-              style={({ pressed }) => [
-                styles.keepWrap,
-                { marginTop: scaleByWidth(24, width) },
-                pressed && styles.keepWrapPressed,
-              ]}
-            >
-              <ExplanationText variant="hint" delayMs={0} style={styles.keepExplanation}>
-                {uiCopy.keepForMe}
-              </ExplanationText>
-            </Pressable>
-          </Animated.View>
-        ) : null}
-      </View>
+      <ExplanationText variant="main" holdAfterReveal delayMs={mainCopyDelayMs}>
+        {uiCopy.returnBody}
+      </ExplanationText>
+      <ExplanationText
+        key={returnExplanation}
+        variant="explanation"
+        holdAfterReveal
+        delayMs={returnCopyEndDelayMs}
+        style={styles.followUp}
+      >
+        {returnExplanation}
+      </ExplanationText>
     </AnchoredSpiralScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  content: {
+  followUp: {
+    marginTop: spacing.md,
+  },
+  keepFooter: {
     alignItems: "center",
     width: "100%",
-    alignSelf: "stretch",
-    maxWidth: "100%",
   },
-  followUp: {},
-  keepWrap: {
-    width: "100%",
-    alignItems: "center",
-    paddingHorizontal: spacing.sm,
-    opacity: 1,
+  keepSavedLabel: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    letterSpacing: 0.25,
+    textAlign: "center",
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
+    minHeight: 44,
   },
-  keepWrapPressed: {
-    opacity: 0.72,
+  keepSavedLabelHighContrast: {
+    color: colors.textPrimary,
   },
-  keepExplanation: {
-    minHeight: 22,
-  },
-  keepHintWrap: {},
 });

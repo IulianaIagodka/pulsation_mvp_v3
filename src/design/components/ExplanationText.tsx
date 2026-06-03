@@ -1,11 +1,13 @@
 import { PropsWithChildren, useEffect, useRef } from "react";
 import { Animated, Easing, StyleProp, StyleSheet, View, ViewStyle, type EasingFunction } from "react-native";
 import { legibleOpacity } from "../accessibility";
-import { breathingRhythm } from "../animation-rhythm";
+import { breathingRhythm, copyReveal } from "../animation-rhythm";
 import { mainCopyTextStyle, spiralHintTextStyle } from "../main-copy";
 import { colors, spacing } from "../tokens";
 import { useHighContrast } from "../../hooks/use-high-contrast";
 import { CalmText } from "./CalmText";
+
+const EXPLANATION_FADE_EASING = Easing.out(Easing.quad);
 
 type Props = PropsWithChildren<{
   delayMs?: number;
@@ -16,6 +18,8 @@ type Props = PropsWithChildren<{
   style?: StyleProp<ViewStyle>;
   variant?: "main" | "explanation" | "hint";
   textOpacity?: number;
+  /** Skip fade restart on parent re-renders — stay visible after first reveal. */
+  holdAfterReveal?: boolean;
 }>;
 
 /**
@@ -23,29 +27,51 @@ type Props = PropsWithChildren<{
  */
 export function ExplanationText({
   children,
-  delayMs = 0,
-  fadeMs = breathingRhythm.explanationText.fadeMs,
-  fadeEasing = Easing.out(Easing.quad),
+  delayMs = copyReveal.delayMs,
+  fadeMs = copyReveal.fadeMs,
+  fadeEasing = EXPLANATION_FADE_EASING,
   style,
   variant = "explanation",
   textOpacity,
+  holdAfterReveal = false,
 }: Props) {
   const opacity = useRef(new Animated.Value(0)).current;
+  const hasRevealedRef = useRef(false);
+  const fadeEasingRef = useRef(fadeEasing);
+  fadeEasingRef.current = fadeEasing;
   const highContrast = useHighContrast();
 
   useEffect(() => {
+    if (holdAfterReveal && hasRevealedRef.current) {
+      opacity.setValue(1);
+      return;
+    }
+
+    let cancelled = false;
     opacity.setValue(0);
+
     const timer = setTimeout(() => {
+      if (cancelled) return;
       Animated.timing(opacity, {
         toValue: 1,
         duration: fadeMs,
-        easing: fadeEasing,
+        easing: fadeEasingRef.current,
         useNativeDriver: true,
-      }).start();
+      }).start(({ finished }) => {
+        if (finished && !cancelled) {
+          hasRevealedRef.current = true;
+        }
+      });
     }, delayMs);
 
-    return () => clearTimeout(timer);
-  }, [children, delayMs, fadeEasing, fadeMs, opacity]);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+      if (!holdAfterReveal || !hasRevealedRef.current) {
+        opacity.stopAnimation();
+      }
+    };
+  }, [delayMs, fadeMs, holdAfterReveal, opacity]);
 
   const resolvedTextOpacity = textOpacity ?? breathingRhythm.explanationText.textOpacity;
   const tone = variant === "hint" ? "hint" : "muted";

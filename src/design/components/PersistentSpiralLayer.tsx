@@ -1,9 +1,18 @@
 import { usePathname } from "expo-router";
-import { StyleSheet, useWindowDimensions, View } from "react-native";
+import { useEffect } from "react";
+import { PixelRatio, StyleSheet, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppStore } from "../../state/app-store";
 import { spiralLayout } from "../animation-rhythm";
-import { PersistentSpiral, SpiralAnimationMode } from "./PersistentSpiral";
+import {
+  getSpiralAnchorMetrics,
+  getSpiralHintLineHeight,
+  getSpiralHintTopY,
+} from "../spiral-anchor-layout";
+import { setSpiralAnimationMode } from "../spiral-breath-engine";
+import { spacing } from "../tokens";
+import { PersistentSpiral } from "./PersistentSpiral";
+import { SpiralUnderHint } from "./SpiralUnderHint";
 
 function isFlowPath(pathname: string): boolean {
   return (
@@ -15,28 +24,58 @@ function isFlowPath(pathname: string): boolean {
   );
 }
 
+function isUnderSpiralHintPath(pathname: string): boolean {
+  return pathname === "/trigger" || pathname === "/action" || pathname === "/return";
+}
+
 export function PersistentSpiralLayer() {
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
-  const { height: windowHeight } = useWindowDimensions();
+  const { height: windowHeight, width: windowWidth } = useWindowDimensions();
   const selected = useAppStore((s) => s.selectedIntervention);
   const spiralPressHandler = useAppStore((s) => s.spiralPressHandler);
+  const hintSlot = useAppStore((s) => s.spiralUnderHint);
 
-  if (!isFlowPath(pathname)) {
-    return null;
-  }
-
-  const contentHeight = windowHeight - insets.top - insets.bottom;
-  const spiralTop = insets.top + contentHeight * spiralLayout.anchorRatio - spiralLayout.size / 2;
-
-  const mode: SpiralAnimationMode =
+  const mode =
     pathname === "/action" && selected === "triangle_breath" ? "triangle" : "calm";
 
+  useEffect(() => {
+    setSpiralAnimationMode(mode);
+  }, [mode]);
+
+  const metrics = getSpiralAnchorMetrics(windowHeight, insets);
+  const spiralTop = insets.top + metrics.spiralCenterY - spiralLayout.size / 2;
+  const hintTop = insets.top + getSpiralHintTopY(metrics, windowWidth);
+  const hintLineHeight = getSpiralHintLineHeight(windowWidth, PixelRatio.getFontScale());
+  const showHint =
+    isFlowPath(pathname) &&
+    isUnderSpiralHintPath(pathname) &&
+    hintSlot &&
+    (hintSlot.visible ?? true) &&
+    hintSlot.presentation.shouldShow;
+  const flowVisible = isFlowPath(pathname);
+
   return (
-    <View pointerEvents="box-none" style={styles.overlay}>
+    <View
+      pointerEvents={flowVisible ? "box-none" : "none"}
+      style={[styles.overlay, !flowVisible && styles.hidden]}
+    >
       <View pointerEvents="box-none" style={[styles.spiralSlot, { top: spiralTop }]}>
-        <PersistentSpiral mode={mode} onPress={spiralPressHandler ?? undefined} />
+        <PersistentSpiral onPress={flowVisible ? (spiralPressHandler ?? undefined) : undefined} />
       </View>
+      {showHint ? (
+        <View
+          pointerEvents="none"
+          style={[styles.hintSlot, { top: hintTop, minHeight: hintLineHeight }]}
+        >
+          <SpiralUnderHint
+            presentation={hintSlot.presentation}
+            delayMs={hintSlot.delayMs}
+            label={hintSlot.label}
+            visible
+          />
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -47,10 +86,23 @@ const styles = StyleSheet.create({
     zIndex: 100,
     elevation: 12,
   },
+  hidden: {
+    opacity: 0,
+  },
   spiralSlot: {
     position: "absolute",
     left: 0,
     right: 0,
     alignItems: "center",
+  },
+  hintSlot: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: spacing.md,
+    zIndex: 2,
+    elevation: 14,
   },
 });

@@ -1,3 +1,11 @@
+export const copyReveal = {
+  /** Brief beat after route fade, then text fades in. */
+  delayMs: 480,
+  fadeMs: 1600,
+  /** Gap before the next line in a sequence. */
+  lineGapMs: 400,
+} as const;
+
 export const breathingRhythm = {
   spiral: {
     /** Expand + brighten — quicker rise, brief peak. */
@@ -15,9 +23,8 @@ export const breathingRhythm = {
     opacityInhale: 1,
   },
   findThreeThings: {
-    /** Delay before each next bullet appears when auto-revealing. */
-    autoRevealIntervalMs: 2000,
-    revealDurationMs: 1200,
+    autoRevealIntervalMs: copyReveal.fadeMs + copyReveal.lineGapMs,
+    revealDurationMs: copyReveal.fadeMs,
   },
   triangleBreath: {
     cycles: 3,
@@ -27,132 +34,130 @@ export const breathingRhythm = {
     labelFadeMs: 600,
   },
   explanationText: {
-    fadeMs: 2200,
+    fadeMs: copyReveal.fadeMs,
     textOpacity: 0.58,
-    /** Trigger / action first line. */
-    primaryDelayMs: 0,
-    /** Gap after return “You are here” before follow-up explanation. */
-    secondaryDelayMs: 2100,
+    primaryDelayMs: copyReveal.delayMs,
+    secondaryDelayMs: copyReveal.lineGapMs,
   },
   motion: {
     screenFadeMs: 450,
-    textFadeInMs: 1500,
+    textFadeInMs: copyReveal.fadeMs,
     textFadeOutMs: 900,
   },
-  /** Return copy starts after route fade so it does not overlap action. */
-  returnScreen: {
-    primaryDelayMs: 650,
-  },
+  /** @deprecated Use {@link copyReveal}. */
+  returnScreen: { primaryDelayMs: copyReveal.delayMs },
+  /** @deprecated Use {@link copyReveal}. */
+  triggerScreen: { primaryDelayMs: copyReveal.delayMs, fadeMs: copyReveal.fadeMs },
+  /** @deprecated Use {@link copyReveal}. */
+  actionScreen: { primaryDelayMs: copyReveal.delayMs },
 } as const;
 
-/** Calm reveal for onboarding “How it works” block (other screens keep `explanationText`). */
+/** Main line — same delay on every screen. */
+export function getMainCopyDelayMs(): number {
+  return copyReveal.delayMs;
+}
+
+/** Main / auxiliary fade duration — same on every screen. */
+export function getMainCopyFadeMs(): number {
+  return copyReveal.fadeMs;
+}
+
+/** When the next line starts fading (after previous line finishes). */
+export function getAuxiliaryCopyDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
+  return mainLineDelayMs + copyReveal.fadeMs + copyReveal.lineGapMs;
+}
+
+/** @deprecated Use {@link getMainCopyFadeMs}. */
 export const onboardingRhythm = {
-  fadeMs: 1800,
-  afterHeadlineMs: 480,
-  stepGapMs: 320,
+  fadeMs: copyReveal.fadeMs,
+  afterHeadlineMs: copyReveal.lineGapMs,
+  stepGapMs: copyReveal.lineGapMs,
 } as const;
 
 function getOnboardingStepGapMs(): number {
-  return onboardingRhythm.fadeMs + onboardingRhythm.stepGapMs;
+  return copyReveal.fadeMs + copyReveal.lineGapMs;
 }
 
-function getOnboardingSubtitleDelayMs(): number {
-  return breathingRhythm.motion.textFadeInMs + onboardingRhythm.afterHeadlineMs;
-}
-
-/** Delay for onboarding subtitle (0) and each step line (1…n). */
+/** Onboarding subtitle (0) and each step (1…n). */
 export function getOnboardingExplanationDelayMs(lineIndex: number): number {
-  const subtitleDelay = getOnboardingSubtitleDelayMs();
+  const firstAuxiliaryMs = getAuxiliaryCopyDelayMs(copyReveal.delayMs);
   if (lineIndex === 0) {
-    return subtitleDelay;
+    return firstAuxiliaryMs;
   }
-  return subtitleDelay + getOnboardingStepGapMs() * lineIndex;
+  return firstAuxiliaryMs + getOnboardingStepGapMs() * lineIndex;
 }
 
-/** Onboarding: “tap the spiral” after all steps (or after headline on short flow). */
+/** Onboarding: “tap the spiral” after headline or after all steps. */
 export function getOnboardingSpiralHintDelayMs(stepCount: number): number {
-  const { fadeMs } = onboardingRhythm;
-  const { textFadeInMs } = breathingRhythm.motion;
   const stepGap = getOnboardingStepGapMs();
-  const subtitleDelay = getOnboardingSubtitleDelayMs();
-
   if (stepCount === 0) {
-    return textFadeInMs + fadeMs + stepGap;
+    return getFlowSpiralHintDelayMs(copyReveal.delayMs);
   }
-
-  const lastStepDelayMs = subtitleDelay + stepGap * stepCount;
-  return lastStepDelayMs + fadeMs + stepGap;
+  const lastStepDelayMs = getAuxiliaryCopyDelayMs(copyReveal.delayMs) + stepGap * (stepCount - 1);
+  return getFlowSpiralHintDelayMs(lastStepDelayMs);
 }
 
-const flowHintGapMs = 400;
+const flowHintGapMs = copyReveal.lineGapMs;
 
-/** Flow screens: hint starts after the last line finishes fading. */
+/** Flow screens: hint after the last line finishes fading. */
 export function getFlowSpiralHintDelayMs(lastLineDelayMs: number): number {
-  return lastLineDelayMs + breathingRhythm.explanationText.fadeMs + flowHintGapMs;
+  return lastLineDelayMs + copyReveal.fadeMs + flowHintGapMs;
 }
 
 /** Hint after the last find-three bullet begins appearing. */
-export function getFindThreeSpiralHintDelayMs(bulletCount: number): number {
+export function getFindThreeSpiralHintDelayMs(
+  bulletCount: number,
+  mainLineDelayMs: number = getMainCopyDelayMs(),
+): number {
   const intervals = Math.max(0, bulletCount - 1);
-  const lastBulletDelayMs =
-    getFindThreeIntroDelayMs() + breathingRhythm.findThreeThings.autoRevealIntervalMs * intervals;
-  return getFlowSpiralHintDelayMs(lastBulletDelayMs);
+  const lastBulletStartMs =
+    getFindThreeBulletsStartDelayMs(mainLineDelayMs) +
+    breathingRhythm.findThreeThings.autoRevealIntervalMs * intervals;
+  return lastBulletStartMs + copyReveal.fadeMs + flowHintGapMs;
 }
 
 /** Delay from mount when gated content (e.g. all bullets) just became visible. */
 export function getFlowSpiralHintDelayAfterRevealMs(): number {
-  return breathingRhythm.explanationText.fadeMs + flowHintGapMs;
+  return copyReveal.fadeMs + flowHintGapMs;
 }
 
-/** "Tap the spiral" delays — always after other copy on that screen (derive from rhythm). */
+/** "Tap the spiral" delays — always after other copy on that screen. */
 export const spiralHintTiming = {
   onboardingAfterMainMs: getOnboardingSpiralHintDelayMs(0),
-  triggerAfterPromptMs: getFlowSpiralHintDelayMs(breathingRhythm.explanationText.primaryDelayMs),
-  returnAfterFollowUpMs: getFlowSpiralHintDelayMs(
-    breathingRhythm.returnScreen.primaryDelayMs + breathingRhythm.explanationText.secondaryDelayMs,
-  ),
-  returnAfterBodyMs: getFlowSpiralHintDelayMs(breathingRhythm.returnScreen.primaryDelayMs),
-  actionAfterFeetInstructionMs: getFlowSpiralHintDelayMs(breathingRhythm.explanationText.primaryDelayMs),
+  triggerAfterPromptMs: getFlowSpiralHintDelayMs(copyReveal.delayMs),
+  returnAfterFollowUpMs: getFlowSpiralHintDelayMs(getAuxiliaryCopyDelayMs(copyReveal.delayMs)),
+  returnAfterBodyMs: getFlowSpiralHintDelayMs(copyReveal.delayMs),
+  actionAfterFeetInstructionMs: getFlowSpiralHintDelayMs(copyReveal.delayMs),
   actionAfterFindThreeMs: getFindThreeSpiralHintDelayMs(3),
 } as const;
 
-/** Return screen: "Save this for me" always after the last visible line (hint or follow-up). */
-export function getReturnKeepForMeDelayMs(params: {
-  spiralHintShows: boolean;
-  spiralHintDelayMs: number;
-}): number {
-  const { fadeMs, secondaryDelayMs } = breathingRhythm.explanationText;
-  const { primaryDelayMs } = breathingRhythm.returnScreen;
-  const gapAfterFadeMs = 400;
-  if (params.spiralHintShows) {
-    return params.spiralHintDelayMs + fadeMs + gapAfterFadeMs;
-  }
-  return primaryDelayMs + secondaryDelayMs + fadeMs + gapAfterFadeMs;
+/** Return screen: "Save this for me" when the follow-up explanation begins. */
+export function getReturnKeepForMeDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
+  return getAuxiliaryCopyDelayMs(mainLineDelayMs);
 }
 
 export const spiralLayout = {
   size: 136,
-  /** Vertical anchor: fraction of content area below safe area (0.5 = true center). */
   anchorRatio: 0.36,
-  /** Gap between spiral bottom edge and first scroll text line when no under-spiral hint (px). */
   textGap: 12,
-  /** Visual offset: negative pulls hint up under the spiral rings (px). */
-  hintOverlap: -22,
-  /** Gap from hint bottom to first scroll line (px). */
+  hintBelowSpiralGap: 10,
   hintToContentGap: 52,
   slotMinHeight: 160,
 } as const;
 
-/** Static intro visible before find-three bullets begin. */
-export function getFindThreeIntroDelayMs(): number {
-  const { primaryDelayMs, fadeMs } = breathingRhythm.explanationText;
-  return primaryDelayMs + fadeMs + 400;
+/** First find-three bullet — after main intro finishes fading. */
+export function getFindThreeBulletsStartDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
+  return getAuxiliaryCopyDelayMs(mainLineDelayMs);
 }
 
-/** Static intro visible before phase labels and spiral triangle rhythm start. */
-export function getTriangleBreathIntroDelayMs(): number {
-  const { primaryDelayMs, fadeMs } = breathingRhythm.explanationText;
-  return primaryDelayMs + fadeMs + 400;
+/** @deprecated Use {@link getFindThreeBulletsStartDelayMs}. */
+export function getFindThreeIntroDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
+  return getFindThreeBulletsStartDelayMs(mainLineDelayMs);
+}
+
+/** Phase labels start after main intro + calm gap. */
+export function getTriangleBreathIntroDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
+  return getAuxiliaryCopyDelayMs(mainLineDelayMs);
 }
 
 export function getTriangleBreathSpiralCycleMs(): number {

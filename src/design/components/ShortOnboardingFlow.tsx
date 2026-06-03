@@ -1,13 +1,11 @@
 import { useRouter } from "expo-router";
 import { useCallback } from "react";
-import { Easing, StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { AnchoredSpiralScreen } from "./AnchoredSpiralScreen";
 import { AboutFooterLink } from "./AboutFooterLink";
+import { ExplanationText } from "./ExplanationText";
 import { SpiralUnderHint } from "./SpiralUnderHint";
-import { GentleTextTransition } from "./GentleTextTransition";
-import { CalmText } from "./CalmText";
-import { breathingRhythm, getOnboardingSpiralHintDelayMs, onboardingRhythm } from "../animation-rhythm";
-import { mainCopyTextStyle } from "../main-copy";
+import { getOnboardingSpiralHintDelayMs } from "../animation-rhythm";
 import { spacing } from "../tokens";
 import { uiCopy } from "../../modules/delivery-layer";
 import { useRegisterSpiralPress } from "../../hooks/use-register-spiral-press";
@@ -27,39 +25,27 @@ export function ShortOnboardingFlow() {
   const spiralHint = useSpiralHintPresentation(hintDelayMs);
 
   return (
-    <AnchoredSpiralScreen footer={<AboutFooterLink label={uiCopy.aboutLink} onPress={() => router.push("/about")} />}>
-      <View style={styles.content}>
-        <GentleTextTransition style={styles.mainLineWrap} durationMs={breathingRhythm.motion.textFadeInMs}>
-          <CalmText style={styles.copy}>{uiCopy.onboardingLine}</CalmText>
-        </GentleTextTransition>
+    <AnchoredSpiralScreen
+      footer={<AboutFooterLink label={uiCopy.aboutLink} onPress={() => router.push("/about")} />}
+      belowEquator={
         <SpiralUnderHint
           presentation={spiralHint}
           delayMs={hintDelayMs}
-          fadeMs={onboardingRhythm.fadeMs}
-          fadeEasing={Easing.out(Easing.cubic)}
           label={uiCopy.onboardingSpiralHint}
           placement="inline"
           style={styles.bodyLine}
         />
-      </View>
+      }
+    >
+      <ExplanationText variant="main" holdAfterReveal>{uiCopy.onboardingLine}</ExplanationText>
     </AnchoredSpiralScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  content: {
-    alignItems: "center",
-    width: "100%",
-    alignSelf: "stretch",
-    paddingHorizontal: spacing.md,
-  },
-  mainLineWrap: {
-    alignItems: "center",
-    width: "100%",
-    alignSelf: "stretch",
-  },
-  copy: mainCopyTextStyle,
   bodyLine: {
     marginTop: spacing.md,
+    paddingHorizontal: spacing.md,
+    width: "100%",
   },
 });

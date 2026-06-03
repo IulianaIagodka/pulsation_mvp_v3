@@ -14,7 +14,8 @@ Use this checklist before release whenever animation/layout is changed.
 
 - [ ] Tap the spiral on **each** flow screen and verify navigation / completion (spiral is wrapped in `Pressable`; layer has `zIndex` + `elevation`).
 - [ ] If tap feels dead, check Android: spiral layer should stay **above** the `ScrollView` hit target (`AnchoredSpiralScreen` spiral `elevation`).
-- [ ] **About** on onboarding footer only; **Show my paths** / **Мої шляхи** only on **trigger** and **return** (opens `app/paths.tsx`).
+- [ ] **About** on onboarding footer only; **Show my paths** / **Мої шляхи** only on **trigger** — fades in **with** “One action for you” / «Одна дія для тебе».
+- [ ] **Save this for me** / **Збережи це для мене** pinned in the **footer** on return (not in scroll body); tap → **Saved** / **Збережено** (not clickable).
 
 ## Copy order (“tap the spiral”)
 
@@ -22,7 +23,7 @@ Use this checklist before release whenever animation/layout is changed.
 - [ ] On trigger, action (feet / find 3), return: short “tap the spiral” / “торкнись спіралі” **under the spiral**, **after** all screen copy (`getFlowSpiralHintDelayMs` / gated reveal on find 3 & triangle).
 - [ ] For the **first 3 completed cycles**, the hint is visible on **every** flow screen (no random hide per screen).
 - [ ] On **triangle breath**, the under-spiral hint appears only **after 3 complete breath cycles**; spiral animates during intro + triangle rhythm.
-- [ ] On return, **Save this for me** / **Збережи це для мене** sits below the explanation block (smaller hint style).
+- [ ] On return, **Save this for me** sits in the bottom footer (same zone as paths on trigger).
 
 ## Animation stability
 
@@ -35,10 +36,10 @@ Use this checklist before release whenever animation/layout is changed.
 - [ ] Action → return: only **one** return screen (back does not land on return again); copy on return starts after fade (`returnScreen.primaryDelayMs`).
 - [ ] On `triangle_breath`, verify phase words (`inhale` / `hold` / `exhale`) crossfade gently; **both** holds show “hold / затримка”.
 - [ ] On `triangle_breath`, feel haptic at **inhale start** and **exhale start** (device build, not Expo Go only).
-- [ ] On return, **Save this for me** fades out on tap; second visit with same intervention does **not** show the button again.
+- [ ] On return, **Save this for me** becomes **Saved** on tap (stays visible, not clickable); later visits with the same saved intervention do **not** show the control.
 - [ ] With **Accessibility XXL** text size, onboarding scrolls; About / paths footer links remain reachable.
 - [ ] Onboarding shows **How it works** steps + **tap the spiral** last; not “one action for you now?” on first screen.
-- [ ] Under-spiral hint is **closer to the spiral** and **farther from** main text on trigger / action / return (`hintOverlap`, `hintToContentGap`).
+- [ ] Under-spiral hint sits **below** inhale-expanded spiral (not covered by motion); main text farther below (`hintBelowSpiralGap`, `hintToContentGap`). Hint renders in `PersistentSpiralLayer` (above spiral rings, below spiral anchor).
 
 ## Automated safety net
 

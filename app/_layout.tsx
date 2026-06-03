@@ -6,6 +6,7 @@ import { InactivityTriggerListener } from "../src/components/InactivityTriggerLi
 import { NotificationOpenListener } from "../src/components/NotificationOpenListener";
 import { configureInactivityNotifications } from "../src/services/inactivity-notification";
 import { breathingRhythm } from "../src/design/animation-rhythm";
+import { ensureSpiralBreathEngineStarted } from "../src/design/spiral-breath-engine";
 import { PersistentSpiralLayer } from "../src/design/components/PersistentSpiralLayer";
 import { StyleSheet, View } from "react-native";
 
@@ -13,6 +14,7 @@ export default function Layout() {
   useEffect(() => {
     bootstrapPulsation();
     configureInactivityNotifications();
+    ensureSpiralBreathEngineStarted();
   }, []);
 
   return (

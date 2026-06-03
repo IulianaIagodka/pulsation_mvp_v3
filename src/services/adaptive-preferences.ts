@@ -58,6 +58,16 @@ export function markInterventionKept(intervention: InterventionType): void {
   });
 }
 
+export function removeKeptIntervention(intervention: InterventionType): void {
+  const profile = getOutcomesProfile();
+  const kept = profile.keptInterventions ?? [];
+  if (!kept.includes(intervention)) return;
+  saveOutcomesProfile({
+    ...profile,
+    keptInterventions: kept.filter((id) => id !== intervention),
+  });
+}
+
 export function registerExplanationEngagement(
   intervention: InterventionType,
   params: { keepForMeTapped: boolean; dwellMs: number },

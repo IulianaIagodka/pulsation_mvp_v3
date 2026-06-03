@@ -49,9 +49,9 @@ Schema is defined in `src/data/schema.ts`. See `docs/adaptive-scheduling.md` for
 ## UX Flow
 
 1. **Onboarding** (`app/index.tsx`): extended first-install flow (`ExtendedOnboardingFlow`). Scrollable copy, Dynamic Type up to Accessibility XXL. **How it works:** headline + four steps + **Tap the spiral — it's the button here** (inline, appears last). Footer: **About** only. Shown once per install (`extended_onboarding_completed`).
-2. **Trigger** (`app/trigger.tsx`): same spiral slot; main prompt (“One action for you now?”); short **tap the spiral** under the rings (after prompt); footer **Show my paths** / **Мої шляхи** → `app/paths.tsx`.
+2. **Trigger** (`app/trigger.tsx`): same spiral slot; main prompt (**One action for you**) and footer **Show my paths** / **Мої шляхи** fade in **together**; short **tap the spiral** under the rings (later). Paths → `app/paths.tsx`.
 3. **Action** (`app/action.tsx`): one micro-intervention (feet / find 3 / triangle breath / relax jaw / drop shoulders / notice 3 sounds / press palms together). Instruction copy uses the same soft **explanation rhythm** as return. **Find 3 things** shows three cues from **7 rotating sets** (`find-three-variants.ts`); same set never repeats back-to-back. Until all three bullets are visible, **spiral tap reveals the next bullet** instead of completing the action. **Triangle breath**: soft haptic at inhale start and light haptic at exhale start (`startTriangleBreathHapticLoop`). Under-spiral hint appears **last** (after all bullets or after 3 breath cycles). **Spiral is the same visual everywhere** (`spiral-visual.ts` + `SpiralRings`). Action → return uses **`router.replace`**.
-4. **Return** (`app/return.tsx`): “You are here”, then a short intervention-specific explanation (3 rotating variants), then optional **Save this for me** / **Збережи це для мене** (hidden for interventions already saved via `keptInterventions` in SQLite). Short spiral hint under the rings (after copy); footer **Show my paths**; tap spiral → trigger.
+4. **Return** (`app/return.tsx`): “You are here” + short explanation (centered); optional **Save this for me** in the **footer** (becomes **Saved**, not clickable; hidden on later visits if already saved). Short spiral hint under the rings; tap spiral → trigger.
 
 Stack navigation uses a calm **fade** between routes (`app/_layout.tsx`, `breathingRhythm.motion.screenFadeMs`).
 
@@ -75,7 +75,7 @@ Dark minimal palette from technical requirements is implemented in `src/design/t
 | Soft explanation-style fades | `ExplanationText` + `breathingRhythm.explanationText` |
 | Onboarding step rhythm | `onboardingRhythm` + `getOnboardingExplanationDelayMs` |
 | Gentle screen text entrance | `GentleTextTransition` (opacity only) |
-| Spiral hint (“tap the spiral”) | **Onboarding**: inline after intro (last line). **Other flow screens**: short label under the spiral (`SpiralUnderHint`), after all screen copy (`getFlowSpiralHintDelayMs`). First **3 completed cycles** always shown; then adapted via `spiral-hint-presentation.ts`. **Triangle breath**: hint after **3 breath cycles**. |
+| Spiral hint (“tap the spiral”) | **Onboarding**: inline after intro (last line). **Other flow screens**: short label under the spiral (`SpiralUnderHint`), after all screen copy (`getFlowSpiralHintDelayMs`). Shown only for the first **3 completed cycles**, then hidden. **Triangle breath**: hint after **3 breath cycles**. |
 | Find 3 sequential bullets | `findThreeThings.autoRevealIntervalMs` |
 | Action → return (“You are here”) | Spiral tap on action (`app/action.tsx`); find 3 requires all bullets first |
 | Save for me | `app/return.tsx` + `src/services/adaptive-preferences.ts` (`keptInterventions`) |

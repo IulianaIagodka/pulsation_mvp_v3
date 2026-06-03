@@ -1,6 +1,8 @@
 import {
   breathingRhythm,
+  copyReveal,
   getFindThreeIntroDelayMs,
+  getMainCopyFadeMs,
   getTriangleBreathLabelCycleMs,
   getTriangleBreathTotalMs,
   spiralLayout,
@@ -28,12 +30,14 @@ describe("spiral layout regression checks", () => {
     expect(breathingRhythm.findThreeThings.revealDurationMs).toBeGreaterThan(0);
   });
 
-  it("keeps explanation text reveal timing calm and delayed", () => {
-    const e = breathingRhythm.explanationText;
-    expect(e.secondaryDelayMs).toBeGreaterThanOrEqual(2000);
-    expect(e.secondaryDelayMs).toBeLessThanOrEqual(3000);
-    expect(e.fadeMs).toBeGreaterThan(1000);
-    expect(e.textOpacity).toBeLessThanOrEqual(0.6);
+  it("keeps one shared copy reveal rhythm (fast, smooth)", () => {
+    expect(copyReveal.delayMs).toBeGreaterThanOrEqual(breathingRhythm.motion.screenFadeMs);
+    expect(copyReveal.fadeMs).toBeGreaterThan(1000);
+    expect(copyReveal.fadeMs).toBeLessThanOrEqual(2200);
+    expect(breathingRhythm.explanationText.fadeMs).toBe(copyReveal.fadeMs);
+    expect(getMainCopyFadeMs()).toBe(copyReveal.fadeMs);
+    expect(breathingRhythm.explanationText.textOpacity).toBeLessThanOrEqual(0.6);
+    expect(getFindThreeIntroDelayMs()).toBeGreaterThan(copyReveal.delayMs + copyReveal.fadeMs);
   });
 
   it("keeps triangle breath cycle at 4-2-5 seconds for 3 cycles", () => {

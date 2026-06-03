@@ -5,6 +5,7 @@ import {
   consumeInactiveMinutesOnResume,
   recordAppStateChange,
 } from "../modules/session-runtime";
+import { goToTrigger } from "../navigation/go-to-trigger";
 import { isPathBlockedForAutoTrigger, shouldAutoOpenTrigger } from "../modules/inactivity-trigger";
 import { recordAppOpen } from "../data/repositories/scheduling-profile-repo";
 import {
@@ -40,7 +41,7 @@ export function InactivityTriggerListener() {
       const inactiveMinutes = consumeInactiveMinutesOnResume();
       if (!shouldAutoOpenTrigger(inactiveMinutes)) return;
 
-      router.replace("/trigger");
+      goToTrigger(router, pathnameRef.current);
     });
 
     return () => subscription.remove();

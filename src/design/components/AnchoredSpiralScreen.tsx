@@ -1,14 +1,24 @@
-import { PropsWithChildren, ReactNode } from "react";
+import { PropsWithChildren, ReactNode, useLayoutEffect } from "react";
+import type { SpiralUnderHintSlot } from "../../types/spiral-under-hint";
 import { useRouter } from "expo-router";
-import { PixelRatio, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
+import { PixelRatio, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import { MAX_FONT_SIZE_MULTIPLIER } from "../accessibility";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { spiralLayout } from "../animation-rhythm";
 import { spacing } from "../tokens";
+import { CalmPressable } from "./CalmPressable";
+import { resolvePressableTextOpacity } from "../pressable-highlight";
 import { clamp, scaleByWidth } from "../responsive";
+import {
+  getContentZoneTopWithoutHint,
+  getContentZoneTopWithHint,
+  getScreenEquatorY,
+  getSpiralAnchorMetrics,
+} from "../spiral-anchor-layout";
 import { useAppStore } from "../../state/app-store";
 import { uiCopy } from "../../modules/delivery-layer";
 import { AboutFooterLink } from "./AboutFooterLink";
+import { FooterRevealLink } from "./FooterRevealLink";
 import { CalmText } from "./CalmText";
 import { CalmScreen } from "./CalmScreen";
 import { SoftCard } from "./SoftCard";
@@ -16,23 +26,31 @@ import { SoftCard } from "./SoftCard";
 type Props = PropsWithChildren<{
   /** Omit when spiral is rendered by `PersistentSpiralLayer` in the root layout. */
   spiral?: ReactNode;
-  /** Vertically center text in the area below the spiral (onboarding). */
+  /** Place main copy on the vertical screen equator (default). Set false for scroll-only layouts. */
   centerContent?: boolean;
+  /** Optional copy below the equator main line (e.g. return follow-up). */
+  belowEquator?: ReactNode;
   /** Pinned to the bottom of the screen (e.g. About link on onboarding). */
   footer?: ReactNode;
-  /** Quiet label directly under the spiral (e.g. “tap the spiral”). */
-  spiralHint?: ReactNode;
-  /** Show “Show my paths” in the footer (trigger + return only). */
+  /** Under-spiral hint data — rendered in `PersistentSpiralLayer` above the spiral motion. */
+  spiralHint?: SpiralUnderHintSlot;
+  /** Show “Show my paths” in the footer (trigger / “one action” screen only). */
   showPathsLink?: boolean;
+  /** Fade in paths link with main copy (trigger). */
+  pathsLinkRevealDelayMs?: number;
+  pathsLinkRevealKey?: number;
 }>;
 
 export function AnchoredSpiralScreen({
   spiral,
   children,
-  centerContent = false,
+  centerContent = true,
+  belowEquator,
   footer,
   spiralHint,
   showPathsLink = false,
+  pathsLinkRevealDelayMs,
+  pathsLinkRevealKey,
 }: Props) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -40,30 +58,47 @@ export function AnchoredSpiralScreen({
   const fontScale = Math.min(PixelRatio.getFontScale(), MAX_FONT_SIZE_MULTIPLIER);
   const highContrastPreviewEnabled = useAppStore((s) => s.highContrastPreviewEnabled);
   const setHighContrastPreviewEnabled = useAppStore((s) => s.setHighContrastPreviewEnabled);
+  const setSpiralUnderHint = useAppStore((s) => s.setSpiralUnderHint);
 
-  const contentHeight = windowHeight - insets.top - insets.bottom;
-  const spiralTop = insets.top + contentHeight * spiralLayout.anchorRatio - spiralLayout.size / 2;
-  const spiralHintLineHeight = spiralHint
-    ? clamp(Math.round(scaleByWidth(16, windowWidth) * fontScale), 14, 56)
-    : 0;
-  const hintPullUp = spiralHint ? scaleByWidth(spiralLayout.hintOverlap, windowWidth) : 0;
-  const hintToContent = scaleByWidth(spiralLayout.hintToContentGap, windowWidth);
-  const textPaddingTop = spiralHint
-    ? spiralTop + spiralLayout.size + hintPullUp + spiralHintLineHeight + hintToContent
-    : spiralTop + spiralLayout.size + spiralLayout.textGap;
+  const metrics = getSpiralAnchorMetrics(windowHeight, insets);
   const footerBottomInset = Math.max(insets.bottom, scaleByWidth(spacing.sm, windowWidth));
   const footerLinkCount = (showPathsLink ? 1 : 0) + (footer ? 1 : 0);
   const footerRowHeight = clamp(scaleByWidth(44, windowWidth) * fontScale, 44, 132);
   const footerHeight = footerLinkCount > 0 ? footerRowHeight * footerLinkCount + scaleByWidth(spacing.xs, windowWidth) : 0;
   const scrollBottomPad =
     footerLinkCount > 0 ? footerHeight + footerBottomInset : scaleByWidth(spacing.xl, windowWidth);
+  const hintSlotVisible =
+    Boolean(spiralHint) &&
+    (spiralHint?.visible ?? true) &&
+    Boolean(spiralHint?.presentation.shouldShow);
+  const contentZoneTop = hintSlotVisible
+    ? getContentZoneTopWithHint(metrics, windowWidth, fontScale)
+    : getContentZoneTopWithoutHint(metrics, windowWidth);
+  const screenEquatorY = getScreenEquatorY(windowHeight, insets);
+  const belowEquatorTop = screenEquatorY + scaleByWidth(36, windowWidth) * fontScale;
+  /** Equator pin ignores under-spiral hint — flow screens must scroll from `contentZoneTop`. */
+  const useEquatorLayout = centerContent && !spiralHint;
+
+  useLayoutEffect(() => {
+    setSpiralUnderHint(spiralHint ?? null);
+    return () => setSpiralUnderHint(null);
+  }, [spiralHint, setSpiralUnderHint]);
 
   const pinnedFooter =
     footerLinkCount > 0 ? (
       <View style={styles.footerStack}>
         {footer}
         {showPathsLink ? (
-          <AboutFooterLink label={uiCopy.pathsLink} onPress={() => router.push("/paths")} />
+          pathsLinkRevealDelayMs != null ? (
+            <FooterRevealLink
+              label={uiCopy.pathsLink}
+              onPress={() => router.push("/paths")}
+              delayMs={pathsLinkRevealDelayMs}
+              revealKey={pathsLinkRevealKey}
+            />
+          ) : (
+            <AboutFooterLink label={uiCopy.pathsLink} onPress={() => router.push("/paths")} />
+          )
         ) : null}
       </View>
     ) : null;
@@ -72,54 +107,58 @@ export function AnchoredSpiralScreen({
     <CalmScreen flush>
       <View style={styles.root}>
         {spiral ? (
-          <View pointerEvents="box-none" style={[styles.spiralLayer, { top: spiralTop }]}>
+          <View
+            pointerEvents="box-none"
+            style={[styles.spiralLayer, { top: metrics.spiralCenterY - spiralLayout.size / 2 }]}
+          >
             {spiral}
           </View>
         ) : null}
 
-        {spiralHint ? (
-          <View
-            pointerEvents="none"
-            style={[
-              styles.spiralHintLayer,
+        {useEquatorLayout ? (
+          <View pointerEvents="box-none" style={styles.equatorRoot}>
+            <View
+              pointerEvents="box-none"
+              style={[styles.equatorPin, { height: screenEquatorY * 2 }]}
+            >
+              <SoftCard style={styles.equatorCard}>{children}</SoftCard>
+            </View>
+            {belowEquator ? (
+              <View
+                pointerEvents="box-none"
+                style={[
+                  styles.belowEquator,
+                  { top: belowEquatorTop, paddingBottom: scrollBottomPad },
+                ]}
+              >
+                {belowEquator}
+              </View>
+            ) : null}
+          </View>
+        ) : (
+          <ScrollView
+            style={styles.scroll}
+            contentContainerStyle={[
+              styles.scrollContent,
               {
-                top:
-                  spiralTop +
-                  spiralLayout.size +
-                  scaleByWidth(spiralLayout.hintOverlap, windowWidth),
-                height: spiralHintLineHeight,
+                paddingTop: contentZoneTop,
+                paddingBottom: scrollBottomPad,
               },
             ]}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            alwaysBounceVertical={false}
           >
-            {spiralHint}
-          </View>
-        ) : null}
-
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={[
-            styles.scrollContent,
-            {
-              paddingTop: textPaddingTop,
-              paddingBottom: scrollBottomPad,
-            },
-            !centerContent && { minHeight: windowHeight - insets.top - footerHeight },
-            centerContent && styles.scrollContentCentered,
-            centerContent && { minHeight: windowHeight - insets.top },
-          ]}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          alwaysBounceVertical={false}
-        >
-          <SoftCard
-            style={[
-              spiralHint ? styles.cardBelowHint : styles.cardTightTop,
-              centerContent && styles.cardCentered,
-            ]}
-          >
-            {children}
-          </SoftCard>
-        </ScrollView>
+            <SoftCard style={spiralHint ? styles.cardBelowHint : styles.cardTightTop}>
+              {children}
+            </SoftCard>
+            {belowEquator ? (
+              <View pointerEvents="box-none" style={styles.scrollBelowEquator}>
+                {belowEquator}
+              </View>
+            ) : null}
+          </ScrollView>
+        )}
 
         {pinnedFooter ? (
           <View pointerEvents="box-none" style={[styles.footer, { paddingBottom: footerBottomInset }]}>
@@ -129,16 +168,23 @@ export function AnchoredSpiralScreen({
 
         {__DEV__ ? (
           <View style={[styles.devToggleWrap, { top: insets.top + scaleByWidth(8, windowWidth) }]}>
-            <Pressable
+            <CalmPressable
               onPress={() => setHighContrastPreviewEnabled(!highContrastPreviewEnabled)}
               style={[styles.devToggle, highContrastPreviewEnabled && styles.devToggleActive]}
               hitSlop={8}
               accessibilityRole="button"
             >
-              <CalmText style={styles.devToggleText}>
-                {highContrastPreviewEnabled ? "HC ON" : "HC"}
-              </CalmText>
-            </Pressable>
+              {(state) => (
+                <CalmText
+                  style={[
+                    styles.devToggleText,
+                    { opacity: resolvePressableTextOpacity(0.95, 1, state) },
+                  ]}
+                >
+                  {highContrastPreviewEnabled ? "HC ON" : "HC"}
+                </CalmText>
+              )}
+            </CalmPressable>
           </View>
         ) : null}
       </View>
@@ -156,24 +202,31 @@ const styles = StyleSheet.create({
     zIndex: 10,
     elevation: 12,
   },
-  spiralHintLayer: {
+  equatorRoot: {
+    flex: 1,
+  },
+  equatorPin: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+  },
+  equatorCard: {
+    paddingTop: 0,
+    paddingBottom: 0,
+  },
+  belowEquator: {
     position: "absolute",
     left: 0,
     right: 0,
     alignItems: "center",
-    justifyContent: "flex-start",
-    zIndex: 9,
-    elevation: 8,
     paddingHorizontal: spacing.md,
   },
   scroll: { flex: 1 },
   scrollContent: {
     flexGrow: 1,
+    justifyContent: "flex-start",
     paddingBottom: spacing.xl,
     alignItems: "center",
-  },
-  scrollContentCentered: {
-    justifyContent: "center",
   },
   cardTightTop: {
     paddingTop: spacing.xs,
@@ -181,10 +234,11 @@ const styles = StyleSheet.create({
   cardBelowHint: {
     paddingTop: 0,
   },
-  cardCentered: {
-    flexGrow: 1,
-    justifyContent: "center",
+  scrollBelowEquator: {
     alignItems: "center",
+    width: "100%",
+    alignSelf: "stretch",
+    paddingHorizontal: spacing.md,
   },
   footer: {
     position: "absolute",

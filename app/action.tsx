@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import {
   Animated,
   Easing,
-  Pressable,
   StyleSheet,
   TouchableWithoutFeedback,
   View,
@@ -12,7 +11,6 @@ import {
 import { CalmText } from "../src/design/components/CalmText";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
-import { SpiralUnderHint } from "../src/design/components/SpiralUnderHint";
 import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
 import {
   activeLocale,
@@ -34,6 +32,7 @@ import { colors, spacing } from "../src/design/tokens";
 import {
   breathingRhythm,
   getFindThreeSpiralHintDelayMs,
+  getMainCopyDelayMs,
   getFlowSpiralHintDelayAfterRevealMs,
   getFlowSpiralHintDelayMs,
   getFindThreeIntroDelayMs,
@@ -41,6 +40,7 @@ import {
 } from "../src/design/animation-rhythm";
 import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
 import { legibleOpacity } from "../src/design/accessibility";
+import { CalmPressable } from "../src/design/components/CalmPressable";
 import { useHighContrast } from "../src/hooks/use-high-contrast";
 import { scaleByWidth } from "../src/design/responsive";
 import { startTriangleBreathHapticLoop } from "../src/services/haptic-regulation";
@@ -51,6 +51,18 @@ export default function ActionScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const highContrast = useHighContrast();
+  const hasFocusedOnceRef = useRef(false);
+  const [copyRevealKey, setCopyRevealKey] = useState(0);
+  const mainLineDelayMs = getMainCopyDelayMs();
+  useFocusEffect(
+    useCallback(() => {
+      if (hasFocusedOnceRef.current) {
+        setCopyRevealKey((key) => key + 1);
+      } else {
+        hasFocusedOnceRef.current = true;
+      }
+    }, []),
+  );
   const phaseLabelOpacity = legibleOpacity(
     breathingRhythm.explanationText.textOpacity,
     highContrast,
@@ -76,11 +88,12 @@ export default function ActionScreen() {
   const [findThreeRevealedCount, setFindThreeRevealedCount] = useState(0);
   const [findThreeSequenceStarted, setFindThreeSequenceStarted] = useState(false);
   const findThreeIntroTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const findThreeSessionRef = useRef(0);
   const findThreeAllRevealed =
     presentation === "find_three" && findThreeRevealedCount >= findThreeQueue.length;
   const hintAfterRevealMs = getFlowSpiralHintDelayAfterRevealMs();
-  const simpleHintDelayMs = getFlowSpiralHintDelayMs(breathingRhythm.explanationText.primaryDelayMs);
-  const findThreeHintDelayMs = getFindThreeSpiralHintDelayMs(findThreeQueue.length);
+  const simpleHintDelayMs = getFlowSpiralHintDelayMs(mainLineDelayMs);
+  const findThreeHintDelayMs = getFindThreeSpiralHintDelayMs(findThreeQueue.length, mainLineDelayMs);
   const nonTriangleHint = useSpiralHintPresentation(
     presentation === "find_three" ? findThreeHintDelayMs : simpleHintDelayMs,
   );
@@ -129,19 +142,27 @@ export default function ActionScreen() {
   useEffect(() => {
     if (presentation !== "find_three") return;
 
+    const session = findThreeSessionRef.current + 1;
+    findThreeSessionRef.current = session;
+    const variantIndex = assignNextFindThreeVariant();
+    setFindThreeVariantIndex(variantIndex);
     setFindThreeRevealedCount(0);
     setFindThreeSequenceStarted(false);
     cancelFindThreeIntroTimer();
 
-    const introMs = getFindThreeIntroDelayMs();
+    const bulletsStartMs = getFindThreeIntroDelayMs(mainLineDelayMs);
     findThreeIntroTimerRef.current = setTimeout(() => {
+      if (findThreeSessionRef.current !== session) return;
       findThreeIntroTimerRef.current = null;
       setFindThreeSequenceStarted(true);
       setFindThreeRevealedCount(1);
-    }, introMs);
+    }, bulletsStartMs);
 
-    return cancelFindThreeIntroTimer;
-  }, [presentation, findThreeVariantIndex, cancelFindThreeIntroTimer]);
+    return () => {
+      findThreeSessionRef.current += 1;
+      cancelFindThreeIntroTimer();
+    };
+  }, [presentation, mainLineDelayMs, cancelFindThreeIntroTimer, setFindThreeVariantIndex]);
 
   useEffect(() => {
     if (presentation !== "find_three" || !findThreeSequenceStarted) return;
@@ -152,12 +173,7 @@ export default function ActionScreen() {
     }, intervalMs);
 
     return () => clearInterval(intervalId);
-  }, [presentation, findThreeSequenceStarted, findThreeQueue.length, findThreeVariantIndex]);
-
-  useEffect(() => {
-    if (presentation !== "find_three") return;
-    setFindThreeVariantIndex(assignNextFindThreeVariant());
-  }, [presentation, setFindThreeVariantIndex]);
+  }, [presentation, findThreeSequenceStarted, findThreeQueue.length]);
 
   useEffect(() => {
     if (presentation !== "triangle_breath") {
@@ -170,7 +186,7 @@ export default function ActionScreen() {
     const { inhaleMs, holdMs, exhaleMs, labelFadeMs } = breathingRhythm.triangleBreath;
     const fade = labelFadeMs;
     const phaseVisible = (phaseMs: number) => Math.max(0, phaseMs - fade * 2);
-    const introDelayMs = getTriangleBreathIntroDelayMs();
+    const introDelayMs = getTriangleBreathIntroDelayMs(mainLineDelayMs);
 
     const oneCycle = Animated.sequence([
         Animated.timing(inhaleOpacity, {
@@ -243,7 +259,7 @@ export default function ActionScreen() {
     if (presentation !== "triangle_breath") return;
 
     let stopHaptics: (() => void) | null = null;
-    const introDelayMs = getTriangleBreathIntroDelayMs();
+    const introDelayMs = getTriangleBreathIntroDelayMs(mainLineDelayMs);
     const startId = setTimeout(() => {
       stopHaptics = startTriangleBreathHapticLoop();
     }, introDelayMs);
@@ -254,124 +270,122 @@ export default function ActionScreen() {
     };
   }, [presentation]);
 
-  const underSpiralHint =
-    presentation === "triangle_breath" ? (
-      <SpiralUnderHint
-        presentation={triangleHint}
-        delayMs={hintAfterRevealMs}
-        visible={showTriangleSpiralHint}
-      />
-    ) : (
-      <SpiralUnderHint
-        presentation={nonTriangleHint}
-        delayMs={presentation === "find_three" ? hintAfterRevealMs : simpleHintDelayMs}
-        visible={presentation === "find_three" ? findThreeAllRevealed : true}
-      />
-    );
+  const underSpiralHint = useMemo(() => {
+    if (presentation === "triangle_breath") {
+      return {
+        presentation: triangleHint,
+        delayMs: hintAfterRevealMs,
+        visible: showTriangleSpiralHint,
+      };
+    }
+    return {
+      presentation: nonTriangleHint,
+      delayMs: presentation === "find_three" ? hintAfterRevealMs : simpleHintDelayMs,
+      visible: presentation === "find_three" ? findThreeAllRevealed : true,
+    };
+  }, [
+    findThreeAllRevealed,
+    hintAfterRevealMs,
+    nonTriangleHint,
+    presentation,
+    showTriangleSpiralHint,
+    simpleHintDelayMs,
+    triangleHint,
+  ]);
+
+  const mainLine =
+    presentation === "find_three" ? (
+      <>
+        <ExplanationText key={`main-${copyRevealKey}`} holdAfterReveal variant="main">
+          {getFindThreeIntro(locale)}
+        </ExplanationText>
+        <CalmPressable
+          onPress={revealNextFindThreeBullet}
+          accessibilityRole="button"
+          accessibilityLabel={getFindThreeIntro(locale)}
+          style={styles.findThreeBulletPress}
+        >
+          {findThreeSequenceStarted
+            ? findThreeQueue.map((item, index) =>
+                index < findThreeRevealedCount ? (
+                  <ExplanationText
+                    key={`${copyRevealKey}-${findThreeVariantIndex ?? 0}-${index}`}
+                    variant="explanation"
+                    holdAfterReveal
+                    delayMs={0}
+                    style={[
+                      index === 0 ? styles.findThreeFirstLine : styles.findThreeLine,
+                      { marginTop: scaleByWidth(index === 0 ? 12 : 4, width) },
+                    ]}
+                  >
+                    {`• ${item}`}
+                  </ExplanationText>
+                ) : null,
+              )
+            : null}
+        </CalmPressable>
+      </>
+    ) : presentation === "triangle_breath" ? (
+      <>
+        <ExplanationText key={`main-${copyRevealKey}`} holdAfterReveal variant="main">
+          {triangleBreathCopy.intro}
+        </ExplanationText>
+        <View style={styles.trianglePhasesWrap}>
+          <View style={[styles.phaseWordLayer, { marginTop: scaleByWidth(spacing.md, width) }]}>
+            <Animated.View style={[styles.phaseWord, { opacity: inhaleOpacity }]}>
+              <CalmText style={[styles.phaseLabel, { opacity: phaseLabelOpacity }, highContrast && styles.phaseLabelHighContrast]}>
+                {phaseLabels.breatheIn}
+              </CalmText>
+            </Animated.View>
+            <Animated.View style={[styles.phaseWord, { opacity: holdOpacity }]}>
+              <CalmText style={[styles.phaseLabel, { opacity: phaseLabelOpacity }, highContrast && styles.phaseLabelHighContrast]}>
+                {phaseLabels.hold}
+              </CalmText>
+            </Animated.View>
+            <Animated.View style={[styles.phaseWord, { opacity: exhaleOpacity }]}>
+              <CalmText style={[styles.phaseLabel, { opacity: phaseLabelOpacity }, highContrast && styles.phaseLabelHighContrast]}>
+                {phaseLabels.breatheOut}
+              </CalmText>
+            </Animated.View>
+          </View>
+        </View>
+      </>
+    ) : isSimpleInstruction(selected) ? (
+      <ExplanationText key={`main-${copyRevealKey}`} holdAfterReveal variant="main">
+        {interventionGuidance[selected].actionText}
+      </ExplanationText>
+    ) : null;
+
+  const belowEquator =
+    __DEV__ && showDebugActionSelector ? (
+      <View style={styles.debugRow}>
+        {ALL_INTERVENTIONS.map((type) => (
+          <TouchableWithoutFeedback key={type} onPress={() => setSelected(type)}>
+            <View style={styles.debugItem}>
+              <CalmText style={styles.debugText}>{getIntervention(type).debugLabel}</CalmText>
+            </View>
+          </TouchableWithoutFeedback>
+        ))}
+      </View>
+    ) : null;
 
   return (
-    <AnchoredSpiralScreen spiralHint={underSpiralHint}>
-      <View style={styles.content}>
-        {presentation === "find_three" ? (
-          <View style={styles.findThreeWrap}>
-            <ExplanationText
-              delayMs={breathingRhythm.explanationText.primaryDelayMs}
-              variant="main"
-              style={styles.findThreeIntro}
-            >
-              {getFindThreeIntro(locale)}
-            </ExplanationText>
-            <Pressable
-              onPress={revealNextFindThreeBullet}
-              accessibilityRole="button"
-              accessibilityLabel={getFindThreeIntro(locale)}
-              style={styles.findThreeBulletPress}
-            >
-              {findThreeSequenceStarted
-                ? findThreeQueue.map((item, index) =>
-                    index < findThreeRevealedCount ? (
-                      <ExplanationText
-                        key={`${findThreeVariantIndex ?? 0}-${index}`}
-                        delayMs={0}
-                        style={[
-                          index === 0 ? styles.findThreeFirstLine : styles.findThreeLine,
-                          { marginTop: scaleByWidth(index === 0 ? 12 : 4, width) },
-                        ]}
-                      >
-                        {`• ${item}`}
-                      </ExplanationText>
-                    ) : null,
-                  )
-                : null}
-            </Pressable>
-          </View>
-        ) : null}
-        {presentation === "triangle_breath" ? (
-          <View style={styles.sequenceWrap}>
-            <ExplanationText
-              delayMs={breathingRhythm.explanationText.primaryDelayMs}
-              style={styles.triangleIntro}
-            >
-              {triangleBreathCopy.intro}
-            </ExplanationText>
-            <View style={[styles.phaseWordLayer, { marginTop: scaleByWidth(12, width) }]}>
-              <Animated.View style={[styles.phaseWord, { opacity: inhaleOpacity }]}>
-                <CalmText style={[styles.phaseLabel, { opacity: phaseLabelOpacity }, highContrast && styles.phaseLabelHighContrast]}>
-                  {phaseLabels.breatheIn}
-                </CalmText>
-              </Animated.View>
-              <Animated.View style={[styles.phaseWord, { opacity: holdOpacity }]}>
-                <CalmText style={[styles.phaseLabel, { opacity: phaseLabelOpacity }, highContrast && styles.phaseLabelHighContrast]}>
-                  {phaseLabels.hold}
-                </CalmText>
-              </Animated.View>
-              <Animated.View style={[styles.phaseWord, { opacity: exhaleOpacity }]}>
-                <CalmText style={[styles.phaseLabel, { opacity: phaseLabelOpacity }, highContrast && styles.phaseLabelHighContrast]}>
-                  {phaseLabels.breatheOut}
-                </CalmText>
-              </Animated.View>
-            </View>
-          </View>
-        ) : null}
-        {isSimpleInstruction(selected) ? (
-          <ExplanationText delayMs={breathingRhythm.explanationText.primaryDelayMs} style={styles.actionInstruction}>
-            {interventionGuidance[selected].actionText}
-          </ExplanationText>
-        ) : null}
-        {__DEV__ && showDebugActionSelector ? (
-          <View style={styles.debugRow}>
-            {ALL_INTERVENTIONS.map((type) => (
-              <TouchableWithoutFeedback key={type} onPress={() => setSelected(type)}>
-                <View style={styles.debugItem}>
-                  <CalmText style={styles.debugText}>{getIntervention(type).debugLabel}</CalmText>
-                </View>
-              </TouchableWithoutFeedback>
-            ))}
-          </View>
-        ) : null}
-      </View>
+    <AnchoredSpiralScreen spiralHint={underSpiralHint} belowEquator={belowEquator}>
+      {mainLine}
     </AnchoredSpiralScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  content: { alignItems: "center", width: "100%" },
-  actionInstruction: {
-    marginTop: spacing.md,
-    minHeight: 40,
-  },
-  findThreeWrap: {
-    alignItems: "center",
+  trianglePhasesWrap: {
     width: "100%",
-    minHeight: 128,
-  },
-  findThreeIntro: {
-    marginTop: spacing.md,
-    minHeight: 40,
+    alignItems: "center",
   },
   findThreeBulletPress: {
     width: "100%",
     alignItems: "center",
+    borderRadius: 12,
+    paddingVertical: spacing.xs,
   },
   findThreeLine: {
     minHeight: 30,
@@ -379,11 +393,6 @@ const styles = StyleSheet.create({
   findThreeFirstLine: {
     minHeight: 30,
   },
-  triangleIntro: {
-    marginTop: spacing.md,
-    minHeight: 44,
-  },
-  sequenceWrap: { alignItems: "center", width: "100%", minHeight: 160 },
   phaseLabel: {
     color: colors.textSecondary,
     textAlign: "center",
@@ -396,7 +405,6 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   phaseWordLayer: {
-    marginTop: spacing.sm,
     minHeight: 60,
     width: "100%",
     alignItems: "center",

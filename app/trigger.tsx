@@ -1,26 +1,32 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
-import { StyleSheet, View } from "react-native";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
-import { SpiralUnderHint } from "../src/design/components/SpiralUnderHint";
 import { uiCopy } from "../src/modules/delivery-layer";
 import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
 import { decideIntervention, registerPulsationDismissed } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
 import { playTriggerHaptic } from "../src/services/haptic-regulation";
-import { breathingRhythm, getFlowSpiralHintDelayMs } from "../src/design/animation-rhythm";
+import { getFlowSpiralHintDelayMs, getMainCopyDelayMs } from "../src/design/animation-rhythm";
 import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
 
 export default function TriggerScreen() {
   const router = useRouter();
   const setSelected = useAppStore((s) => s.setSelectedIntervention);
   const wentToActionRef = useRef(false);
+  const hasFocusedOnceRef = useRef(false);
+  const [promptRevealKey, setPromptRevealKey] = useState(0);
+  const triggerPromptDelayMs = getMainCopyDelayMs();
 
   useFocusEffect(
     useCallback(() => {
       wentToActionRef.current = false;
       setSelected(decideIntervention());
+      if (hasFocusedOnceRef.current) {
+        setPromptRevealKey((key) => key + 1);
+      } else {
+        hasFocusedOnceRef.current = true;
+      }
 
       return () => {
         if (!wentToActionRef.current) {
@@ -35,7 +41,7 @@ export default function TriggerScreen() {
     router.push("/action");
   }, [router]);
   useRegisterSpiralPress(onSpiralPress);
-  const hintDelayMs = getFlowSpiralHintDelayMs(breathingRhythm.explanationText.primaryDelayMs);
+  const hintDelayMs = getFlowSpiralHintDelayMs(triggerPromptDelayMs);
   const spiralHint = useSpiralHintPresentation(hintDelayMs);
 
   useFocusEffect(
@@ -47,17 +53,15 @@ export default function TriggerScreen() {
   return (
     <AnchoredSpiralScreen
       showPathsLink
-      spiralHint={<SpiralUnderHint presentation={spiralHint} delayMs={hintDelayMs} />}
+      pathsLinkRevealDelayMs={triggerPromptDelayMs}
+      pathsLinkRevealKey={promptRevealKey}
+      centerContent
+      spiralHint={{ presentation: spiralHint, delayMs: hintDelayMs }}
     >
-      <View style={styles.content}>
-        <ExplanationText variant="main" delayMs={breathingRhythm.explanationText.primaryDelayMs}>
-          {uiCopy.triggerPrompt}
-        </ExplanationText>
-      </View>
+      <ExplanationText key={promptRevealKey} variant="main" holdAfterReveal>
+        {uiCopy.triggerPrompt}
+      </ExplanationText>
     </AnchoredSpiralScreen>
   );
 }
 
-const styles = StyleSheet.create({
-  content: { alignItems: "center", width: "100%" },
-});

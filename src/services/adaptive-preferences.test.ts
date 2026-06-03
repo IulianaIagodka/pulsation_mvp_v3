@@ -2,6 +2,7 @@ import { getOutcomesProfile, saveOutcomesProfile } from "../data/repositories/ou
 import {
   hasKeptIntervention,
   markInterventionKept,
+  removeKeptIntervention,
   registerExplanationEngagement,
   scoreDwellTimeMs,
 } from "./adaptive-preferences";
@@ -41,6 +42,27 @@ describe("adaptive-preferences", () => {
     expect(hasKeptIntervention("relax_jaw")).toBe(true);
     markInterventionKept("relax_jaw");
     expect(profile.keptInterventions).toEqual(["relax_jaw"]);
+  });
+
+  it("removes kept interventions from the saved list", () => {
+    let profile = {
+      preferredByHour: {},
+      completionRates: {},
+      preferenceScores: {},
+      keptInterventions: ["relax_jaw", "feet_on_ground"] as string[],
+      recentInterventions: [],
+    };
+    (getOutcomesProfile as jest.Mock).mockImplementation(() => profile);
+    (saveOutcomesProfile as jest.Mock).mockImplementation((next) => {
+      profile = next;
+    });
+
+    removeKeptIntervention("relax_jaw");
+    expect(hasKeptIntervention("relax_jaw")).toBe(false);
+    expect(hasKeptIntervention("feet_on_ground")).toBe(true);
+    expect(profile.keptInterventions).toEqual(["feet_on_ground"]);
+    removeKeptIntervention("relax_jaw");
+    expect(profile.keptInterventions).toEqual(["feet_on_ground"]);
   });
 
   it("scores dwell time tiers", () => {

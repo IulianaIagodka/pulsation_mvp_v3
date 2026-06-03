@@ -37,49 +37,49 @@ const guidanceByLocale: Record<Locale, Record<InterventionType, Guidance>> = {
   en: {
     feet_on_ground: {
       actionText:
-        "Place your feet on the floor. Notice the pressure under them. Take one slow breath",
+        "Place your feet on the ground, notice the pressure under them, take one slow breath",
     },
     find_three_things: {
-      actionText: "Find 3 things close to you",
+      actionText: "Find 3 things",
     },
     triangle_breath: {
-      actionText: "Follow a calm triangle rhythm: inhale 4, hold 2, exhale 5 (x3, ~33s total)",
+      actionText: "Follow a calm triangle rhythm — inhale 4, hold 2, exhale 5 (×3, ~33s total)",
     },
     relax_jaw: {
-      actionText: "Relax your jaw. Let it soften. Take one slow breath",
+      actionText: "Relax your jaw, let it soften, take one slow breath",
     },
     drop_shoulders: {
-      actionText: "Drop your shoulders. Notice the release",
+      actionText: "Drop your shoulders, notice the release",
     },
     notice_three_sounds: {
       actionText: "Notice 3 sounds around you — near, far, subtle",
     },
     press_palms_together: {
-      actionText: "Press your palms together gently. Feel the warmth and pressure",
+      actionText: "Press your palms together gently, feel the warmth and pressure",
     },
   },
   uk: {
     feet_on_ground: {
       actionText:
-        "Постав стопи на підлогу. Відчуй тиск під ними. Дихай",
+        "Постав стопи на опору, відчуй тиск під ними, дихай",
     },
     find_three_things: {
-      actionText: "Знайди 3 речі поруч",
+      actionText: "Знайди 3 речі",
     },
     triangle_breath: {
-      actionText: "Дихай спокійним трикутником: вдих 4, затримка 2, видих 5 (x3, ~33 с)",
+      actionText: "Дихай спокійним трикутником — вдих 4, затримка 2, видих 5 (×3, ~33 с)",
     },
     relax_jaw: {
-      actionText: "Розслаб щелепу. Відпусти напругу. Дихай",
+      actionText: "Розслаб щелепу, відпусти напругу, дихай",
     },
     drop_shoulders: {
-      actionText: "Опусти плечі. Відчуй їх вагу. Дихай",
+      actionText: "Опусти плечі, відчуй їх вагу, дихай",
     },
     notice_three_sounds: {
       actionText: "Поміть 3 звуки навколо — близькі, далекі, ледь чутні",
     },
     press_palms_together: {
-      actionText: "М'яко склади долоні разом. Відчуй тепло та тиск. Дихай",
+      actionText: "М'яко склади долоні разом, відчуй тепло та тиск, дихай",
     },
   },
 };
@@ -89,7 +89,7 @@ const explanationPoolByLocale: Record<Locale, Record<InterventionType, readonly 
     feet_on_ground: [
       "Feeling the ground under your feet helps you feel grounded.",
       "Noticing pressure under your feet helps your attention return.",
-      "Feeling your feet on the floor helps your mind settle.",
+      "Feeling your feet on the ground helps your mind settle.",
     ] as const,
     find_three_things: [
       "Noticing nearby objects helps calm your attention.",
@@ -126,7 +126,7 @@ const explanationPoolByLocale: Record<Locale, Record<InterventionType, readonly 
     feet_on_ground: [
       "Відчуття опори під ногами допомагає відчути стійкість.",
       "Коли помічаєш тиск під стопами, увага повертається.",
-      "Відчуття стоп на підлозі допомагає заспокоїти думки.",
+      "Відчуття стоп на опорі допомагає заспокоїти думки.",
     ] as const,
     find_three_things: [
       "Коли помічаєш речі поруч, увага заспокоюється.",
@@ -174,7 +174,7 @@ const triangleBreathCopyByLocale: Record<
   { intro: string; phases: TriangleBreathPhaseLabels }
 > = {
   en: {
-    intro: "Take 3 deep breaths. Follow the triangle.",
+    intro: "Take 3 deep breaths, follow the triangle",
     phases: {
       breatheIn: "Breathe in",
       hold: "hold",
@@ -182,7 +182,7 @@ const triangleBreathCopyByLocale: Record<
     },
   },
   uk: {
-    intro: "Зроби 3 цикли дихання. Слідуй за трикутником.",
+    intro: "Зроби 3 цикли дихання, слідуй за трикутником",
     phases: {
       breatheIn: "Вдихни",
       hold: "затримка",
@@ -206,7 +206,7 @@ const uiCopyByLocale: Record<
     actionSkip: string;
     explanationContinue: string;
     keepForMe: string;
-    keepForMeHint: string;
+    keepForMeSaved: string;
     returnBody: string;
     returnAction: string;
     spiralHint: string;
@@ -219,11 +219,11 @@ const uiCopyByLocale: Record<
     aboutVersionPrefix: string;
     pathsLink: string;
     pathsTitle: string;
-    pathsTodayLabel: string;
     pathsTodayNone: string;
-    pathsTodayCount: (count: number) => string;
-    pathsKeptLabel: string;
-    pathsKeptEmpty: string;
+    pathsTodayCountLabel: (count: number) => string;
+    pathsSavedLabel: string;
+    pathsSavedEmpty: string;
+    pathsRemoveSavedA11y: (label: string) => string;
   }
 > = {
   en: {
@@ -236,15 +236,15 @@ const uiCopyByLocale: Record<
       "A quiet return — «you are here»",
     ] as const,
     onboardingSpiralHint: "Tap the spiral — it's the button here",
-    triggerPrompt: "One action for you now?",
-    triggerPauseMessage: "Not now. You can continue gently",
+    triggerPrompt: "One action for you",
+    triggerPauseMessage: "Not now, you can continue gently",
     triggerAccept: "I can take this moment",
     triggerDecline: "I will stay for now",
     actionDone: "This feels complete",
     actionSkip: "Not this time",
     explanationContinue: "I will carry this with me",
     keepForMe: "Save this for me",
-    keepForMeHint: "Saves your preference",
+    keepForMeSaved: "Saved",
     returnBody: "You are here",
     returnAction: "Return to stillness",
     spiralHint: "tap the spiral",
@@ -258,16 +258,16 @@ const uiCopyByLocale: Record<
       "Pulsation does not read or analyze your other apps.",
       "This is a wellbeing app, not a medical device or substitute for professional care.",
     ] as const,
-    aboutBack: "Back",
+    aboutBack: "Return",
     aboutVersionPrefix: "Version",
     pathsLink: "Show my paths",
     pathsTitle: "Your paths",
-    pathsTodayLabel: "Today",
-    pathsTodayNone: "No gentle actions yet today",
-    pathsTodayCount: (count) =>
-      count === 1 ? "1 gentle action today" : `${count} gentle actions today`,
-    pathsKeptLabel: "Kept for you",
-    pathsKeptEmpty: "Nothing kept yet. After a return, tap «Save this for me».",
+    pathsTodayNone: "No actions for yourself yet today",
+    pathsTodayCountLabel: (count) =>
+      count === 1 ? "action for yourself today" : "actions for yourself today",
+    pathsSavedLabel: "Saved for you",
+    pathsSavedEmpty: "Nothing saved yet. After a return, tap «Save this for me» — it becomes Saved.",
+    pathsRemoveSavedA11y: (label) => `Remove ${label}`,
   },
   uk: {
     onboardingLine: "Pulsation допомагає повернутися до себе",
@@ -279,7 +279,7 @@ const uiCopyByLocale: Record<
       "Коротке повернення — «ти тут»",
     ] as const,
     onboardingSpiralHint: "Торкнися спіралі — це кнопка тут",
-    triggerPrompt: "Одна дія для тебе зараз?",
+    triggerPrompt: "Одна дія для тебе",
     triggerPauseMessage: "Зараз не час. Можна просто побути",
     triggerAccept: "Можу побути в цьому моменті",
     triggerDecline: "Зараз просто побуду",
@@ -287,7 +287,7 @@ const uiCopyByLocale: Record<
     actionSkip: "Не цього разу",
     explanationContinue: "Візьму це з собою",
     keepForMe: "Збережи це для мене",
-    keepForMeHint: "Збереже твоє вподобання",
+    keepForMeSaved: "збережено",
     returnBody: "Ти тут",
     returnAction: "Повернутися до тиші",
     spiralHint: "торкнись спіралі",
@@ -301,21 +301,21 @@ const uiCopyByLocale: Record<
       "Застосунок не читає й не аналізує інші додатки на телефоні.",
       "Це застосунок для добробуту, не медичний виріб і не заміна професійної допомоги.",
     ] as const,
-    aboutBack: "Назад",
+    aboutBack: "Повернутися",
     aboutVersionPrefix: "Версія",
     pathsLink: "Мої шляхи",
     pathsTitle: "Твої шляхи",
-    pathsTodayLabel: "Сьогодні",
-    pathsTodayNone: "Сьогодні ще не було м'яких дій",
-    pathsTodayCount: (count) => {
+    pathsTodayNone: "Сьогодні ще не було дій для себе",
+    pathsTodayCountLabel: (count) => {
       const n = count % 10;
       const n100 = count % 100;
-      if (n === 1 && n100 !== 11) return "1 м'яка дія сьогодні";
-      if (n >= 2 && n <= 4 && (n100 < 10 || n100 >= 20)) return `${count} м'які дії сьогодні`;
-      return `${count} м'яких дій сьогодні`;
+      if (n === 1 && n100 !== 11) return "дія для себе сьогодні";
+      if (n >= 2 && n <= 4 && (n100 < 10 || n100 >= 20)) return "дії для себе сьогодні";
+      return "дій для себе сьогодні";
     },
-    pathsKeptLabel: "Залишені для тебе",
-    pathsKeptEmpty: "Поки нічого. Після повернення натисни «Збережи це для мене».",
+    pathsSavedLabel: "Збережені для тебе",
+    pathsSavedEmpty: "Поки нічого збережено. Після повернення натисни «Збережи це для мене» — стане Збережено.",
+    pathsRemoveSavedA11y: (label) => `Прибрати ${label}`,
   },
 };
 

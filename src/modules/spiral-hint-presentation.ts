@@ -4,62 +4,24 @@ export type SpiralHintPresentation = {
   textOpacity: number;
 };
 
-/** Show “tap the spiral” on every flow screen for the first N completed cycles. */
+/** Show “tap the spiral” on flow screens only for the first N completed cycles. */
 export const SPIRAL_HINT_FULL_CYCLES = 3;
 
-type HintTier = "full" | "soft" | "subtle" | "hidden";
-
-function getHintTier(spiralTapCount: number): HintTier {
-  if (spiralTapCount <= 2) return "full";
-  if (spiralTapCount <= 6) return "soft";
-  if (spiralTapCount <= 14) return "subtle";
-  return "hidden";
-}
-
-function shouldShowSubtleHint(spiralTapCount: number, screenSalt: number): boolean {
-  return (spiralTapCount + screenSalt) % 4 === 0;
-}
+const fullHintOpacity = 0.58;
 
 export function getSpiralHintPresentation(
-  spiralTapCount: number,
+  _spiralTapCount: number,
   baseDelayMs: number,
-  screenSalt: number,
+  _screenSalt: number,
   completedCycles = 0,
 ): SpiralHintPresentation {
-  if (completedCycles < SPIRAL_HINT_FULL_CYCLES) {
-    return {
-      shouldShow: true,
-      delayMs: baseDelayMs,
-      textOpacity: 0.58,
-    };
-  }
-
-  const tier = getHintTier(spiralTapCount);
-
-  if (tier === "hidden") {
+  if (completedCycles >= SPIRAL_HINT_FULL_CYCLES) {
     return { shouldShow: false, delayMs: baseDelayMs, textOpacity: 0 };
-  }
-
-  if (tier === "subtle") {
-    return {
-      shouldShow: shouldShowSubtleHint(spiralTapCount, screenSalt),
-      delayMs: baseDelayMs + 2800,
-      textOpacity: 0.34,
-    };
-  }
-
-  if (tier === "soft") {
-    const tierDelay = (spiralTapCount + screenSalt) % 2 === 0 ? 2200 : 2800;
-    return {
-      shouldShow: true,
-      delayMs: baseDelayMs + tierDelay,
-      textOpacity: 0.46,
-    };
   }
 
   return {
     shouldShow: true,
     delayMs: baseDelayMs,
-    textOpacity: 0.58,
+    textOpacity: fullHintOpacity,
   };
 }
