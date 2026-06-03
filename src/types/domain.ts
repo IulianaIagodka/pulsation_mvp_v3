@@ -22,7 +22,7 @@ export type OutcomesProfile = {
   completionRates: Partial<Record<InterventionType, number>>;
   /** Lightweight local affinity signal used for weighted random picks. */
   preferenceScores: Partial<Record<InterventionType, number>>;
-  /** Interventions the user saved via "Keep this one for me". */
+  /** Interventions the user saved via "Save this for me". */
   keptInterventions?: InterventionType[];
   recentInterventions: InterventionType[];
   /** Last “find 3 things” prompt set (0–6); avoids repeating the same combo back-to-back. */

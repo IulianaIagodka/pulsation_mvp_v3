@@ -18,34 +18,37 @@ export function PersistentSpiral({ mode, onPress }: Props) {
   const scale = useRef(new Animated.Value(1)).current;
   const opacity = useRef(new Animated.Value(breathingRhythm.spiral.opacityExhale)).current;
   const runningRef = useRef<Animated.CompositeAnimation | null>(null);
+  const modeRef = useRef(mode);
+  modeRef.current = mode;
 
   useEffect(() => {
     runningRef.current?.stop();
     runningRef.current = null;
 
-    if (mode === "calm") {
-      const {
-        inhaleMs,
-        holdMs,
-        exhaleMs,
-        postExhaleHoldMs,
-        scaleExhale,
-        scaleInhale,
-        opacityExhale,
-        opacityInhale,
-      } = breathingRhythm.spiral;
+    const {
+      inhaleMs: calmInhaleMs,
+      holdMs: calmHoldMs,
+      exhaleMs: calmExhaleMs,
+      postExhaleHoldMs,
+      scaleExhale,
+      scaleInhale,
+      opacityExhale,
+      opacityInhale,
+    } = breathingRhythm.spiral;
+
+    const startCalmLoop = () => {
       const loop = Animated.loop(
         Animated.sequence([
           Animated.parallel([
             Animated.timing(scale, {
               toValue: scaleInhale,
-              duration: inhaleMs,
+              duration: calmInhaleMs,
               easing: Easing.out(Easing.quad),
               useNativeDriver: true,
             }),
             Animated.timing(opacity, {
               toValue: opacityInhale,
-              duration: inhaleMs,
+              duration: calmInhaleMs,
               easing: Easing.out(Easing.quad),
               useNativeDriver: true,
             }),
@@ -53,13 +56,13 @@ export function PersistentSpiral({ mode, onPress }: Props) {
           Animated.parallel([
             Animated.timing(scale, {
               toValue: scaleInhale,
-              duration: holdMs,
+              duration: calmHoldMs,
               easing: Easing.linear,
               useNativeDriver: true,
             }),
             Animated.timing(opacity, {
               toValue: opacityInhale,
-              duration: holdMs,
+              duration: calmHoldMs,
               easing: Easing.linear,
               useNativeDriver: true,
             }),
@@ -67,13 +70,13 @@ export function PersistentSpiral({ mode, onPress }: Props) {
           Animated.parallel([
             Animated.timing(scale, {
               toValue: scaleExhale,
-              duration: exhaleMs,
+              duration: calmExhaleMs,
               easing: Easing.in(Easing.quad),
               useNativeDriver: true,
             }),
             Animated.timing(opacity, {
               toValue: opacityExhale,
-              duration: exhaleMs,
+              duration: calmExhaleMs,
               easing: Easing.in(Easing.quad),
               useNativeDriver: true,
             }),
@@ -96,10 +99,20 @@ export function PersistentSpiral({ mode, onPress }: Props) {
       );
       runningRef.current = loop;
       loop.start();
-    } else {
-      const { inhaleMs, holdMs, exhaleMs } = breathingRhythm.triangleBreath;
-      const { scaleExhale, scaleInhale, opacityExhale, opacityInhale } = breathingRhythm.spiral;
-      const oneCycle = Animated.sequence([
+    };
+
+    if (mode === "calm") {
+      startCalmLoop();
+      return () => {
+        runningRef.current?.stop();
+        runningRef.current = null;
+      };
+    }
+
+    const { inhaleMs, holdMs, exhaleMs, cycles } = breathingRhythm.triangleBreath;
+
+    const makeTriangleCycle = () =>
+      Animated.sequence([
         Animated.parallel([
           Animated.timing(scale, {
             toValue: scaleInhale,
@@ -130,23 +143,26 @@ export function PersistentSpiral({ mode, onPress }: Props) {
           }),
         ]),
       ]);
-      const fullBreath = Animated.sequence(
-        Array.from({ length: breathingRhythm.triangleBreath.cycles }, () => oneCycle),
-      );
-      const introDelayMs = getTriangleBreathIntroDelayMs();
-      const startId = setTimeout(() => {
-        runningRef.current = fullBreath;
-        fullBreath.start();
-      }, introDelayMs);
 
-      return () => {
-        clearTimeout(startId);
-        runningRef.current?.stop();
-        runningRef.current = null;
-      };
-    }
+    const fullBreath = Animated.sequence(
+      Array.from({ length: cycles }, () => makeTriangleCycle()),
+    );
+
+    startCalmLoop();
+
+    const introDelayMs = getTriangleBreathIntroDelayMs();
+    const startId = setTimeout(() => {
+      if (modeRef.current !== "triangle") return;
+      runningRef.current?.stop();
+      runningRef.current = fullBreath;
+      fullBreath.start(({ finished }) => {
+        if (!finished || modeRef.current !== "triangle") return;
+        startCalmLoop();
+      });
+    }, introDelayMs);
 
     return () => {
+      clearTimeout(startId);
       runningRef.current?.stop();
       runningRef.current = null;
     };

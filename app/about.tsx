@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import Constants from "expo-constants";
 import { ScrollView, StyleSheet, View } from "react-native";
+import { AboutFooterLink } from "../src/design/components/AboutFooterLink";
 import { CalmActionButton } from "../src/design/components/CalmActionButton";
 import { CalmScreen } from "../src/design/components/CalmScreen";
 import { CalmText } from "../src/design/components/CalmText";
@@ -28,6 +29,7 @@ export default function AboutScreen() {
           {uiCopy.aboutVersionPrefix} {version}
         </CalmText>
         <View style={styles.footer}>
+          <AboutFooterLink label={uiCopy.pathsLink} onPress={() => router.push("/paths")} />
           <CalmActionButton label={uiCopy.aboutBack} onPress={() => router.back()} />
         </View>
       </ScrollView>
@@ -65,6 +67,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     marginTop: spacing.xl,
-    alignItems: "flex-start",
+    alignItems: "center",
+    width: "100%",
   },
 });

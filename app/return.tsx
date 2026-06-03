@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { Animated, Easing, Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
+import { SpiralUnderHint } from "../src/design/components/SpiralUnderHint";
 import { pickReturnExplanation, uiCopy } from "../src/modules/delivery-layer";
 import { DEFAULT_INTERVENTION } from "../src/interventions/registry";
 import { useAppStore } from "../src/state/app-store";
@@ -109,7 +110,7 @@ export default function ReturnScreen() {
   );
 
   return (
-    <AnchoredSpiralScreen>
+    <AnchoredSpiralScreen spiralHint={<SpiralUnderHint presentation={spiralHint} />}>
       <View style={styles.content}>
         <ExplanationText variant="main" delayMs={breathingRhythm.returnScreen.primaryDelayMs}>
           {uiCopy.returnBody}
@@ -126,21 +127,13 @@ export default function ReturnScreen() {
             </ExplanationText>
           </>
         ) : null}
-        {spiralHint.shouldShow ? (
-          <ExplanationText
-            delayMs={spiralHint.delayMs}
-            style={[styles.hintWrap, { marginTop: scaleByWidth(12, width) }]}
-            textOpacity={spiralHint.textOpacity}
-          >
-            {uiCopy.spiralHint}
-          </ExplanationText>
-        ) : null}
         {showKeepForMe && returnExplanation ? (
           <Animated.View style={{ width: "100%", opacity: keepForMeOpacity }}>
             {showKeepForMeHint ? (
               <ExplanationText
+                variant="hint"
                 delayMs={0}
-                style={[styles.keepHintWrap, { marginTop: scaleByWidth(12, width) }]}
+                style={[styles.keepHintWrap, { marginTop: scaleByWidth(8, width) }]}
                 textOpacity={breathingRhythm.explanationText.textOpacity}
               >
                 {keepForMeHintText}
@@ -158,11 +151,11 @@ export default function ReturnScreen() {
               hitSlop={8}
               style={({ pressed }) => [
                 styles.keepWrap,
-                { marginTop: scaleByWidth(10, width) },
+                { marginTop: scaleByWidth(24, width) },
                 pressed && styles.keepWrapPressed,
               ]}
             >
-              <ExplanationText delayMs={0} style={styles.keepExplanation}>
+              <ExplanationText variant="hint" delayMs={0} style={styles.keepExplanation}>
                 {uiCopy.keepForMe}
               </ExplanationText>
             </Pressable>
@@ -191,8 +184,7 @@ const styles = StyleSheet.create({
     opacity: 0.72,
   },
   keepExplanation: {
-    minHeight: 28,
+    minHeight: 22,
   },
   keepHintWrap: {},
-  hintWrap: {},
 });

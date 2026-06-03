@@ -48,10 +48,10 @@ Schema is defined in `src/data/schema.ts`. See `docs/adaptive-scheduling.md` for
 
 ## UX Flow
 
-1. **Onboarding** (`app/index.tsx`): short or extended first-install flow (`ShortOnboardingFlow` / `ExtendedOnboardingFlow`). Anchored spiral, calm main line, then “tap the spiral” (not “one action for you” on onboarding). Optional **About** footer link (About is **only** here in the main flow). Shown once per install/profile (`extendedOnboardingCompleted`).
-2. **Trigger** (`app/trigger.tsx`): same spiral slot; main prompt (“One action for you now?”); adaptive spiral hint when the hint system decides to show it.
+1. **Onboarding** (`app/index.tsx`): short or extended first-install flow (`ShortOnboardingFlow` / `ExtendedOnboardingFlow`). Scrollable copy, Dynamic Type up to Accessibility XXL. “Tap the spiral” / “торкнись спіралі” sits **under the spiral** (quiet hint style). Footer: **About** + **Show my paths** / **Мої шляхи** → `app/paths.tsx` (today’s actions, kept interventions).
+2. **Trigger** (`app/trigger.tsx`): same spiral slot; main prompt (“One action for you now?”); spiral hint under the rings when the hint system shows it.
 3. **Action** (`app/action.tsx`): one micro-intervention (feet / find 3 / triangle breath / relax jaw / drop shoulders / notice 3 sounds / press palms together). Instruction copy uses the same soft **explanation rhythm** as return. **Find 3 things** shows three cues from **7 rotating sets** (`find-three-variants.ts`); same set never repeats back-to-back. Until all three bullets are visible, **spiral tap reveals the next bullet** instead of completing the action. **Triangle breath**: soft haptic at inhale start and light haptic at exhale start (`startTriangleBreathHapticLoop`). **Spiral is the same visual everywhere** (`spiral-visual.ts` + `SpiralRings`). Action → return uses **`router.replace`**.
-4. **Return** (`app/return.tsx`): “You are here”, then a short intervention-specific explanation (3 rotating variants), then optional **Keep this one for me** (hidden for interventions already saved via `keptInterventions` in SQLite). Adaptive “tap the spiral” hint; tap spiral → trigger.
+4. **Return** (`app/return.tsx`): “You are here”, then a short intervention-specific explanation (3 rotating variants), then optional **Save this for me** / **Збережи це для мене** (hidden for interventions already saved via `keptInterventions` in SQLite). Spiral hint under the rings; tap spiral → trigger.
 
 Stack navigation uses a calm **fade** between routes (`app/_layout.tsx`, `breathingRhythm.motion.screenFadeMs`).
 
@@ -72,10 +72,12 @@ Dark minimal palette from technical requirements is implemented in `src/design/t
 | Main line typography | `src/design/main-copy.ts` (matches onboarding tone where used) |
 | Soft explanation-style fades | `ExplanationText` + `breathingRhythm.explanationText` |
 | Gentle screen text entrance | `GentleTextTransition` (opacity only) |
-| Spiral hint timing (“tap the spiral”) | Base timing is in `spiralHintTiming` (`src/design/animation-rhythm.ts`), then adapted by `src/modules/spiral-hint-presentation.ts` + `src/services/spiral-hint.ts` based on spiral-tap familiarity (delay, opacity, occasional hide, eventual silence). On **triangle breath**, reveal still waits for **3 full cycles** before adaptation is applied. |
+| Spiral hint (“tap the spiral”) | Under the spiral on all flow screens (`SpiralUnderHint`). For the **first 3 completed cycles**, always shown. After that, adapted via `spiral-hint-presentation.ts` + `spiral_tap` events. **Triangle breath**: hint only after **3 breath cycles** on the action screen. |
 | Find 3 sequential bullets | `findThreeThings.autoRevealIntervalMs` |
 | Action → return (“You are here”) | Spiral tap on action (`app/action.tsx`); find 3 requires all bullets first |
-| Keep for me | `app/return.tsx` + `src/services/adaptive-preferences.ts` (`keptInterventions`) |
+| Save for me | `app/return.tsx` + `src/services/adaptive-preferences.ts` (`keptInterventions`) |
+| Paths stats | `app/paths.tsx` + `src/services/paths-stats.ts` |
+| Dynamic Type cap | `src/design/accessibility.ts` (`MAX_FONT_SIZE_MULTIPLIER` ≈ XXL) |
 
 Triangle breath pattern (labels + spiral): **inhale 4s → hold 2s → exhale 5s → hold 2s**, ×3 cycles (~39s spiral timing). Both holds show the “hold / затримка” label.
 
@@ -136,7 +138,7 @@ Background once (even briefly), then return to the app.
 
 - **Trigger:** soft double-pulse when the prompt appears.
 - **Triangle breath:** one pulse at inhale start, one at exhale start.
-- **Keep this one for me:** subtle selection feedback on tap.
+- **Save this for me:** subtle selection feedback on tap.
 - **Return:** grounding arrival pulse when the screen appears.
 
 Works in silent mode on iPhone (Taptic Engine). Requires a dev build (`npm run ios`) — not Expo Go alone after native module changes.

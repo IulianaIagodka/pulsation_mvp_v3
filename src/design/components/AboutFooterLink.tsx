@@ -22,16 +22,16 @@ export function AboutFooterLink({ label, onPress }: Props) {
 
 const styles = StyleSheet.create({
   wrap: {
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.xs,
     paddingHorizontal: spacing.md,
     minHeight: 44,
     justifyContent: "center",
   },
   text: {
     color: colors.textSecondary,
-    opacity: 0.7,
-    fontSize: 14,
-    letterSpacing: 0.35,
+    opacity: 0.55,
+    fontSize: 12,
+    letterSpacing: 0.25,
     textAlign: "center",
     textDecorationLine: "underline",
   },

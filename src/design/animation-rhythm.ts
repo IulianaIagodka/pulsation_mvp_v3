@@ -62,7 +62,7 @@ export const spiralHintTiming = {
     400,
 } as const;
 
-/** Return screen: "Keep it for me" always after the last visible line (hint or follow-up). */
+/** Return screen: "Save this for me" always after the last visible line (hint or follow-up). */
 export function getReturnKeepForMeDelayMs(params: {
   spiralHintShows: boolean;
   spiralHintDelayMs: number;

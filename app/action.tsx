@@ -12,13 +12,13 @@ import {
 import { CalmText } from "../src/design/components/CalmText";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
+import { SpiralUnderHint } from "../src/design/components/SpiralUnderHint";
 import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
 import {
   activeLocale,
   getTriangleBreathPhaseLabels,
   interventionGuidance,
   triangleBreathCopy,
-  uiCopy,
 } from "../src/modules/delivery-layer";
 import { getFindThreeIntro, getFindThreeVariant } from "../src/modules/find-three-variants";
 import { assignNextFindThreeVariant } from "../src/services/find-three-flow";
@@ -243,8 +243,18 @@ export default function ActionScreen() {
     };
   }, [presentation]);
 
+  const underSpiralHint =
+    presentation === "triangle_breath" ? (
+      <SpiralUnderHint presentation={triangleHint} visible={showTriangleSpiralHint} />
+    ) : (
+      <SpiralUnderHint
+        presentation={nonTriangleHint}
+        visible={presentation === "find_three" ? findThreeAllRevealed : true}
+      />
+    );
+
   return (
-    <AnchoredSpiralScreen>
+    <AnchoredSpiralScreen spiralHint={underSpiralHint}>
       <View style={styles.content}>
         {presentation === "find_three" ? (
           <View style={styles.findThreeWrap}>
@@ -317,19 +327,6 @@ export default function ActionScreen() {
             ))}
           </View>
         ) : null}
-        {presentation === "triangle_breath" ? (
-          showTriangleSpiralHint && triangleHint.shouldShow ? (
-            <ExplanationText delayMs={triangleHint.delayMs} style={styles.hintWrap} textOpacity={triangleHint.textOpacity}>
-              {uiCopy.spiralHint}
-            </ExplanationText>
-          ) : null
-        ) : (
-          (presentation === "find_three" ? findThreeAllRevealed : true) && nonTriangleHint.shouldShow ? (
-            <ExplanationText delayMs={nonTriangleHint.delayMs} style={styles.hintWrap} textOpacity={nonTriangleHint.textOpacity}>
-              {uiCopy.spiralHint}
-            </ExplanationText>
-          ) : null
-        )}
       </View>
     </AnchoredSpiralScreen>
   );
@@ -388,9 +385,6 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-  },
-  hintWrap: {
-    marginTop: spacing.md,
   },
   debugRow: { marginTop: spacing.md, flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: spacing.md },
   debugItem: { paddingVertical: spacing.xs },

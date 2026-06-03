@@ -1,15 +1,15 @@
 import { PropsWithChildren, useEffect, useRef } from "react";
 import { Animated, Easing, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { breathingRhythm } from "../animation-rhythm";
-import { mainCopyTextStyle } from "../main-copy";
-import { colors } from "../tokens";
+import { mainCopyTextStyle, spiralHintTextStyle } from "../main-copy";
+import { colors, spacing } from "../tokens";
 import { useHighContrast } from "../../hooks/use-high-contrast";
 import { CalmText } from "./CalmText";
 
 type Props = PropsWithChildren<{
   delayMs?: number;
   style?: StyleProp<ViewStyle>;
-  variant?: "main" | "explanation";
+  variant?: "main" | "explanation" | "hint";
   textOpacity?: number;
 }>;
 
@@ -46,10 +46,14 @@ export function ExplanationText({
   const textStyle =
     variant === "main"
       ? [styles.mainText, highContrast && styles.mainTextHighContrast]
-      : [styles.text, highContrast && styles.textHighContrast, { opacity: effectiveOpacity }];
+      : variant === "hint"
+        ? [styles.hintText, highContrast && styles.hintTextHighContrast, { opacity: effectiveOpacity }]
+        : [styles.text, highContrast && styles.textHighContrast, { opacity: effectiveOpacity }];
+
+  const wrapStyle = variant === "hint" ? [styles.wrapHint, style] : [styles.wrap, style];
 
   return (
-    <View style={[styles.wrap, style]}>
+    <View style={wrapStyle}>
       <Animated.View style={[styles.inner, { opacity }]}>
         <CalmText style={textStyle}>{children}</CalmText>
       </Animated.View>
@@ -64,6 +68,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     minHeight: 48,
     justifyContent: "center",
+  },
+  wrapHint: {
+    width: "100%",
+    alignSelf: "stretch",
+    alignItems: "center",
+    paddingHorizontal: spacing.sm,
   },
   inner: {
     width: "100%",
@@ -84,5 +94,10 @@ const styles = StyleSheet.create({
   },
   textHighContrast: {
     color: colors.textPrimary,
+  },
+  hintText: spiralHintTextStyle,
+  hintTextHighContrast: {
+    color: colors.textPrimary,
+    opacity: 0.82,
   },
 });

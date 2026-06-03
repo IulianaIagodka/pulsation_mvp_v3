@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { AnchoredSpiralScreen } from "./AnchoredSpiralScreen";
 import { AboutFooterLink } from "./AboutFooterLink";
-import { ExplanationText } from "./ExplanationText";
+import { SpiralUnderHint } from "./SpiralUnderHint";
 import { GentleTextTransition } from "./GentleTextTransition";
 import { CalmText } from "./CalmText";
 import { breathingRhythm, spiralHintTiming } from "../animation-rhythm";
@@ -25,17 +25,17 @@ export function ShortOnboardingFlow() {
 
   const spiralHint = useSpiralHintPresentation(spiralHintTiming.onboardingAfterMainMs);
 
+  const underSpiralHint = <SpiralUnderHint presentation={spiralHint} />;
+
   return (
-    <AnchoredSpiralScreen footer={<AboutFooterLink label={uiCopy.aboutLink} onPress={() => router.push("/about")} />}>
+    <AnchoredSpiralScreen
+      spiralHint={underSpiralHint}
+      footer={<AboutFooterLink label={uiCopy.aboutLink} onPress={() => router.push("/about")} />}
+    >
       <View style={styles.content}>
         <GentleTextTransition style={styles.mainLineWrap} durationMs={breathingRhythm.motion.textFadeInMs}>
           <CalmText style={styles.copy}>{uiCopy.onboardingLine}</CalmText>
         </GentleTextTransition>
-        {spiralHint.shouldShow ? (
-          <ExplanationText delayMs={spiralHint.delayMs} style={styles.hintWrap} textOpacity={spiralHint.textOpacity}>
-            {uiCopy.spiralHint}
-          </ExplanationText>
-        ) : null}
       </View>
     </AnchoredSpiralScreen>
   );
@@ -45,14 +45,13 @@ const styles = StyleSheet.create({
   content: {
     alignItems: "center",
     width: "100%",
+    alignSelf: "stretch",
     paddingHorizontal: spacing.md,
   },
   mainLineWrap: {
     alignItems: "center",
     width: "100%",
+    alignSelf: "stretch",
   },
   copy: mainCopyTextStyle,
-  hintWrap: {
-    marginTop: spacing.lg,
-  },
 });

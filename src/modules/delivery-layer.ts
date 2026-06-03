@@ -217,6 +217,13 @@ const uiCopyByLocale: Record<
     aboutParagraphs: readonly string[];
     aboutBack: string;
     aboutVersionPrefix: string;
+    pathsLink: string;
+    pathsTitle: string;
+    pathsTodayLabel: string;
+    pathsTodayNone: string;
+    pathsTodayCount: (count: number) => string;
+    pathsKeptLabel: string;
+    pathsKeptEmpty: string;
   }
 > = {
   en: {
@@ -232,8 +239,8 @@ const uiCopyByLocale: Record<
     actionDone: "This feels complete",
     actionSkip: "Not this time",
     explanationContinue: "I will carry this with me",
-    keepForMe: "Keep this one for me",
-    keepForMeHint: "Saves your preference for next time",
+    keepForMe: "Save this for me",
+    keepForMeHint: "Saves this for you next time",
     returnBody: "You are here",
     returnAction: "Return to stillness",
     spiralHint: "tap the spiral",
@@ -249,6 +256,14 @@ const uiCopyByLocale: Record<
     ] as const,
     aboutBack: "Back",
     aboutVersionPrefix: "Version",
+    pathsLink: "Show my paths",
+    pathsTitle: "Your paths",
+    pathsTodayLabel: "Today",
+    pathsTodayNone: "No gentle actions yet today",
+    pathsTodayCount: (count) =>
+      count === 1 ? "1 gentle action today" : `${count} gentle actions today`,
+    pathsKeptLabel: "Kept for you",
+    pathsKeptEmpty: "Nothing kept yet. After a return, tap «Save this for me».",
   },
   uk: {
     onboardingLine: "Pulsation допомагає повернутися до себе",
@@ -263,8 +278,8 @@ const uiCopyByLocale: Record<
     actionDone: "Цього достатньо",
     actionSkip: "Не цього разу",
     explanationContinue: "Візьму це з собою",
-    keepForMe: "Залиши для мене",
-    keepForMeHint: "Збереже твоє вподобання на наступний раз",
+    keepForMe: "Збережи це для мене",
+    keepForMeHint: "Збереже це для тебе наступного разу",
     returnBody: "Ти тут",
     returnAction: "Повернутися до тиші",
     spiralHint: "торкнись спіралі",
@@ -280,6 +295,19 @@ const uiCopyByLocale: Record<
     ] as const,
     aboutBack: "Назад",
     aboutVersionPrefix: "Версія",
+    pathsLink: "Мої шляхи",
+    pathsTitle: "Твої шляхи",
+    pathsTodayLabel: "Сьогодні",
+    pathsTodayNone: "Сьогодні ще не було м'яких дій",
+    pathsTodayCount: (count) => {
+      const n = count % 10;
+      const n100 = count % 100;
+      if (n === 1 && n100 !== 11) return "1 м'яка дія сьогодні";
+      if (n >= 2 && n <= 4 && (n100 < 10 || n100 >= 20)) return `${count} м'які дії сьогодні`;
+      return `${count} м'яких дій сьогодні`;
+    },
+    pathsKeptLabel: "Залишені для тебе",
+    pathsKeptEmpty: "Поки нічого. Після повернення натисни «Збережи це для мене».",
   },
 };
 

@@ -1,17 +1,23 @@
 import { PropsWithChildren } from "react";
 import { StyleProp, StyleSheet, Text, TextProps, TextStyle } from "react-native";
+import { MAX_FONT_SIZE_MULTIPLIER } from "../accessibility";
 import { colors, typography } from "../tokens";
 import { useHighContrast } from "../../hooks/use-high-contrast";
 
-type Props = PropsWithChildren<TextProps & { style?: StyleProp<TextStyle> }>;
+type Props = PropsWithChildren<
+  TextProps & {
+    style?: StyleProp<TextStyle>;
+    maxFontSizeMultiplier?: number;
+  }
+>;
 
-export function CalmText({ children, style, ...rest }: Props) {
+export function CalmText({ children, style, maxFontSizeMultiplier = MAX_FONT_SIZE_MULTIPLIER, ...rest }: Props) {
   const highContrast = useHighContrast();
 
   return (
     <Text
       allowFontScaling
-      maxFontSizeMultiplier={1.6}
+      maxFontSizeMultiplier={maxFontSizeMultiplier}
       style={[styles.text, style, highContrast && styles.textHighContrast]}
       {...rest}
     >

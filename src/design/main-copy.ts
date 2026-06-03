@@ -13,3 +13,15 @@ export const mainCopyTextStyle: TextStyle = {
   flexShrink: 1,
   fontFamily: Platform.select({ ios: "Times New Roman", default: "serif" }),
 };
+
+/** Quiet CTA under the spiral — smaller than main copy. */
+export const spiralHintTextStyle: TextStyle = {
+  color: colors.textSecondary,
+  fontSize: 12,
+  fontWeight: "400",
+  textAlign: "center",
+  letterSpacing: 0.2,
+  width: "100%",
+  maxWidth: "100%",
+  flexShrink: 1,
+};

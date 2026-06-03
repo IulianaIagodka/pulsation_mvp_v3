@@ -14,12 +14,14 @@ Use this checklist before release whenever animation/layout is changed.
 
 - [ ] Tap the spiral on **each** flow screen and verify navigation / completion (spiral is wrapped in `Pressable`; layer has `zIndex` + `elevation`).
 - [ ] If tap feels dead, check Android: spiral layer should stay **above** the `ScrollView` hit target (`AnchoredSpiralScreen` spiral `elevation`).
-- [ ] **About** appears only on **onboarding** footer — not on trigger/action/return.
+- [ ] **About** on onboarding footer; **Show my paths** / **Мої шляхи** on all anchored screens (opens `app/paths.tsx`).
 
-## Copy order (“tap the spiral” last)
+## Copy order (“tap the spiral” under the spiral)
 
-- [ ] On onboarding, trigger, action (feet / find 3), return: “tap the spiral” / “торкнись спіралі” should become visible **after** the main instructional text on that screen (see `spiralHintTiming`).
-- [ ] On **triangle breath**, the spiral hint appears only **after 3 complete breath cycles**; return waits for spiral tap.
+- [ ] On onboarding, trigger, action (feet / find 3), return: “tap the spiral” / “торкнись спіралі” appears **under the spiral** (small hint), after main copy on that screen (see `spiralHintTiming`).
+- [ ] For the **first 3 completed cycles**, the hint is visible on **every** flow screen (no random hide per screen).
+- [ ] On **triangle breath**, the under-spiral hint appears only **after 3 complete breath cycles**; spiral animates during intro + triangle rhythm.
+- [ ] On return, **Save this for me** / **Збережи це для мене** sits below the explanation block (smaller hint style).
 
 ## Animation stability
 
@@ -32,7 +34,8 @@ Use this checklist before release whenever animation/layout is changed.
 - [ ] Action → return: only **one** return screen (back does not land on return again); copy on return starts after fade (`returnScreen.primaryDelayMs`).
 - [ ] On `triangle_breath`, verify phase words (`inhale` / `hold` / `exhale`) crossfade gently; **both** holds show “hold / затримка”.
 - [ ] On `triangle_breath`, feel haptic at **inhale start** and **exhale start** (device build, not Expo Go only).
-- [ ] On return, **Keep this one for me** fades out on tap; second visit with same intervention does **not** show the button again.
+- [ ] On return, **Save this for me** fades out on tap; second visit with same intervention does **not** show the button again.
+- [ ] With **Accessibility XXL** text size, onboarding scrolls; About / paths footer links remain reachable.
 - [ ] Onboarding shows **tap the spiral**, not “one action for you now?”.
 
 ## Automated safety net

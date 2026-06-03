@@ -1,10 +1,14 @@
 import { PropsWithChildren, ReactNode } from "react";
-import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
+import { useRouter } from "expo-router";
+import { PixelRatio, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
+import { MAX_FONT_SIZE_MULTIPLIER } from "../accessibility";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { spiralLayout } from "../animation-rhythm";
 import { spacing } from "../tokens";
 import { clamp, scaleByWidth } from "../responsive";
 import { useAppStore } from "../../state/app-store";
+import { uiCopy } from "../../modules/delivery-layer";
+import { AboutFooterLink } from "./AboutFooterLink";
 import { CalmText } from "./CalmText";
 import { CalmScreen } from "./CalmScreen";
 import { SoftCard } from "./SoftCard";
@@ -16,20 +20,49 @@ type Props = PropsWithChildren<{
   centerContent?: boolean;
   /** Pinned to the bottom of the screen (e.g. About link on onboarding). */
   footer?: ReactNode;
+  /** Quiet label directly under the spiral (e.g. “tap the spiral”). */
+  spiralHint?: ReactNode;
+  /** Hide the global “Show my paths” link (e.g. if unused). */
+  hidePathsLink?: boolean;
 }>;
 
-export function AnchoredSpiralScreen({ spiral, children, centerContent = false, footer }: Props) {
+export function AnchoredSpiralScreen({
+  spiral,
+  children,
+  centerContent = false,
+  footer,
+  spiralHint,
+  hidePathsLink = false,
+}: Props) {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { height: windowHeight, width: windowWidth } = useWindowDimensions();
+  const fontScale = Math.min(PixelRatio.getFontScale(), MAX_FONT_SIZE_MULTIPLIER);
   const highContrastPreviewEnabled = useAppStore((s) => s.highContrastPreviewEnabled);
   const setHighContrastPreviewEnabled = useAppStore((s) => s.setHighContrastPreviewEnabled);
 
   const contentHeight = windowHeight - insets.top - insets.bottom;
   const spiralTop = insets.top + contentHeight * spiralLayout.anchorRatio - spiralLayout.size / 2;
-  const textPaddingTop = spiralTop + spiralLayout.size + spiralLayout.textGap;
+  const spiralHintZoneHeight = spiralHint
+    ? clamp(scaleByWidth(40, windowWidth) * fontScale, 36, 128)
+    : 0;
+  const textPaddingTop = spiralTop + spiralLayout.size + spiralLayout.textGap + spiralHintZoneHeight;
   const footerBottomInset = Math.max(insets.bottom, scaleByWidth(spacing.sm, windowWidth));
-  const footerHeight = clamp(scaleByWidth(52, windowWidth), 48, 64);
-  const scrollBottomPad = footer ? footerHeight + footerBottomInset : scaleByWidth(spacing.xl, windowWidth);
+  const footerLinkCount = (hidePathsLink ? 0 : 1) + (footer ? 1 : 0);
+  const footerRowHeight = clamp(scaleByWidth(44, windowWidth) * fontScale, 44, 100);
+  const footerHeight = footerLinkCount > 0 ? footerRowHeight * footerLinkCount + scaleByWidth(spacing.xs, windowWidth) : 0;
+  const scrollBottomPad =
+    footerLinkCount > 0 ? footerHeight + footerBottomInset : scaleByWidth(spacing.xl, windowWidth);
+
+  const pinnedFooter =
+    footerLinkCount > 0 ? (
+      <View style={styles.footerStack}>
+        {footer}
+        {!hidePathsLink ? (
+          <AboutFooterLink label={uiCopy.pathsLink} onPress={() => router.push("/paths")} />
+        ) : null}
+      </View>
+    ) : null;
 
   return (
     <CalmScreen flush>
@@ -40,26 +73,43 @@ export function AnchoredSpiralScreen({ spiral, children, centerContent = false, 
           </View>
         ) : null}
 
+        {spiralHint ? (
+          <View
+            pointerEvents="none"
+            style={[
+              styles.spiralHintLayer,
+              {
+                top: spiralTop + spiralLayout.size + scaleByWidth(6, windowWidth),
+                minHeight: spiralHintZoneHeight,
+              },
+            ]}
+          >
+            {spiralHint}
+          </View>
+        ) : null}
+
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={[
             styles.scrollContent,
             {
               paddingTop: textPaddingTop,
-              minHeight: windowHeight - insets.top,
               paddingBottom: scrollBottomPad,
             },
+            !centerContent && { minHeight: windowHeight - insets.top - footerHeight },
             centerContent && styles.scrollContentCentered,
+            centerContent && { minHeight: windowHeight - insets.top },
           ]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          alwaysBounceVertical={false}
         >
           <SoftCard style={[styles.cardTightTop, centerContent && styles.cardCentered]}>{children}</SoftCard>
         </ScrollView>
 
-        {footer ? (
+        {pinnedFooter ? (
           <View pointerEvents="box-none" style={[styles.footer, { paddingBottom: footerBottomInset }]}>
-            {footer}
+            {pinnedFooter}
           </View>
         ) : null}
 
@@ -92,6 +142,16 @@ const styles = StyleSheet.create({
     zIndex: 10,
     elevation: 12,
   },
+  spiralHintLayer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    zIndex: 9,
+    elevation: 8,
+    paddingHorizontal: spacing.md,
+  },
   scroll: { flex: 1 },
   scrollContent: {
     flexGrow: 1,
@@ -117,6 +177,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     zIndex: 5,
     elevation: 4,
+  },
+  footerStack: {
+    alignItems: "center",
+    width: "100%",
   },
   devToggleWrap: {
     position: "absolute",

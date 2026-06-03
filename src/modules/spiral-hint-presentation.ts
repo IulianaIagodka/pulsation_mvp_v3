@@ -4,6 +4,9 @@ export type SpiralHintPresentation = {
   textOpacity: number;
 };
 
+/** Show “tap the spiral” on every flow screen for the first N completed cycles. */
+export const SPIRAL_HINT_FULL_CYCLES = 3;
+
 type HintTier = "full" | "soft" | "subtle" | "hidden";
 
 function getHintTier(spiralTapCount: number): HintTier {
@@ -21,7 +24,16 @@ export function getSpiralHintPresentation(
   spiralTapCount: number,
   baseDelayMs: number,
   screenSalt: number,
+  completedCycles = 0,
 ): SpiralHintPresentation {
+  if (completedCycles < SPIRAL_HINT_FULL_CYCLES) {
+    return {
+      shouldShow: true,
+      delayMs: baseDelayMs,
+      textOpacity: 0.52,
+    };
+  }
+
   const tier = getHintTier(spiralTapCount);
 
   if (tier === "hidden") {
