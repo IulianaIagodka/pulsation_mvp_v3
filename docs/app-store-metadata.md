@@ -75,14 +75,19 @@ Initial release of Pulsation.
 A calm, minimal flow with seven micro-interventions:
 Feet on ground, Find 3 things, Triangle breath, Relax your jaw, Drop your shoulders, Notice 3 sounds, and Press your palms together.
 
-### What's New (build 20 — resubmission after review)
+### What's New (1.0.1 — resubmission after review)
 - Clearer onboarding: **How it works** with four short steps; **Tap the spiral — it's the button here** appears last.
 - **Show my paths** on trigger and return (today's actions + saved preferences, local only).
 - **Save this for me** on return (renamed from earlier copy).
 - Spiral hint placement and timing improved on all flow screens.
 - Accessibility: Dynamic Type up to XXL, scrollable onboarding.
 
-### App Review Notes
+### App Review Notes (version 1.0.1 — submit this build for review)
+
+Hello App Review Team,
+Thank you for reviewing our previous submission (build 26, version 1.0.0).
+This build (1.0.1) addresses the minimum functionality feedback: clearer onboarding, complete end-to-end flow, and improved usability.
+
 Pulsation is a wellbeing app with a minimal flow.
 Core path: onboarding (How it works + tap the spiral as the button) -> trigger prompt -> one micro-action -> return ("You are here" + short explanation).
 Optional "Save this for me" on return saves local preference for that intervention (button not shown again for saved actions).
@@ -147,14 +152,19 @@ Pulsation створено для спокою, а не тиску.
 Спокійний мінімалістичний флоу з сімома мікроінтервенціями:
 Стопи на опорі, Знайди 3 речі, Трикутне дихання, Розслаб щелепу, Опусти плечі, Поміть 3 звуки та Склади долоні разом.
 
-### What's New (build 20 — повторна подача після рев’ю)
+### What's New (1.0.1 — повторна подача після рев’ю)
 - Онбординг: **Як це працює:** + чотири кроки; **Торкнися спіралі — це кнопка тут** з’являється останнім.
 - **Мої шляхи** на trigger і return (сьогодні + збережені дії, лише локально).
 - **Збережи це для мене** на return.
 - Підказка під спіраллю та таймінг на всіх екранах флоу.
 - Доступність: Dynamic Type до XXL, прокручуваний онбординг.
 
-### App Review Notes
+### App Review Notes (версія 1.0.1 — цей build на рев’ю)
+
+Вітаємо, команда App Review,
+Дякуємо за попередній рев’ю (build 26, версія 1.0.0).
+Цей build (1.0.1) враховує зауваження щодо мінімальної функціональності: зрозуміліший онбординг, повний шлях у застосунку, покращена зручність.
+
 Pulsation — застосунок добробуту з мінімальним флоу.
 Шлях: онбординг (Як це працює + торкнись спіралі як кнопка) -> запит -> одна м'яка дія -> повернення («Ти тут» + коротке пояснення).
 Опційно «Збережи це для мене» на return зберігає вподобання локально (кнопка не показується знову для збережених дій).

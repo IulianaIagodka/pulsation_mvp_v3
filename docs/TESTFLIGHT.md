@@ -28,7 +28,7 @@ npm run build:ios:testflight
 
 - Профіль: **production** (`distribution: store`).
 - EAS запитає Apple credentials (можна довірити EAS).
-- `buildNumber` у `app.json` (зараз **20**); EAS production також може `autoIncrement` на remote.
+- **version** `1.0.1`, **buildNumber** `27` у `app.json` (після build **26** у Store); EAS production також може `autoIncrement` на remote.
 - Тестовий режим ротації дій **вимкнено** у production-білді.
 
 Чекай статус на https://expo.dev → Builds (зазвичай 10–25 хв).
@@ -88,7 +88,7 @@ npm run start
 | Submit failed | `npm run submit:ios:testflight` після успішного build |
 | `could not determine executable` | Спочатку `npm install` у папці проєкту |
 | Білд «Processing» довго | Зачекай; інколи до 1 год |
-| TestFlight не бачить build | Перевір, що build прив’язаний до версії **1.0.0** |
+| TestFlight не бачить build | Перевір, що build прив’язаний до версії **1.0.1** |
 
 ## Privacy / metadata (для external beta)
 

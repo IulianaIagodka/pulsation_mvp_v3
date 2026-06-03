@@ -3,7 +3,7 @@
     "name": "Pulsation",
     "slug": "pulsation",
     "scheme": "pulsation",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.maksym.pulsation",
-      "buildNumber": "20",
+      "buildNumber": "27",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSUserNotificationsUsageDescription": "Pulsation sends a gentle reminder after you have been away for a while."
