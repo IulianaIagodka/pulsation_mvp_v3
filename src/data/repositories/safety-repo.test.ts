@@ -17,6 +17,7 @@ describe("safety-repo daily reset rules", () => {
 
     expect(normalized.interventionsToday).toBe(0);
     expect(normalized.dismissalStreak).toBe(0);
+    expect(normalized.lastInterventionAt).toBeUndefined();
   });
 
   it("keeps counters for the same day", () => {

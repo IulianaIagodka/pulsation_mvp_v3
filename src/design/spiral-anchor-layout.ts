@@ -2,6 +2,7 @@ import { PixelRatio } from "react-native";
 import { breathingRhythm, spiralLayout } from "./animation-rhythm";
 import { MAX_FONT_SIZE_MULTIPLIER } from "./accessibility";
 import { clamp, scaleByWidth } from "./responsive";
+import { spacing } from "./tokens";
 
 export type SpiralAnchorMetrics = {
   contentHeight: number;
@@ -31,15 +32,17 @@ export function getSpiralBreathBottomOverflow(windowWidth: number): number {
   return scaleOverflow + shadowSlack;
 }
 
-export function getSpiralHintLineHeight(windowWidth: number, fontScale = PixelRatio.getFontScale()): number {
+/** Reserved height for inline hint below main copy (includes top margin). */
+export function getInlineHintSlotHeight(windowWidth: number, fontScale = PixelRatio.getFontScale()): number {
   const capped = Math.min(fontScale, MAX_FONT_SIZE_MULTIPLIER);
-  return clamp(Math.round(scaleByWidth(16, windowWidth) * capped), 14, 56);
+  const lineHeight = clamp(Math.round(scaleByWidth(22, windowWidth) * capped), 20, 48);
+  return lineHeight + scaleByWidth(spacing.sm, windowWidth) * 2;
 }
 
-/** Top of under-spiral hint in scroll coordinates. */
-export function getSpiralHintTopY(metrics: SpiralAnchorMetrics, windowWidth: number): number {
-  const gap = scaleByWidth(spiralLayout.hintBelowSpiralGap, windowWidth);
-  return metrics.spiralBottomY + getSpiralBreathBottomOverflow(windowWidth) + gap;
+/** Fixed slot for the primary main line — shared across flow screens. */
+export function getMainCopySlotHeight(windowWidth: number, fontScale = PixelRatio.getFontScale()): number {
+  const capped = Math.min(fontScale, MAX_FONT_SIZE_MULTIPLIER);
+  return clamp(Math.round(scaleByWidth(52, windowWidth) * capped), 52, 88);
 }
 
 /** Vertical center of the full display, in scroll coordinates (below top safe area). */
@@ -50,7 +53,27 @@ export function getScreenEquatorY(
   return windowHeight / 2 - insets.top;
 }
 
-/** Top of scroll copy when the under-spiral hint is not shown yet. */
+/** Main line Y — shared across flow screens (no under-spiral hint gap). */
+export function getTriggerMainCopyTop(
+  metrics: SpiralAnchorMetrics,
+  windowWidth: number,
+): number {
+  return getContentZoneTopWithoutHint(metrics, windowWidth);
+}
+
+/** Return follow-up — below pinned main line slot. */
+export function getReturnFollowUpTop(
+  metrics: SpiralAnchorMetrics,
+  windowWidth: number,
+  fontScale = PixelRatio.getFontScale(),
+): number {
+  const mainTop = getTriggerMainCopyTop(metrics, windowWidth);
+  const mainSlotHeight = getMainCopySlotHeight(windowWidth, fontScale);
+  const gap = scaleByWidth(16, windowWidth);
+  return mainTop + mainSlotHeight + gap;
+}
+
+/** Top of main copy below the spiral. */
 export function getContentZoneTopWithoutHint(
   metrics: SpiralAnchorMetrics,
   windowWidth: number,
@@ -58,16 +81,3 @@ export function getContentZoneTopWithoutHint(
   const gap = scaleByWidth(spiralLayout.textGap, windowWidth);
   return metrics.spiralBottomY + getSpiralBreathBottomOverflow(windowWidth) + gap;
 }
-
-/** Top of scroll copy on action — extra space below the under-spiral hint. */
-export function getContentZoneTopWithHint(
-  metrics: SpiralAnchorMetrics,
-  windowWidth: number,
-  fontScale = PixelRatio.getFontScale(),
-): number {
-  const hintTop = getSpiralHintTopY(metrics, windowWidth);
-  const lineHeight = getSpiralHintLineHeight(windowWidth, fontScale);
-  const hintToContent = scaleByWidth(spiralLayout.hintToContentGap, windowWidth);
-  return hintTop + lineHeight + hintToContent;
-}
-

@@ -1,14 +1,17 @@
-import { useEffect, useRef } from "react";
-import { Animated, Easing } from "react-native";
+import { useRef } from "react";
+import { Animated } from "react-native";
 import { copyReveal } from "../animation-rhythm";
+import { shouldInstantFlowReveal } from "../flow-copy-reveal";
+import { useFlowCopyReveal } from "../use-flow-copy-reveal";
 import { AboutFooterLink } from "./AboutFooterLink";
 
 type Props = {
   label: string;
   onPress: () => void;
   delayMs?: number;
-  /** Remount reveal when screen re-enters (e.g. trigger prompt key). */
-  revealKey?: number;
+  holdAfterReveal?: boolean;
+  revealId?: string;
+  forceVisible?: boolean;
 };
 
 /** Footer link that fades in on the same rhythm as main copy. */
@@ -16,38 +19,25 @@ export function FooterRevealLink({
   label,
   onPress,
   delayMs = copyReveal.delayMs,
-  revealKey = 0,
+  holdAfterReveal = false,
+  revealId,
+  forceVisible = false,
 }: Props) {
-  const opacity = useRef(new Animated.Value(0)).current;
-  const hasRevealedRef = useRef(false);
+  const instant = shouldInstantFlowReveal(revealId, forceVisible);
+  const opacity = useRef(new Animated.Value(instant ? 1 : 0)).current;
 
-  useEffect(() => {
-    hasRevealedRef.current = false;
-    opacity.setValue(0);
+  useFlowCopyReveal({
+    opacity,
+    delayMs,
+    fadeMs: copyReveal.fadeMs,
+    holdAfterReveal,
+    revealId,
+    forceVisible: instant,
+  });
 
-    let cancelled = false;
-    const timer = setTimeout(() => {
-      if (cancelled) return;
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: copyReveal.fadeMs,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: true,
-      }).start(({ finished }) => {
-        if (finished && !cancelled) {
-          hasRevealedRef.current = true;
-        }
-      });
-    }, delayMs);
-
-    return () => {
-      cancelled = true;
-      clearTimeout(timer);
-      if (!hasRevealedRef.current) {
-        opacity.stopAnimation();
-      }
-    };
-  }, [delayMs, opacity, revealKey]);
+  if (instant) {
+    return <AboutFooterLink label={label} onPress={onPress} />;
+  }
 
   return (
     <Animated.View style={{ opacity }}>

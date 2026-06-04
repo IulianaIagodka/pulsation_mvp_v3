@@ -1,6 +1,7 @@
 import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import { useAppStore } from "../state/app-store";
+import { playSpiralTapHaptic } from "../services/haptic-regulation";
 import { recordSpiralTap } from "../services/spiral-hint";
 
 /** Register spiral tap handler while this screen is focused (persistent overlay spiral). */
@@ -8,6 +9,7 @@ export function useRegisterSpiralPress(handler: (() => void) | null) {
   const setSpiralPressHandler = useAppStore((s) => s.setSpiralPressHandler);
   const wrappedHandler = useCallback(() => {
     if (!handler) return;
+    playSpiralTapHaptic();
     recordSpiralTap("flow");
     handler();
   }, [handler]);

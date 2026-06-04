@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { AppState } from "react-native";
 import { usePathname, useRouter } from "expo-router";
 import {
@@ -22,6 +22,19 @@ export function InactivityTriggerListener() {
     pathnameRef.current = pathname;
   }, [pathname]);
 
+  const tryResumeTrigger = useCallback(() => {
+    void cancelInactivityNotification();
+
+    const inactiveMinutes = consumeInactiveMinutesOnResume();
+    if (inactiveMinutes <= 0) return;
+
+    recordAppOpen(Date.now());
+    if (isPathBlockedForAutoTrigger(pathnameRef.current, inactiveMinutes)) return;
+    if (!shouldAutoOpenTrigger(inactiveMinutes)) return;
+
+    goToTrigger(router, pathnameRef.current);
+  }, [router]);
+
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextState) => {
       recordAppStateChange(nextState);
@@ -33,19 +46,15 @@ export function InactivityTriggerListener() {
 
       if (nextState !== "active") return;
 
-      void cancelInactivityNotification();
-      recordAppOpen(Date.now());
-
-      if (isPathBlockedForAutoTrigger(pathnameRef.current)) return;
-
-      const inactiveMinutes = consumeInactiveMinutesOnResume();
-      if (!shouldAutoOpenTrigger(inactiveMinutes)) return;
-
-      goToTrigger(router, pathnameRef.current);
+      tryResumeTrigger();
     });
 
+    if (AppState.currentState === "active") {
+      tryResumeTrigger();
+    }
+
     return () => subscription.remove();
-  }, [router]);
+  }, [tryResumeTrigger]);
 
   return null;
 }

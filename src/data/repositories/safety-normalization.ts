@@ -17,5 +17,6 @@ export function normalizeSafetyState(state: SafetyState, updatedAt?: number): Sa
     ...state,
     interventionsToday: 0,
     dismissalStreak: 0,
+    lastInterventionAt: undefined,
   };
 }

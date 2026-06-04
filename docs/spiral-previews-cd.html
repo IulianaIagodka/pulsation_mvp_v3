@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Спіраль C і D — Pulsation</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #070D18;
+      color: #BCC8DA;
+      padding: 24px;
+    }
+    h1 { font-size: 1.25rem; font-weight: 600; margin: 0 0 8px; }
+    p.sub { margin: 0 0 24px; font-size: 0.875rem; color: #74839A; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 32px;
+      max-width: 560px;
+    }
+    .card h2 { font-size: 1rem; margin: 0 0 6px; }
+    .card .note { font-size: 0.8rem; color: #74839A; margin: 0 0 12px; line-height: 1.4; }
+    .card svg { display: block; margin: 0 auto; }
+    .current {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid #1E2F49;
+      max-width: 200px;
+    }
+    .current h2 { font-size: 0.9rem; color: #74839A; }
+    .legend { font-size: 0.75rem; color: #74839A; margin-top: 8px; text-align: center; }
+  </style>
+</head>
+<body>
+  <h1>Спіраль: C і D</h1>
+  <p class="sub">136×136 px · spiralRing #3D5A82 · dot #1C2F4A</p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>C — Кільця з розривами</h2>
+      <p class="note">Ті самі 4 кільця, кожне зсунуте на +15°. 270° дуга + короткі «сходинки» між рівнями.</p>
+      <svg width="136" height="136" viewBox="0 0 136 136" aria-label="Кільця з розривами">
+        <circle cx="68" cy="68" r="67.4" fill="none" stroke="#3D5A82" stroke-width="1.15" opacity="1"/>
+        <circle cx="68" cy="68" r="54.4" fill="none" stroke="#3D5A82" stroke-width="1" opacity="0.72" stroke-dasharray="256.35 85.45" transform="rotate(0 68 68)"/>
+        <circle cx="68" cy="68" r="42.4" fill="none" stroke="#3D5A82" stroke-width="1" opacity="0.76" stroke-dasharray="199.81 66.60" transform="rotate(15 68 68)"/>
+        <circle cx="68" cy="68" r="30.4" fill="none" stroke="#3D5A82" stroke-width="1" opacity="0.8" stroke-dasharray="143.26 47.75" transform="rotate(30 68 68)"/>
+        <circle cx="68" cy="68" r="18.4" fill="none" stroke="#3D5A82" stroke-width="1" opacity="0.84" stroke-dasharray="86.71 28.90" transform="rotate(45 68 68)"/>
+        <path d="M82.1,15.5 L79.0,27.0 M89.2,31.3 L83.2,41.7 M89.5,46.5 L81.0,55.0" fill="none" stroke="#3D5A82" stroke-width="0.9" opacity="0.45" stroke-linecap="round"/>
+        <circle cx="68" cy="68" r="5" fill="#1C2F4A" opacity="0.92"/>
+      </svg>
+      <p class="legend">Зовнішнє кільце повне · розрив 90° на кільці</p>
+    </div>
+
+    <div class="card">
+      <h2>D — Подвійна спіраль</h2>
+      <p class="note">Два дзеркальні «плеча» від центру: ліве (вдих) яскравіше, праве (видих) тьмяніше.</p>
+      <svg width="136" height="136" viewBox="0 0 136 136" aria-label="Подвійна спіраль">
+        <path d="M68.00,60.00L67.76,59.68L67.51,59.37L67.24,59.07L66.95,58.78L66.65,58.50L66.33,58.22L65.99,57.96L65.63,57.71L65.26,57.47L64.88,57.24L64.47,57.03L64.06,56.83L63.63,56.65L63.19,56.49L62.73,56.33L62.27,56.20L61.79,56.08L61.30,55.98L60.79,55.90L60.28,55.84L59.76,55.80L59.24,55.78L58.70,55.78L58.16,55.79L57.61,55.83L57.05,55.89L56.50,55.98L55.93,56.08L55.37,56.21L54.80,56.36L54.23,56.53L53.66,56.73L53.09,56.95L52.52,57.19L51.95,57.46L51.39,57.75L50.83,58.06L50.27,58.40L49.72,58.76L49.18,59.14L48.64,59.55L48.12,59.98L47.60,60.44L47.09,60.91L46.59,61.41L46.10,61.94L45.63,62.48L45.17,63.05L44.73,63.64L44.30,64.25L43.88,64.88L43.48,65.53L43.11,66.20L42.74,66.89L42.40,67.60L42.08,68.33L41.78,69.07L41.50,69.83L41.25,70.61L41.01,71.41L40.81,72.22L40.62,73.04L40.46,73.88L40.33,74.74L40.22,75.60L40.14,76.47L40.09,77.36L40.06,78.26L40.07,79.16L40.10,80.07L40.16,80.99L40.26,81.92L40.38,82.85L40.53,83.78L40.72,84.72L40.93,85.66L41.18,86.60L41.46,87.54L41.77,88.48L42.11,89.42L42.49,90.35L42.89,91.28L43.33,92.21L43.81,93.12L44.31,94.04L44.85,94.94L45.42,95.83L46.02,96.71L46.65,97.58L47.32,98.44L48.01,99.28L48.74,100.11L49.50,100.92L50.29,101.71L51.11,102.48L51.96,103.24L52.83,103.97L53.74,104.69L54.68,105.38L55.64,106.04L56.63,106.68L57.65,107.30L58.69,107.89L59.76,108.45L60.85,108.98L61.96,109.48L63.10,109.95L64.26,110.40L65.44,110.80L66.64,111.18L67.86,111.52" fill="none" stroke="#3D5A82" stroke-width="1.25" stroke-linecap="round" opacity="0.92"/>
+        <path d="M68.00,60.00L68.24,59.68L68.49,59.37L68.76,59.07L69.05,58.78L69.35,58.50L69.67,58.22L70.01,57.96L70.37,57.71L70.74,57.47L71.12,57.24L71.53,57.03L71.94,56.83L72.37,56.65L72.81,56.49L73.27,56.33L73.73,56.20L74.21,56.08L74.70,55.98L75.21,55.90L75.72,55.84L76.24,55.80L76.76,55.78L77.30,55.78L77.84,55.79L78.39,55.83L78.95,55.89L79.50,55.98L80.07,56.08L80.63,56.21L81.20,56.36L81.77,56.53L82.34,56.73L82.91,56.95L83.48,57.19L84.05,57.46L84.61,57.75L85.17,58.06L85.73,58.40L86.28,58.76L86.82,59.14L87.36,59.55L87.88,59.98L88.40,60.44L88.91,60.91L89.41,61.41L89.90,61.94L90.37,62.48L90.83,63.05L91.27,63.64L91.70,64.25L92.12,64.88L92.52,65.53L92.89,66.20L93.26,66.89L93.60,67.60L93.92,68.33L94.22,69.07L94.50,69.83L94.75,70.61L94.99,71.41L95.19,72.22L95.38,73.04L95.54,73.88L95.67,74.74L95.78,75.60L95.86,76.47L95.91,77.36L95.94,78.26L95.93,79.16L95.90,80.07L95.84,80.99L95.74,81.92L95.62,82.85L95.47,83.78L95.28,84.72L95.07,85.66L94.82,86.60L94.54,87.54L94.23,88.48L93.89,89.42L93.51,90.35L93.11,91.28L92.67,92.21L92.19,93.12L91.69,94.04L91.15,94.94L90.58,95.83L89.98,96.71L89.35,97.58L88.68,98.44L87.99,99.28L87.26,100.11L86.50,100.92L85.71,101.71L84.89,102.48L84.04,103.24L83.17,103.97L82.26,104.69L81.32,105.38L80.36,106.04L79.37,106.68L78.35,107.30L77.31,107.89L76.24,108.45L75.15,108.98L74.04,109.48L72.90,109.95L71.74,110.40L70.56,110.80L69.36,111.18L68.14,111.52" fill="none" stroke="#3D5A82" stroke-width="1.25" stroke-linecap="round" opacity="0.58"/>
+        <circle cx="68" cy="68" r="5" fill="#1C2F4A" opacity="0.92"/>
+      </svg>
+      <p class="legend">У prod: різна opacity на вдиху/видиху</p>
+    </div>
+  </div>
+
+  <div class="current">
+    <h2>Зараз — кільця</h2>
+    <svg width="136" height="136" viewBox="0 0 136 136">
+      <circle cx="68" cy="68" r="67.4" fill="none" stroke="#3D5A82" stroke-width="1.15" opacity="1"/>
+      <circle cx="68" cy="68" r="54.4" fill="none" stroke="#3D5A82" stroke-width="1" opacity="0.68"/>
+      <circle cx="68" cy="68" r="42.4" fill="none" stroke="#3D5A82" stroke-width="1" opacity="0.72"/>
+      <circle cx="68" cy="68" r="30.4" fill="none" stroke="#3D5A82" stroke-width="1" opacity="0.76"/>
+      <circle cx="68" cy="68" r="18.4" fill="none" stroke="#3D5A82" stroke-width="1" opacity="0.8"/>
+      <circle cx="68" cy="68" r="5" fill="#1C2F4A" opacity="0.92"/>
+    </svg>
+  </div>
+</body>
+</html>

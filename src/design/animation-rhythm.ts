@@ -140,8 +140,6 @@ export const spiralLayout = {
   size: 136,
   anchorRatio: 0.36,
   textGap: 12,
-  hintBelowSpiralGap: 10,
-  hintToContentGap: 52,
   slotMinHeight: 160,
 } as const;
 

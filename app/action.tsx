@@ -11,6 +11,7 @@ import {
 import { CalmText } from "../src/design/components/CalmText";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
+import { InlineSpiralHintSlot } from "../src/design/components/InlineSpiralHintSlot";
 import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
 import {
   activeLocale,
@@ -20,6 +21,7 @@ import {
 } from "../src/modules/delivery-layer";
 import { getFindThreeIntro, getFindThreeVariant } from "../src/modules/find-three-variants";
 import { assignNextFindThreeVariant } from "../src/services/find-three-flow";
+import { armInstantTriggerReturn } from "../src/design/flow-copy-reveal";
 import { registerInterventionOutcome } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
 import {
@@ -31,11 +33,11 @@ import {
 import { colors, spacing } from "../src/design/tokens";
 import {
   breathingRhythm,
+  getFindThreeIntroDelayMs,
   getFindThreeSpiralHintDelayMs,
-  getMainCopyDelayMs,
   getFlowSpiralHintDelayAfterRevealMs,
   getFlowSpiralHintDelayMs,
-  getFindThreeIntroDelayMs,
+  getMainCopyDelayMs,
   getTriangleBreathIntroDelayMs,
 } from "../src/design/animation-rhythm";
 import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
@@ -104,6 +106,7 @@ export default function ActionScreen() {
     completionRef.current = true;
     isTransitioningRef.current = true;
     registerInterventionOutcome(selected, true);
+    armInstantTriggerReturn();
     router.replace("/return");
   }, [router, selected]);
 
@@ -293,12 +296,34 @@ export default function ActionScreen() {
     triangleHint,
   ]);
 
-  const mainLine =
+  const inlineHint = (
+    <InlineSpiralHintSlot
+      presentation={underSpiralHint.presentation}
+      delayMs={underSpiralHint.delayMs}
+      visible={underSpiralHint.visible}
+      holdAfterReveal
+      revealId="action-spiral-hint"
+    />
+  );
+
+  const mainLineOnly =
+    presentation === "find_three" ? (
+      <ExplanationText key={`main-${copyRevealKey}`} holdAfterReveal variant="main">
+        {getFindThreeIntro(locale)}
+      </ExplanationText>
+    ) : presentation === "triangle_breath" ? (
+      <ExplanationText key={`main-${copyRevealKey}`} holdAfterReveal variant="main">
+        {triangleBreathCopy.intro}
+      </ExplanationText>
+    ) : isSimpleInstruction(selected) ? (
+      <ExplanationText key={`main-${copyRevealKey}`} holdAfterReveal variant="main">
+        {interventionGuidance[selected].actionText}
+      </ExplanationText>
+    ) : null;
+
+  const afterMainLine =
     presentation === "find_three" ? (
       <>
-        <ExplanationText key={`main-${copyRevealKey}`} holdAfterReveal variant="main">
-          {getFindThreeIntro(locale)}
-        </ExplanationText>
         <CalmPressable
           onPress={revealNextFindThreeBullet}
           accessibilityRole="button"
@@ -324,12 +349,10 @@ export default function ActionScreen() {
               )
             : null}
         </CalmPressable>
+        {inlineHint}
       </>
     ) : presentation === "triangle_breath" ? (
       <>
-        <ExplanationText key={`main-${copyRevealKey}`} holdAfterReveal variant="main">
-          {triangleBreathCopy.intro}
-        </ExplanationText>
         <View style={styles.trianglePhasesWrap}>
           <View style={[styles.phaseWordLayer, { marginTop: scaleByWidth(spacing.md, width) }]}>
             <Animated.View style={[styles.phaseWord, { opacity: inhaleOpacity }]}>
@@ -349,11 +372,10 @@ export default function ActionScreen() {
             </Animated.View>
           </View>
         </View>
+        {inlineHint}
       </>
     ) : isSimpleInstruction(selected) ? (
-      <ExplanationText key={`main-${copyRevealKey}`} holdAfterReveal variant="main">
-        {interventionGuidance[selected].actionText}
-      </ExplanationText>
+      inlineHint
     ) : null;
 
   const belowEquator =
@@ -370,8 +392,8 @@ export default function ActionScreen() {
     ) : null;
 
   return (
-    <AnchoredSpiralScreen spiralHint={underSpiralHint} belowEquator={belowEquator}>
-      {mainLine}
+    <AnchoredSpiralScreen pinMainLikeTrigger belowEquator={belowEquator} mainLine={mainLineOnly}>
+      {afterMainLine}
     </AnchoredSpiralScreen>
   );
 }

@@ -36,6 +36,8 @@ export type OutcomesProfile = {
 /** Local engagement signals that drive adaptive Pulsation timing. */
 export type SchedulingProfile = {
   lastAppOpenAt?: number;
+  /** Set when the app enters background; used to restore inactivity after process restarts. */
+  lastBackgroundAt?: number;
   lastCompletedAt?: number;
   consecutiveIgnored: number;
   totalCompleted: number;

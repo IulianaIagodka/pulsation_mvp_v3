@@ -1,29 +1,38 @@
 import { StyleSheet, View } from "react-native";
 import { ExplanationText } from "./ExplanationText";
-import { SpiralUnderHint } from "./SpiralUnderHint";
+import { InlineSpiralHintSlot } from "./InlineSpiralHintSlot";
 import { getOnboardingExplanationDelayMs, getOnboardingSpiralHintDelayMs } from "../animation-rhythm";
 import { spacing } from "../tokens";
 import { uiCopy } from "../../modules/delivery-layer";
+import { isAppStoreScreenshotMode } from "../../modules/app-store-screenshot-mode";
 import { useSpiralHintPresentation } from "../../hooks/use-spiral-hint-presentation";
 
-/** Main onboarding line — pinned to screen equator like trigger. */
+const screenshotMode = isAppStoreScreenshotMode();
+
+/** Main onboarding line — same Y as trigger “One action for you”. */
 export function OnboardingHeadline() {
   return (
-    <ExplanationText variant="main" holdAfterReveal>{uiCopy.onboardingLine}</ExplanationText>
+    <ExplanationText variant="main" holdAfterReveal forceVisible={screenshotMode}>
+      {uiCopy.onboardingLine}
+    </ExplanationText>
   );
 }
 
-/** Subtitle, steps, and spiral hint below the equator. */
+/** Subtitle, steps, and spiral hint below the main line. */
 export function OnboardingIntroBelow() {
   const hintDelayMs = getOnboardingSpiralHintDelayMs(uiCopy.onboardingSteps.length);
-  const spiralHint = useSpiralHintPresentation(hintDelayMs);
+  const spiralHintLive = useSpiralHintPresentation(hintDelayMs);
+  const spiralHint = screenshotMode
+    ? { shouldShow: true, delayMs: hintDelayMs, textOpacity: spiralHintLive.textOpacity }
+    : spiralHintLive;
 
   return (
     <View style={styles.below}>
       <ExplanationText
         variant="explanation"
         delayMs={getOnboardingExplanationDelayMs(0)}
-        style={styles.bodyLine}
+        style={styles.bodyLineFirst}
+        forceVisible={screenshotMode}
       >
         {uiCopy.onboardingSubtitle}
       </ExplanationText>
@@ -34,16 +43,17 @@ export function OnboardingIntroBelow() {
           variant="explanation"
           delayMs={getOnboardingExplanationDelayMs(index + 1)}
           style={styles.bodyLine}
+          forceVisible={screenshotMode}
         >
           {step}
         </ExplanationText>
       ))}
 
-      <SpiralUnderHint
+      <InlineSpiralHintSlot
         presentation={spiralHint}
         delayMs={hintDelayMs}
         label={uiCopy.onboardingSpiralHint}
-        placement="inline"
+        forceVisible={screenshotMode}
         style={styles.bodyLine}
       />
     </View>
@@ -55,9 +65,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     alignSelf: "stretch",
-    paddingHorizontal: spacing.md,
   },
   bodyLine: {
-    marginTop: spacing.md,
+    marginTop: screenshotMode ? spacing.sm : spacing.md,
+  },
+  bodyLineFirst: {
+    marginTop: screenshotMode ? spacing.xs : spacing.md,
   },
 });

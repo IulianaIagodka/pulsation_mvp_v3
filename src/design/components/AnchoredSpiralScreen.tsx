@@ -1,9 +1,9 @@
-import { PropsWithChildren, ReactNode, useLayoutEffect } from "react";
-import type { SpiralUnderHintSlot } from "../../types/spiral-under-hint";
+import { PropsWithChildren, ReactNode } from "react";
 import { useRouter } from "expo-router";
-import { PixelRatio, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
+import { PixelRatio, ScrollView, StyleSheet, View } from "react-native";
 import { MAX_FONT_SIZE_MULTIPLIER } from "../accessibility";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useStableLayoutInsets } from "../../hooks/use-stable-layout-insets";
+import { useStableWindowDimensions } from "../../hooks/use-stable-window-dimensions";
 import { spiralLayout } from "../animation-rhythm";
 import { spacing } from "../tokens";
 import { CalmPressable } from "./CalmPressable";
@@ -11,9 +11,11 @@ import { resolvePressableTextOpacity } from "../pressable-highlight";
 import { clamp, scaleByWidth } from "../responsive";
 import {
   getContentZoneTopWithoutHint,
-  getContentZoneTopWithHint,
+  getMainCopySlotHeight,
+  getReturnFollowUpTop,
   getScreenEquatorY,
   getSpiralAnchorMetrics,
+  getTriggerMainCopyTop,
 } from "../spiral-anchor-layout";
 import { useAppStore } from "../../state/app-store";
 import { uiCopy } from "../../modules/delivery-layer";
@@ -26,39 +28,49 @@ import { SoftCard } from "./SoftCard";
 type Props = PropsWithChildren<{
   /** Omit when spiral is rendered by `PersistentSpiralLayer` in the root layout. */
   spiral?: ReactNode;
+  /** Primary main line — pinned alone so hint / bullets never shift its Y. */
+  mainLine?: ReactNode;
   /** Place main copy on the vertical screen equator (default). Set false for scroll-only layouts. */
   centerContent?: boolean;
   /** Optional copy below the equator main line (e.g. return follow-up). */
   belowEquator?: ReactNode;
   /** Pinned to the bottom of the screen (e.g. About link on onboarding). */
   footer?: ReactNode;
-  /** Under-spiral hint data — rendered in `PersistentSpiralLayer` above the spiral motion. */
-  spiralHint?: SpiralUnderHintSlot;
+  /**
+   * Pin main copy at the shared flow main-line Y.
+   * Return / onboarding — keeps follow-up from shifting the main line.
+   */
+  pinMainLikeTrigger?: boolean;
   /** Show “Show my paths” in the footer (trigger / “one action” screen only). */
   showPathsLink?: boolean;
   /** Fade in paths link with main copy (trigger). */
   pathsLinkRevealDelayMs?: number;
-  pathsLinkRevealKey?: number;
+  pathsLinkRevealId?: string;
+  pathsLinkForceVisible?: boolean;
+  /** Tighter scroll top for App Store capture (full extended onboarding on one screen). */
+  compactCapture?: boolean;
 }>;
 
 export function AnchoredSpiralScreen({
   spiral,
+  mainLine,
   children,
   centerContent = true,
   belowEquator,
   footer,
-  spiralHint,
   showPathsLink = false,
   pathsLinkRevealDelayMs,
-  pathsLinkRevealKey,
+  pathsLinkRevealId,
+  pathsLinkForceVisible,
+  compactCapture = false,
+  pinMainLikeTrigger = false,
 }: Props) {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
-  const { height: windowHeight, width: windowWidth } = useWindowDimensions();
+  const insets = useStableLayoutInsets();
+  const { height: windowHeight, width: windowWidth } = useStableWindowDimensions();
   const fontScale = Math.min(PixelRatio.getFontScale(), MAX_FONT_SIZE_MULTIPLIER);
   const highContrastPreviewEnabled = useAppStore((s) => s.highContrastPreviewEnabled);
   const setHighContrastPreviewEnabled = useAppStore((s) => s.setHighContrastPreviewEnabled);
-  const setSpiralUnderHint = useAppStore((s) => s.setSpiralUnderHint);
 
   const metrics = getSpiralAnchorMetrics(windowHeight, insets);
   const footerBottomInset = Math.max(insets.bottom, scaleByWidth(spacing.sm, windowWidth));
@@ -67,22 +79,18 @@ export function AnchoredSpiralScreen({
   const footerHeight = footerLinkCount > 0 ? footerRowHeight * footerLinkCount + scaleByWidth(spacing.xs, windowWidth) : 0;
   const scrollBottomPad =
     footerLinkCount > 0 ? footerHeight + footerBottomInset : scaleByWidth(spacing.xl, windowWidth);
-  const hintSlotVisible =
-    Boolean(spiralHint) &&
-    (spiralHint?.visible ?? true) &&
-    Boolean(spiralHint?.presentation.shouldShow);
-  const contentZoneTop = hintSlotVisible
-    ? getContentZoneTopWithHint(metrics, windowWidth, fontScale)
+  const contentZoneTop = compactCapture
+    ? metrics.spiralBottomY + scaleByWidth(spacing.xs, windowWidth)
     : getContentZoneTopWithoutHint(metrics, windowWidth);
+  const triggerMainCopyTop = getTriggerMainCopyTop(metrics, windowWidth);
+  const mainCopySlotHeight = getMainCopySlotHeight(windowWidth, fontScale);
   const screenEquatorY = getScreenEquatorY(windowHeight, insets);
-  const belowEquatorTop = screenEquatorY + scaleByWidth(36, windowWidth) * fontScale;
-  /** Equator pin ignores under-spiral hint — flow screens must scroll from `contentZoneTop`. */
-  const useEquatorLayout = centerContent && !spiralHint;
-
-  useLayoutEffect(() => {
-    setSpiralUnderHint(spiralHint ?? null);
-    return () => setSpiralUnderHint(null);
-  }, [spiralHint, setSpiralUnderHint]);
+  const belowEquatorTop = pinMainLikeTrigger
+    ? getReturnFollowUpTop(metrics, windowWidth, fontScale)
+    : screenEquatorY + scaleByWidth(36, windowWidth) * fontScale;
+  const useEquatorLayout = centerContent && pinMainLikeTrigger;
+  const afterMainTop = triggerMainCopyTop + mainCopySlotHeight;
+  const pinnedAfterMain = mainLine != null ? children : null;
 
   const pinnedFooter =
     footerLinkCount > 0 ? (
@@ -94,7 +102,9 @@ export function AnchoredSpiralScreen({
               label={uiCopy.pathsLink}
               onPress={() => router.push("/paths")}
               delayMs={pathsLinkRevealDelayMs}
-              revealKey={pathsLinkRevealKey}
+              holdAfterReveal
+              revealId={pathsLinkRevealId}
+              forceVisible={pathsLinkForceVisible}
             />
           ) : (
             <AboutFooterLink label={uiCopy.pathsLink} onPress={() => router.push("/paths")} />
@@ -119,10 +129,21 @@ export function AnchoredSpiralScreen({
           <View pointerEvents="box-none" style={styles.equatorRoot}>
             <View
               pointerEvents="box-none"
-              style={[styles.equatorPin, { height: screenEquatorY * 2 }]}
+              style={[
+                styles.mainAnchorSlot,
+                { top: triggerMainCopyTop, minHeight: mainCopySlotHeight },
+              ]}
             >
-              <SoftCard style={styles.equatorCard}>{children}</SoftCard>
+              <SoftCard style={styles.equatorCard}>{mainLine ?? children}</SoftCard>
             </View>
+            {pinnedAfterMain ? (
+              <View
+                pointerEvents="box-none"
+                style={[styles.afterMainAnchorSlot, { top: afterMainTop }]}
+              >
+                <SoftCard style={styles.equatorCard}>{pinnedAfterMain}</SoftCard>
+              </View>
+            ) : null}
             {belowEquator ? (
               <View
                 pointerEvents="box-none"
@@ -149,9 +170,7 @@ export function AnchoredSpiralScreen({
             keyboardShouldPersistTaps="handled"
             alwaysBounceVertical={false}
           >
-            <SoftCard style={spiralHint ? styles.cardBelowHint : styles.cardTightTop}>
-              {children}
-            </SoftCard>
+            <SoftCard style={styles.equatorCard}>{children}</SoftCard>
             {belowEquator ? (
               <View pointerEvents="box-none" style={styles.scrollBelowEquator}>
                 {belowEquator}
@@ -205,10 +224,20 @@ const styles = StyleSheet.create({
   equatorRoot: {
     flex: 1,
   },
-  equatorPin: {
-    justifyContent: "center",
+  mainAnchorSlot: {
+    position: "absolute",
+    left: 0,
+    right: 0,
     alignItems: "center",
-    width: "100%",
+    justifyContent: "flex-start",
+    paddingHorizontal: spacing.md,
+  },
+  afterMainAnchorSlot: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    paddingHorizontal: spacing.md,
   },
   equatorCard: {
     paddingTop: 0,
@@ -227,12 +256,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingBottom: spacing.xl,
     alignItems: "center",
-  },
-  cardTightTop: {
-    paddingTop: spacing.xs,
-  },
-  cardBelowHint: {
-    paddingTop: 0,
   },
   scrollBelowEquator: {
     alignItems: "center",

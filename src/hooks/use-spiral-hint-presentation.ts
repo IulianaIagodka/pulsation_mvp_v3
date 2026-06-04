@@ -13,8 +13,10 @@ function getPathSalt(pathname: string): number {
 
 export function useSpiralHintPresentation(baseDelayMs: number): SpiralHintPresentation {
   const pathname = usePathname();
-  const [spiralTapCount, setSpiralTapCount] = useState(0);
-  const [completedCycles, setCompletedCycles] = useState(0);
+  const [spiralTapCount, setSpiralTapCount] = useState(() => getSpiralTapCount());
+  const [completedCycles, setCompletedCycles] = useState(
+    () => getSchedulingProfile().totalCompleted,
+  );
 
   useFocusEffect(
     useCallback(() => {

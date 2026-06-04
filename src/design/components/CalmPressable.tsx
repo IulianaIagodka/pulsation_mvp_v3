@@ -1,18 +1,22 @@
 import { useCallback, useState } from "react";
 import {
+  Platform,
   Pressable,
   type PressableProps,
   type StyleProp,
   type ViewStyle,
 } from "react-native";
-import { calmPressableWebCursor, type CalmPressableVisualState } from "../pressable-highlight";
+import { type CalmPressableVisualState } from "../pressable-highlight";
+
+const calmPressableWebCursor: ViewStyle =
+  Platform.OS === "web" ? ({ cursor: "pointer" } as ViewStyle) : {};
 
 type Props = Omit<PressableProps, "children" | "style"> & {
   children: React.ReactNode | ((state: CalmPressableVisualState) => React.ReactNode);
   style?: StyleProp<ViewStyle> | ((state: CalmPressableVisualState) => StyleProp<ViewStyle>);
 };
 
-/** Tracks hover/press/focus for text-only feedback — no background flash. */
+/** Tracks hover/press/focus for a brief brighten on links, icons, and the spiral. */
 export function CalmPressable({
   children,
   style,

@@ -26,6 +26,33 @@ const OUTCOMES_OPTIONAL_COLUMNS: Array<{ column: string; sql: string }> = [
   },
 ];
 
+const SCHEDULING_OPTIONAL_COLUMNS: Array<{ column: string; sql: string }> = [
+  {
+    column: "last_background_at",
+    sql: "ALTER TABLE scheduling_profile ADD COLUMN last_background_at INTEGER",
+  },
+];
+
+function ensureSchedulingProfileColumns() {
+  const rows = db.getAllSync<{ name: string }>("PRAGMA table_info(scheduling_profile)");
+  const existing = new Set(rows.map((row) => row.name));
+
+  SCHEDULING_OPTIONAL_COLUMNS.forEach(({ column, sql }) => {
+    if (existing.has(column)) {
+      return;
+    }
+    try {
+      db.execSync(sql);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (message.includes("duplicate column")) {
+        return;
+      }
+      console.warn(`[db] Failed to add scheduling_profile.${column}:`, error);
+    }
+  });
+}
+
 function ensureOutcomesProfileColumns() {
   const rows = db.getAllSync<{ name: string }>("PRAGMA table_info(outcomes_profile)");
   const existing = new Set(rows.map((row) => row.name));
@@ -49,6 +76,7 @@ function ensureOutcomesProfileColumns() {
 function applySchema() {
   schemaStatements.forEach((sql) => db.execSync(sql));
   ensureOutcomesProfileColumns();
+  ensureSchedulingProfileColumns();
 }
 
 function resetLocalDatabase() {

@@ -1,6 +1,8 @@
-import { Animated, Easing, Pressable, StyleSheet } from "react-native";
+import { Animated, Easing, StyleSheet } from "react-native";
 import { useEffect, useRef } from "react";
 import { breathingRhythm } from "../animation-rhythm";
+import { isPressableHighlighted } from "../pressable-highlight";
+import { CalmPressable } from "./CalmPressable";
 import { SpiralRings } from "./SpiralRings";
 
 type Props = { onPress?: () => void; startDelayMs?: number };
@@ -103,21 +105,25 @@ export function SpiralFocus({ onPress, startDelayMs = 0 }: Props) {
     startDelayMs,
   ]);
 
-  const content = <SpiralRings opacity={opacity} scale={scale} />;
-
   if (!onPress) {
-    return content;
+    return <SpiralRings opacity={opacity} scale={scale} />;
   }
 
   return (
-    <Pressable
+    <CalmPressable
       onPress={onPress}
       style={styles.pressWrap}
       hitSlop={12}
       accessibilityRole="button"
     >
-      {content}
-    </Pressable>
+      {(state) => (
+        <SpiralRings
+          opacity={opacity}
+          scale={scale}
+          highlighted={isPressableHighlighted(state)}
+        />
+      )}
+    </CalmPressable>
   );
 }
 

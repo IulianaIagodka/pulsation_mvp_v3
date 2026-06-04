@@ -14,7 +14,12 @@
     "build:ios:testflight": "npx eas-cli build -p ios --profile production",
     "submit:ios:prod": "npx eas-cli submit -p ios --profile production --latest",
     "submit:ios:testflight": "npx eas-cli submit -p ios --profile production --latest",
-    "generate:icon": "node scripts/generate-app-icon.mjs"
+    "generate:icon": "node scripts/generate-app-icon.mjs",
+    "render:captures": "node scripts/render-app-store-captures.mjs",
+    "generate:screenshots": "node scripts/render-app-store-captures.mjs && node scripts/generate-app-store-screenshots.mjs",
+    "generate:screenshots:uk": "node scripts/generate-app-store-screenshots.mjs --locale=uk",
+    "generate:screenshots:marketing": "node scripts/generate-app-store-screenshots.mjs --marketing",
+    "generate:screenshots:marketing:uk": "node scripts/generate-app-store-screenshots.mjs --marketing --locale=uk"
   },
   "dependencies": {
     "expo": "~54.0.34",

@@ -1,6 +1,8 @@
 import { useEffect } from "react";
-import { Pressable, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { isPressableHighlighted } from "../pressable-highlight";
 import { getSpiralBreathValues, resumeCalmLoopAfterViewMount } from "../spiral-breath-engine";
+import { CalmPressable } from "./CalmPressable";
 import { SpiralRings } from "./SpiralRings";
 
 type Props = {
@@ -18,16 +20,27 @@ export function PersistentSpiral({ onPress }: Props) {
     return () => cancelAnimationFrame(frame);
   }, []);
 
+  const rings = <SpiralRings opacity={opacity} scale={scale} />;
+
+  if (!onPress) {
+    return <View style={styles.pressWrap}>{rings}</View>;
+  }
+
   return (
-    <Pressable
+    <CalmPressable
       onPress={onPress}
-      disabled={!onPress}
       style={styles.pressWrap}
       hitSlop={12}
-      accessibilityRole={onPress ? "button" : undefined}
+      accessibilityRole="button"
     >
-      <SpiralRings opacity={opacity} scale={scale} />
-    </Pressable>
+      {(state) => (
+        <SpiralRings
+          opacity={opacity}
+          scale={scale}
+          highlighted={isPressableHighlighted(state)}
+        />
+      )}
+    </CalmPressable>
   );
 }
 

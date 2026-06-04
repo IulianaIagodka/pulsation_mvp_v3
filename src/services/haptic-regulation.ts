@@ -67,6 +67,11 @@ export function playKeepForMeHaptic() {
   void subtleSelection();
 }
 
+/** Light ack when the user taps the spiral button. */
+export function playSpiralTapHaptic() {
+  void softImpact();
+}
+
 /**
  * Triangle breath haptics: one pulse on inhale start and one on exhale start.
  * Returns stop() to cancel between screens.

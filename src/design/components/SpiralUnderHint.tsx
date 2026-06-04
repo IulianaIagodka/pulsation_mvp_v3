@@ -15,6 +15,9 @@ type Props = {
   style?: StyleProp<ViewStyle>;
   /** Onboarding: same rhythm as body copy. Other screens: quiet label under the spiral. */
   placement?: "inline" | "underSpiral";
+  holdAfterReveal?: boolean;
+  revealId?: string;
+  forceVisible?: boolean;
 };
 
 /** “Tap the spiral” — under the spiral on flow screens; inline after copy on onboarding. */
@@ -27,6 +30,9 @@ export function SpiralUnderHint({
   label,
   style,
   placement = "underSpiral",
+  holdAfterReveal = false,
+  revealId,
+  forceVisible = false,
 }: Props) {
   if (!visible || !presentation.shouldShow) {
     return null;
@@ -42,6 +48,9 @@ export function SpiralUnderHint({
       fadeEasing={fadeEasing}
       textOpacity={isInline ? undefined : presentation.textOpacity}
       style={style}
+      holdAfterReveal={holdAfterReveal}
+      revealId={revealId}
+      forceVisible={forceVisible}
     >
       {label ?? uiCopy.spiralHint}
     </ExplanationText>

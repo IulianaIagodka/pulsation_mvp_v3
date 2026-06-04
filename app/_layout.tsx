@@ -9,6 +9,7 @@ import { breathingRhythm } from "../src/design/animation-rhythm";
 import { ensureSpiralBreathEngineStarted } from "../src/design/spiral-breath-engine";
 import { PersistentSpiralLayer } from "../src/design/components/PersistentSpiralLayer";
 import { StyleSheet, View } from "react-native";
+import { SafeAreaProvider, initialWindowMetrics } from "react-native-safe-area-context";
 
 export default function Layout() {
   useEffect(() => {
@@ -18,7 +19,7 @@ export default function Layout() {
   }, []);
 
   return (
-    <>
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <InactivityTriggerListener />
       <NotificationOpenListener />
       <StatusBar style="light" />
@@ -30,10 +31,14 @@ export default function Layout() {
             animation: "fade",
             animationDuration: breathingRhythm.motion.screenFadeMs,
           }}
-        />
+        >
+          <Stack.Screen name="trigger" options={{ animation: "none" }} />
+          <Stack.Screen name="action" options={{ animation: "none" }} />
+          <Stack.Screen name="return" options={{ animation: "none" }} />
+        </Stack>
         <PersistentSpiralLayer />
       </View>
-    </>
+    </SafeAreaProvider>
   );
 }
 

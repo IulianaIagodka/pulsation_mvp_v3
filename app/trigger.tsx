@@ -1,7 +1,15 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
+import { InlineSpiralHintSlot } from "../src/design/components/InlineSpiralHintSlot";
+import {
+  clearInstantTriggerReturn,
+  hasFlowCopyRevealed,
+  markTriggerFlowRevealed,
+  shouldInstantFlowReveal,
+} from "../src/design/flow-copy-reveal";
+import { flowRevealIds } from "../src/design/flow-reveal-ids";
 import { uiCopy } from "../src/modules/delivery-layer";
 import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
 import { decideIntervention, registerPulsationDismissed } from "../src/services/pulsation-flow";
@@ -14,19 +22,14 @@ export default function TriggerScreen() {
   const router = useRouter();
   const setSelected = useAppStore((s) => s.setSelectedIntervention);
   const wentToActionRef = useRef(false);
-  const hasFocusedOnceRef = useRef(false);
-  const [promptRevealKey, setPromptRevealKey] = useState(0);
   const triggerPromptDelayMs = getMainCopyDelayMs();
+  const showTriggerInstant = shouldInstantFlowReveal(flowRevealIds.triggerMain);
 
   useFocusEffect(
     useCallback(() => {
       wentToActionRef.current = false;
       setSelected(decideIntervention());
-      if (hasFocusedOnceRef.current) {
-        setPromptRevealKey((key) => key + 1);
-      } else {
-        hasFocusedOnceRef.current = true;
-      }
+      clearInstantTriggerReturn();
 
       return () => {
         if (!wentToActionRef.current) {
@@ -38,6 +41,7 @@ export default function TriggerScreen() {
 
   const onSpiralPress = useCallback(() => {
     wentToActionRef.current = true;
+    markTriggerFlowRevealed();
     router.push("/action");
   }, [router]);
   useRegisterSpiralPress(onSpiralPress);
@@ -46,7 +50,9 @@ export default function TriggerScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      playTriggerHaptic();
+      if (!hasFlowCopyRevealed(flowRevealIds.triggerMain)) {
+        playTriggerHaptic();
+      }
     }, []),
   );
 
@@ -54,14 +60,27 @@ export default function TriggerScreen() {
     <AnchoredSpiralScreen
       showPathsLink
       pathsLinkRevealDelayMs={triggerPromptDelayMs}
-      pathsLinkRevealKey={promptRevealKey}
-      centerContent
-      spiralHint={{ presentation: spiralHint, delayMs: hintDelayMs }}
+      pathsLinkRevealId={flowRevealIds.triggerPaths}
+      pathsLinkForceVisible={showTriggerInstant}
+      pinMainLikeTrigger
+      mainLine={
+        <ExplanationText
+          variant="main"
+          holdAfterReveal
+          revealId={flowRevealIds.triggerMain}
+          forceVisible={showTriggerInstant}
+        >
+          {uiCopy.triggerPrompt}
+        </ExplanationText>
+      }
     >
-      <ExplanationText key={promptRevealKey} variant="main" holdAfterReveal>
-        {uiCopy.triggerPrompt}
-      </ExplanationText>
+      <InlineSpiralHintSlot
+        presentation={spiralHint}
+        delayMs={hintDelayMs}
+        holdAfterReveal
+        revealId={flowRevealIds.triggerSpiralHint}
+        forceVisible={showTriggerInstant}
+      />
     </AnchoredSpiralScreen>
   );
 }
-

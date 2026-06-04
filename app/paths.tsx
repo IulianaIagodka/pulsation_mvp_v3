@@ -1,6 +1,6 @@
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
-import { PixelRatio, ScrollView, StyleSheet, View } from "react-native";
+import { PixelRatio, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { AboutFooterLink } from "../src/design/components/AboutFooterLink";
 import { CalmPressable } from "../src/design/components/CalmPressable";
@@ -13,6 +13,7 @@ import { interventionCopy, uiCopy } from "../src/modules/delivery-layer";
 import { removeKeptIntervention } from "../src/services/adaptive-preferences";
 import { getPathsSnapshot } from "../src/services/paths-stats";
 import type { InterventionType } from "../src/types/domain";
+import { getContentMaxWidth } from "../src/design/responsive";
 import { colors, spacing, typography } from "../src/design/tokens";
 
 type RemoveIconProps = {
@@ -37,6 +38,7 @@ function RemoveIcon({ color, size = 20 }: RemoveIconProps) {
 
 export default function PathsScreen() {
   const router = useRouter();
+  const { width } = useWindowDimensions();
   const highContrast = useHighContrast();
   const fontScale = Math.min(PixelRatio.getFontScale(), MAX_FONT_SIZE_MULTIPLIER);
   const [kept, setKept] = useState<InterventionType[]>([]);
@@ -61,10 +63,11 @@ export default function PathsScreen() {
     () => [
       styles.scroll,
       {
+        maxWidth: getContentMaxWidth(width),
         paddingBottom: spacing.xl + footerRowHeight,
       },
     ],
-    [footerRowHeight],
+    [footerRowHeight, width],
   );
 
   const countOpacity = legibleOpacity(0.72, highContrast, "muted");
@@ -189,7 +192,6 @@ const styles = StyleSheet.create({
   scroll: {
     paddingTop: spacing.md,
     flexGrow: 1,
-    maxWidth: 420,
     width: "100%",
     alignSelf: "center",
   },

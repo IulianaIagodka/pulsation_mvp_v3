@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 import { AnchoredSpiralScreen } from "./AnchoredSpiralScreen";
 import { AboutFooterLink } from "./AboutFooterLink";
 import { ExplanationText } from "./ExplanationText";
-import { SpiralUnderHint } from "./SpiralUnderHint";
+import { InlineSpiralHintSlot } from "./InlineSpiralHintSlot";
 import { getOnboardingSpiralHintDelayMs } from "../animation-rhythm";
 import { spacing } from "../tokens";
 import { uiCopy } from "../../modules/delivery-layer";
@@ -27,25 +27,27 @@ export function ShortOnboardingFlow() {
   return (
     <AnchoredSpiralScreen
       footer={<AboutFooterLink label={uiCopy.aboutLink} onPress={() => router.push("/about")} />}
+      pinMainLikeTrigger
+      mainLine={
+        <ExplanationText variant="main" holdAfterReveal>
+          {uiCopy.onboardingLine}
+        </ExplanationText>
+      }
       belowEquator={
-        <SpiralUnderHint
+        <InlineSpiralHintSlot
           presentation={spiralHint}
           delayMs={hintDelayMs}
           label={uiCopy.onboardingSpiralHint}
-          placement="inline"
           style={styles.bodyLine}
         />
       }
-    >
-      <ExplanationText variant="main" holdAfterReveal>{uiCopy.onboardingLine}</ExplanationText>
-    </AnchoredSpiralScreen>
+    />
   );
 }
 
 const styles = StyleSheet.create({
   bodyLine: {
     marginTop: spacing.md,
-    paddingHorizontal: spacing.md,
     width: "100%",
   },
 });

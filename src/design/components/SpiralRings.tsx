@@ -6,9 +6,10 @@ type Props = {
   style?: StyleProp<ViewStyle>;
   opacity?: Animated.Value | Animated.AnimatedInterpolation<number>;
   scale?: Animated.Value | Animated.AnimatedInterpolation<number>;
+  highlighted?: boolean;
 };
 
-export function SpiralRings({ style, opacity, scale }: Props) {
+export function SpiralRings({ style, opacity, scale, highlighted = false }: Props) {
   const highContrast = useHighContrast();
   const animatedStyle =
     opacity != null || scale != null
@@ -19,12 +20,42 @@ export function SpiralRings({ style, opacity, scale }: Props) {
       : undefined;
 
   return (
-    <Animated.View style={[styles.outer, animatedStyle, style]}>
-      <View style={[styles.ringXL, highContrast && styles.ringXLHighContrast]} />
-      <View style={[styles.ringL, highContrast && styles.ringLHighContrast]} />
-      <View style={[styles.ringM, highContrast && styles.ringMHighContrast]} />
-      <View style={[styles.ringS, highContrast && styles.ringSHighContrast]} />
-      <View style={[styles.centerDot, highContrast && styles.centerDotHighContrast]} />
+    <Animated.View style={[styles.outer, highlighted && styles.outerHighlighted, animatedStyle, style]}>
+      <View
+        style={[
+          styles.ringXL,
+          highContrast && styles.ringXLHighContrast,
+          highlighted && styles.ringXLHighlighted,
+        ]}
+      />
+      <View
+        style={[
+          styles.ringL,
+          highContrast && styles.ringLHighContrast,
+          highlighted && styles.ringLHighlighted,
+        ]}
+      />
+      <View
+        style={[
+          styles.ringM,
+          highContrast && styles.ringMHighContrast,
+          highlighted && styles.ringMHighlighted,
+        ]}
+      />
+      <View
+        style={[
+          styles.ringS,
+          highContrast && styles.ringSHighContrast,
+          highlighted && styles.ringSHighlighted,
+        ]}
+      />
+      <View
+        style={[
+          styles.centerDot,
+          highContrast && styles.centerDotHighContrast,
+          highlighted && styles.centerDotHighlighted,
+        ]}
+      />
     </Animated.View>
   );
 }

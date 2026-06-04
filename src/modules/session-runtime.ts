@@ -1,4 +1,9 @@
 import type { AppStateStatus } from "react-native";
+import {
+  clearAppBackgrounded,
+  getSchedulingProfile,
+  recordAppBackgrounded,
+} from "../data/repositories/scheduling-profile-repo";
 
 let currentState: "active" | "background" | "inactive" = "active";
 let activeStartedAt = Date.now();
@@ -6,6 +11,22 @@ let accumulatedActiveMs = 0;
 let backgroundStartedAt: number | null = null;
 let hasBeenBackgrounded = false;
 let pendingInactiveMinutes = 0;
+
+function getPersistedBackgroundMinutes(now: number): number {
+  const lastBackgroundAt = getSchedulingProfile().lastBackgroundAt;
+  if (!lastBackgroundAt) return 0;
+  return Math.max(0, Math.floor((now - lastBackgroundAt) / 60000));
+}
+
+function resolveInactiveMinutes(now: number): number {
+  const fromPending = pendingInactiveMinutes;
+  const fromOngoing =
+    backgroundStartedAt != null
+      ? Math.max(0, Math.floor((now - backgroundStartedAt) / 60000))
+      : 0;
+  const fromPersisted = getPersistedBackgroundMinutes(now);
+  return Math.max(fromPending, fromOngoing, fromPersisted);
+}
 
 export function recordAppStateChange(nextStateRaw: AppStateStatus) {
   const nextState: "active" | "background" | "inactive" =
@@ -17,11 +38,12 @@ export function recordAppStateChange(nextStateRaw: AppStateStatus) {
     accumulatedActiveMs += Math.max(0, now - activeStartedAt);
     backgroundStartedAt = now;
     hasBeenBackgrounded = true;
+    recordAppBackgrounded(now);
   }
   if (currentState !== "active" && nextState === "active") {
     activeStartedAt = now;
-    if (backgroundStartedAt != null) {
-      pendingInactiveMinutes = Math.floor((now - backgroundStartedAt) / 60000);
+    if (backgroundStartedAt != null || getPersistedBackgroundMinutes(now) > 0) {
+      pendingInactiveMinutes = resolveInactiveMinutes(now);
       backgroundStartedAt = null;
     } else {
       pendingInactiveMinutes = 0;
@@ -31,9 +53,17 @@ export function recordAppStateChange(nextStateRaw: AppStateStatus) {
 }
 
 export function consumeInactiveMinutesOnResume(): number {
-  if (!hasBeenBackgrounded) return 0;
-  const minutes = pendingInactiveMinutes;
+  const now = Date.now();
+  const hasPersistedBackground = getPersistedBackgroundMinutes(now) > 0;
+  if (!hasBeenBackgrounded && !hasPersistedBackground) {
+    return 0;
+  }
+
+  const minutes = resolveInactiveMinutes(now);
   pendingInactiveMinutes = 0;
+  backgroundStartedAt = null;
+  hasBeenBackgrounded = false;
+  clearAppBackgrounded();
   return minutes;
 }
 
@@ -44,7 +74,8 @@ export function getActiveSessionMinutes() {
 }
 
 export function getPendingInactiveMinutes() {
-  return pendingInactiveMinutes;
+  const now = Date.now();
+  return resolveInactiveMinutes(now);
 }
 
 export const __sessionRuntimeInternals = {

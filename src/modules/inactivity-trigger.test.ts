@@ -61,10 +61,16 @@ describe("inactivity trigger", () => {
     expect(shouldAutoOpenTrigger(2)).toBe(true);
   });
 
-  it("blocks auto trigger during action flow screens", () => {
-    expect(isPathBlockedForAutoTrigger("/action")).toBe(true);
-    expect(isPathBlockedForAutoTrigger("/return")).toBe(true);
-    expect(isPathBlockedForAutoTrigger("/trigger")).toBe(false);
+  it("blocks auto trigger during action flow screens for short resumes", () => {
+    expect(isPathBlockedForAutoTrigger("/action", 0)).toBe(true);
+    expect(isPathBlockedForAutoTrigger("/return", 0)).toBe(true);
+    expect(isPathBlockedForAutoTrigger("/trigger", 0)).toBe(false);
     expect(isPathBlockedForAutoTrigger("/")).toBe(false);
+  });
+
+  it("allows auto trigger on flow screens after the inactivity threshold", () => {
+    process.env.EXPO_PUBLIC_INACTIVITY_TRIGGER_MINUTES = "20";
+    expect(isPathBlockedForAutoTrigger("/return", 20)).toBe(false);
+    expect(isPathBlockedForAutoTrigger("/action", 45)).toBe(false);
   });
 });

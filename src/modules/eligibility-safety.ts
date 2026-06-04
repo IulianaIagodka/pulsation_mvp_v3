@@ -1,3 +1,4 @@
+import { isSameLocalDay } from "../data/repositories/safety-normalization";
 import { SafetyState, UserSignal } from "../types/domain";
 
 const minDistractingMinutes = 20;
@@ -30,8 +31,11 @@ export function checkEligibility(signal: UserSignal, safety: SafetyState) {
     return { eligible: false, reason: "daily_cap" };
   }
 
-  if (safety.lastInterventionAt) {
-    const diffMinutes = (Date.now() - safety.lastInterventionAt) / 60000;
+  if (
+    safety.lastInterventionAt &&
+    isSameLocalDay(safety.lastInterventionAt, signal.timestamp)
+  ) {
+    const diffMinutes = (signal.timestamp - safety.lastInterventionAt) / 60000;
     if (diffMinutes < safety.cooldownMinutes) {
       return { eligible: false, reason: "cooldown" };
     }

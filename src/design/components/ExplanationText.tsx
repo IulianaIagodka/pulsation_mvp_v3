@@ -1,8 +1,11 @@
-import { PropsWithChildren, useEffect, useRef } from "react";
-import { Animated, Easing, StyleProp, StyleSheet, View, ViewStyle, type EasingFunction } from "react-native";
+import { PropsWithChildren, ReactNode, useRef } from "react";
+import { Animated, Easing, PixelRatio, StyleProp, StyleSheet, View, ViewStyle, useWindowDimensions, type EasingFunction } from "react-native";
 import { legibleOpacity } from "../accessibility";
 import { breathingRhythm, copyReveal } from "../animation-rhythm";
+import { shouldInstantFlowReveal } from "../flow-copy-reveal";
+import { useFlowCopyReveal } from "../use-flow-copy-reveal";
 import { mainCopyTextStyle, spiralHintTextStyle } from "../main-copy";
+import { getMainCopySlotHeight } from "../spiral-anchor-layout";
 import { colors, spacing } from "../tokens";
 import { useHighContrast } from "../../hooks/use-high-contrast";
 import { CalmText } from "./CalmText";
@@ -11,15 +14,14 @@ const EXPLANATION_FADE_EASING = Easing.out(Easing.quad);
 
 type Props = PropsWithChildren<{
   delayMs?: number;
-  /** Defaults to `breathingRhythm.explanationText.fadeMs`. */
   fadeMs?: number;
-  /** Defaults to `Easing.out(Easing.quad)`. */
   fadeEasing?: EasingFunction;
   style?: StyleProp<ViewStyle>;
   variant?: "main" | "explanation" | "hint";
   textOpacity?: number;
-  /** Skip fade restart on parent re-renders — stay visible after first reveal. */
   holdAfterReveal?: boolean;
+  revealId?: string;
+  forceVisible?: boolean;
 }>;
 
 /**
@@ -34,44 +36,23 @@ export function ExplanationText({
   variant = "explanation",
   textOpacity,
   holdAfterReveal = false,
+  revealId,
+  forceVisible = false,
 }: Props) {
-  const opacity = useRef(new Animated.Value(0)).current;
-  const hasRevealedRef = useRef(false);
-  const fadeEasingRef = useRef(fadeEasing);
-  fadeEasingRef.current = fadeEasing;
+  const { width: windowWidth } = useWindowDimensions();
   const highContrast = useHighContrast();
+  const instant = shouldInstantFlowReveal(revealId, forceVisible);
+  const opacity = useRef(new Animated.Value(instant ? 1 : 0)).current;
 
-  useEffect(() => {
-    if (holdAfterReveal && hasRevealedRef.current) {
-      opacity.setValue(1);
-      return;
-    }
-
-    let cancelled = false;
-    opacity.setValue(0);
-
-    const timer = setTimeout(() => {
-      if (cancelled) return;
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: fadeMs,
-        easing: fadeEasingRef.current,
-        useNativeDriver: true,
-      }).start(({ finished }) => {
-        if (finished && !cancelled) {
-          hasRevealedRef.current = true;
-        }
-      });
-    }, delayMs);
-
-    return () => {
-      cancelled = true;
-      clearTimeout(timer);
-      if (!holdAfterReveal || !hasRevealedRef.current) {
-        opacity.stopAnimation();
-      }
-    };
-  }, [delayMs, fadeMs, holdAfterReveal, opacity]);
+  useFlowCopyReveal({
+    opacity,
+    delayMs,
+    fadeMs,
+    fadeEasing,
+    holdAfterReveal,
+    revealId,
+    forceVisible: instant,
+  });
 
   const resolvedTextOpacity = textOpacity ?? breathingRhythm.explanationText.textOpacity;
   const tone = variant === "hint" ? "hint" : "muted";
@@ -83,7 +64,25 @@ export function ExplanationText({
         ? [styles.hintText, highContrast && styles.hintTextHighContrast, { opacity: effectiveOpacity }]
         : [styles.text, highContrast && styles.textHighContrast, { opacity: effectiveOpacity }];
 
-  const wrapStyle = variant === "hint" ? [styles.wrapHint, style] : [styles.wrap, style];
+  const wrapStyle =
+    variant === "hint"
+      ? [styles.wrapHint, style]
+      : variant === "main"
+        ? [
+            styles.wrap,
+            styles.wrapMain,
+            { minHeight: getMainCopySlotHeight(windowWidth, PixelRatio.getFontScale()) },
+            style,
+          ]
+        : [styles.wrap, style];
+
+  if (instant) {
+    return (
+      <View style={wrapStyle}>
+        <CalmText style={textStyle}>{children}</CalmText>
+      </View>
+    );
+  }
 
   return (
     <View style={wrapStyle}>
@@ -100,6 +99,10 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "center",
+  },
+  /** Stable slot while main line fades in (avoids equator re-center jump). */
+  wrapMain: {
+    justifyContent: "flex-start",
   },
   wrapHint: {
     width: "100%",

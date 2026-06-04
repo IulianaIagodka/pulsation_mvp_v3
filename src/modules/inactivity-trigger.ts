@@ -70,8 +70,12 @@ export function shouldAutoOpenTrigger(inactiveMinutes: number): boolean {
   }
 }
 
-export function isPathBlockedForAutoTrigger(pathname: string | null | undefined): boolean {
+export function isPathBlockedForAutoTrigger(
+  pathname: string | null | undefined,
+  inactiveMinutes = 0,
+): boolean {
   if (!pathname) return false;
+  if (inactiveMinutes >= getInactivityTriggerThresholdMinutes()) return false;
   return blockedPathPrefixes.some((prefix) => pathname.startsWith(prefix));
 }
 

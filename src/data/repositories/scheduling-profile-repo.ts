@@ -33,6 +33,7 @@ export function getSchedulingProfile(): SchedulingProfile {
     }
     return {
       lastAppOpenAt: row.last_app_open_at ?? undefined,
+      lastBackgroundAt: row.last_background_at ?? undefined,
       lastCompletedAt: row.last_completed_at ?? undefined,
       consecutiveIgnored: row.consecutive_ignored ?? 0,
       totalCompleted: row.total_completed ?? 0,
@@ -50,12 +51,13 @@ export function saveSchedulingProfile(profile: SchedulingProfile) {
   try {
     getDb().runSync(
       `INSERT OR REPLACE INTO scheduling_profile (
-        id, last_app_open_at, last_completed_at, consecutive_ignored, total_completed,
+        id, last_app_open_at, last_background_at, last_completed_at, consecutive_ignored, total_completed,
         completions_by_type, completions_by_hour, last_scheduled_interval_minutes, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         primaryId,
         profile.lastAppOpenAt ?? null,
+        profile.lastBackgroundAt ?? null,
         profile.lastCompletedAt ?? null,
         profile.consecutiveIgnored,
         profile.totalCompleted,
@@ -73,6 +75,17 @@ export function saveSchedulingProfile(profile: SchedulingProfile) {
 export function recordAppOpen(at: number) {
   const profile = getSchedulingProfile();
   saveSchedulingProfile({ ...profile, lastAppOpenAt: at });
+}
+
+export function recordAppBackgrounded(at: number) {
+  const profile = getSchedulingProfile();
+  saveSchedulingProfile({ ...profile, lastBackgroundAt: at });
+}
+
+export function clearAppBackgrounded() {
+  const profile = getSchedulingProfile();
+  if (profile.lastBackgroundAt == null) return;
+  saveSchedulingProfile({ ...profile, lastBackgroundAt: undefined });
 }
 
 export function recordPulsationCompleted(intervention: InterventionType, at: number) {

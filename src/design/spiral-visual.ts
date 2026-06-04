@@ -80,4 +80,28 @@ export const spiralVisualStyles = StyleSheet.create({
   centerDotHighContrast: {
     opacity: 0.86,
   },
+  outerHighlighted: {
+    borderColor: colors.spiralRingHighlight,
+    shadowOpacity: 0.22,
+    shadowRadius: 18,
+  },
+  ringXLHighlighted: {
+    borderColor: colors.spiralRingHighlight,
+    opacity: 0.82,
+  },
+  ringLHighlighted: {
+    borderColor: colors.spiralRingHighlight,
+    opacity: 0.86,
+  },
+  ringMHighlighted: {
+    borderColor: colors.spiralRingHighlight,
+    opacity: 0.9,
+  },
+  ringSHighlighted: {
+    borderColor: colors.spiralRingHighlight,
+    opacity: 0.94,
+  },
+  centerDotHighlighted: {
+    opacity: 1,
+  },
 });

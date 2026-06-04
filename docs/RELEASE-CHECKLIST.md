@@ -10,7 +10,7 @@
 
 ### A1. Дизайн (готово)
 
-- [x] Іконка = ті самі кільця, що `SpiralFocus` (скрипт `npm run generate:icon`)
+- [x] Іконка = та сама довга тонка спіраль, що `SpiralFocus` (скрипт `npm run generate:icon`)
 - [x] **1024×1024** PNG у `assets/icon.png`
 
 ### A2. Файли в проєкті
@@ -88,7 +88,7 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 4. [ ] **Return** — «Ти тут» + коротке одно-реченнєве пояснення (варіанти ротуются).
 5. [ ] **About** (опційно) — лише з онбордингу → «Про застосунок»
 
-Готові PNG **1284×2778** (якщо вже зняті): `docs/app-store-screenshots/` + `README` у тій папці.
+Готові PNG для Connect: `docs/app-store-screenshots/connect/` (`npm run generate:screenshots` після знімків у `captures/`). Див. `docs/app-store-screenshots/README.md`.
 
 Поради:
 - Темна тема, без статус-бару з часом/батареєю (симулятор: Hide status bar або чистий скрін)
@@ -98,8 +98,9 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 
 ```bash
 cd /Users/maksym/dev/pulsation_mvp_v3
-npm run start
+EXPO_PUBLIC_APP_STORE_SCREENSHOTS=true npm start
 # натисни i → симулятор з таблиці B1 (часто iPhone 14 Pro Max для 1284×2778)
+# онбординг: розширений екран — увесь текст одразу для ⌘S
 ```
 
 За потреби у Simulator: **File → Open Simulator → iPhone 14 Pro Max** (перед ⌘S).
@@ -179,29 +180,29 @@ npm audit --omit=dev
 - [ ] **Expo compatibility:** `npx expo-doctor` без критичних fail
 - [ ] **Security:** `npm audit --omit=dev` переглянуто; high/critical відсутні або задокументовані з планом fix
 
-Поточний зафіксований стан (локальна перевірка 2026-06-02):
-- `npm test` ✅ (17/17 suites, 67 tests)
-- iOS **version** `1.0.1`, `buildNumber` **27** у `app.json` (попередній Store — build **26**)
+Поточний зафіксований стан (локальна перевірка 2026-06-04):
+- `npm test` ✅
+- iOS **version** `1.0.1`, `buildNumber` **28** у `app.json` (попередній Store — build **27**)
 - `npx tsc --noEmit` ✅
-- `npx expo-doctor` ✅ (18/18 checks passed)
-- `npm audit --omit=dev` ⚠️ 14 moderate вразливостей (high/critical немає), залишок у Expo transitive deps; повний fix вимагає major upgrade до Expo 56 (`npm audit fix --force`)
+- `npx expo-doctor` ✅
+- `npm audit --omit=dev` ⚠️ moderate в Expo transitive deps; high/critical немає
 
 ### D2. UX/UI перевірка для adaptive spiral hint
 
-- [ ] Перші **3 завершені цикли**: «торкнись спіралі» під спіраллю на **кожному** екрані флоу
+- [ ] Перші **3 завершені цикли**: «торкнись спіралі» **inline** під текстом на **кожному** екрані флоу
+- [ ] **Return**: порядок — **You are here** → пояснення → tap the spiral (усі з fade-in)
+- [ ] **Return**: **You are here** не стрибає по Y при появі пояснення / hint (pinned `mainLine`)
+- [ ] **Accessibility XXL**: main line лишається на місці; довгий текст переноситься без зсуву якоря
 - [ ] **Мої шляхи** / paths: лише на trigger; з’являється одночасно з «One action for you»
 - [ ] **Збережи це для мене** у footer на return → **Збережено** після натискання
 - [ ] 1–3 взаємодії (після 3 циклів — по tap count): хінт видимий одразу, стандартна виразність
 - [ ] 4–7 взаємодій: хінт приходить пізніше (прибл. +2.2…2.8с), менш контрастний
 - [ ] 8–15 взаємодій: хінт з’являється лише інколи, дуже тихий
 - [ ] 15+ взаємодій: хінт не показується
-- [ ] Перехід між tier-ами без різких UX-стрибків, без “tutorial completed” відчуття
 - [ ] `triangle_breath`: хінт не з’являється раніше завершення 3 циклів дихання
-- [ ] `triangle_breath`: haptic на старт вдиху та видиху
 - [ ] `find_three`: спіраль не завершує дію, поки не показані всі 3 буліти
-- [ ] `return`: **Збережи це для мене** / Save this for me не показується повторно для вже збереженої дії
-- [ ] Онбординг: **How it works** + **tap the spiral** останнім (inline), без «one action for you» на першому екрані
-- [ ] Підказка під спіраллю на trigger/return: ближче до кілець, далі від тексту
+- [ ] `return`: **Збережи це для мене** не показується повторно для вже збереженої дії
+- [ ] Онбординг: **How it works** + **tap the spiral** останнім (inline)
 - [ ] Контраст і читабельність у темній темі залишаються комфортними
 
 ---
@@ -248,6 +249,6 @@ npm audit --omit=dev
 - `docs/app-store-metadata.md` — опис EN/UK
 - `docs/app-privacy-mapping.md` — App Privacy form mapping для Connect
 - `docs/privacy-policy.md` — політика конфіденційності
-- `docs/app-store-screenshots/` — готові скріни для Connect (1284×2778)
+- `docs/app-store-screenshots/connect/` — готові скріни для Connect (1284×2778)
 - `src/modules/find-three-variants.ts` — 7 наборів підказок find 3
 - `app.json` — bundle id, version, icon paths

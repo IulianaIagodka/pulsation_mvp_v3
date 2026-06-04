@@ -6,9 +6,11 @@ import { OnboardingHeadline, OnboardingIntroBelow } from "./OnboardingIntroConte
 import { uiCopy } from "../../modules/delivery-layer";
 import { useRegisterSpiralPress } from "../../hooks/use-register-spiral-press";
 import { markExtendedOnboardingCompleted } from "../../services/onboarding-gate";
+import { isAppStoreScreenshotMode } from "../../modules/app-store-screenshot-mode";
 
 export function ExtendedOnboardingFlow() {
   const router = useRouter();
+  const captureMode = isAppStoreScreenshotMode();
 
   const onSpiralPress = useCallback(() => {
     markExtendedOnboardingCompleted();
@@ -19,9 +21,18 @@ export function ExtendedOnboardingFlow() {
   return (
     <AnchoredSpiralScreen
       footer={<AboutFooterLink label={uiCopy.aboutLink} onPress={() => router.push("/about")} />}
-      belowEquator={<OnboardingIntroBelow />}
+      centerContent={!captureMode}
+      pinMainLikeTrigger={!captureMode}
+      compactCapture={captureMode}
+      belowEquator={captureMode ? undefined : <OnboardingIntroBelow />}
+      mainLine={captureMode ? undefined : <OnboardingHeadline />}
     >
-      <OnboardingHeadline />
+      {captureMode ? (
+        <>
+          <OnboardingHeadline />
+          <OnboardingIntroBelow />
+        </>
+      ) : null}
     </AnchoredSpiralScreen>
   );
 }

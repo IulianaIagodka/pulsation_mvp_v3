@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Архімедова довга — Pulsation</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #070D18;
+      color: #BCC8DA;
+      padding: 24px;
+    }
+    h1 { font-size: 1.25rem; font-weight: 600; margin: 0 0 8px; }
+    p.sub { margin: 0 0 24px; font-size: 0.875rem; color: #74839A; max-width: 520px; line-height: 1.45; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 28px;
+      max-width: 720px;
+    }
+    .card h2 { font-size: 0.95rem; margin: 0 0 4px; }
+    .card .meta { font-size: 0.75rem; color: #74839A; margin: 0 0 10px; }
+    .card svg { display: block; margin: 0 auto; }
+    .highlight { outline: 1px solid #3D5A82; outline-offset: 8px; border-radius: 8px; }
+    .highlight h2 { color: #BCC8DA; }
+  </style>
+</head>
+<body>
+  <h1>Архімедова: довша лінія, тонше</h1>
+  <p class="sub">
+    <strong>Рекомендований варіант</strong> (центр): 4.5 оберти, крок між витками ~12 px (як зараз між кільцями),
+    stroke 0.85 px, від зовнішнього краю до центру. Тонке зовнішнє кільце як у prod.
+  </p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Зараз</h2>
+      <p class="meta">5 кілець · stroke 1–1.15</p>
+      <svg width="136" height="136" viewBox="0 0 136 136">
+        <circle cx="68" cy="68" r="67.4" fill="none" stroke="#3D5A82" stroke-width="1.15" opacity="1"/>
+        <circle cx="68" cy="68" r="54.4" fill="none" stroke="#3D5A82" stroke-width="1" opacity="0.68"/>
+        <circle cx="68" cy="68" r="42.4" fill="none" stroke="#3D5A82" stroke-width="1" opacity="0.72"/>
+        <circle cx="68" cy="68" r="30.4" fill="none" stroke="#3D5A82" stroke-width="1" opacity="0.76"/>
+        <circle cx="68" cy="68" r="18.4" fill="none" stroke="#3D5A82" stroke-width="1" opacity="0.8"/>
+        <circle cx="68" cy="68" r="5" fill="#1C2F4A" opacity="0.92"/>
+      </svg>
+    </div>
+
+    <div class="card">
+      <h2>A коротка</h2>
+      <p class="meta">2.25 оберти · stroke 1.25</p>
+      <svg width="136" height="136" viewBox="0 0 136 136">
+        <path d="M68.00,62.00L68.37,61.78L68.76,61.58L69.18,61.40L69.62,61.26L70.08,61.14L70.56,61.06L71.06,61.01L71.57,60.99L72.10,61.01L72.63,61.07L73.17,61.17L73.72,61.31L74.26,61.49L74.80,61.71L75.34,61.97L75.87,62.28L76.39,62.63L76.90,63.02L77.39,63.45L77.85,63.92L78.30,64.43L78.72,64.98L79.10,65.56L79.46,66.19L79.78,66.84L80.06,67.53L80.30,68.24L80.49,68.98L80.65,69.75L80.75,70.54L80.80,71.34L80.81,72.16L80.76,72.99L80.65,73.83L80.49,74.68L80.28,75.52L80.01,76.37L79.68,77.20L79.29,78.03L78.84,78.84L78.34,79.64L77.78,80.41L77.17,81.15L76.50,81.87L75.78,82.55L75.01,83.20L74.18,83.80L73.32,84.36L72.40,84.87L71.45,85.33L70.45,85.73L69.42,86.08L68.36,86.36L67.27,86.59L66.15,86.74L65.02,86.83L63.86,86.85L62.70,86.80L61.52,86.68L60.35,86.48L59.17,86.20L58.00,85.86L56.84,85.43L55.70,84.94L54.57,84.36L53.47,83.71L52.41,82.99L51.37,82.20L50.38,81.34L49.43,80.41L48.53,79.41L47.69,78.35L46.90,77.23L46.17,76.05L45.51,74.82L44.92,73.54L44.41,72.21L43.97,70.84L43.61,69.44L43.33,68.00L43.14,66.53L43.04,65.05L43.03,63.54L43.11,62.02L43.28,60.50L43.54,58.98L43.90,57.46L44.36,55.95L44.91,54.47L45.55,53.00L46.29,51.56L47.11,50.16L48.03,48.80L49.04,47.49L50.13,46.23L51.31,45.02L52.56,43.88L53.90,42.81L55.30,41.82L56.77,40.90L58.31,40.07L59.91,39.32L61.56,38.66L63.27,38.11L65.01,37.65L66.79,37.29L68.61,37.04L70.45,36.90L72.31,36.86L74.18,36.94L76.05,37.13L77.93,37.44L79.80,37.86L81.65,38.39L83.48,39.04L85.28,39.81L87.04,40.68L88.76,41.67L90.43,42.76L92.04,43.96L93.59,45.26L95.07,46.66L96.47,48.16L97.79,49.75L99.01,51.42L100.15,53.18L101.18,55.01L102.11,56.92L102.93,58.89L103.64,60.91L104.22,62.99L104.69,65.11L105.03,67.27L105.24,69.46L105.32,71.68L105.27,73.90L105.08,76.14L104.77,78.37L104.31,80.59L103.72,82.80L103.00,84.98L102.14,87.12L101.16,89.22L100.04,91.28L98.79,93.27L97.42,95.20L95.93,97.05L94.32,98.82L92.60,100.50L90.78,102.09L88.85,103.57L86.83,104.95L84.71,106.21L82.51,107.34L80.24,108.35L77.90,109.23L75.49,109.97L73.04,110.57L70.54,111.03L68.00,111.33L65.44,111.49L62.85,111.50L60.26,111.35L57.67,111.04L55.08,110.58L52.52,109.97L49.98,109.20L47.48,108.27L45.03,107.20L42.63,105.97L40.30,104.60L38.04,103.08L35.86,101.42L33.78,99.63L31.80,97.71L29.92,95.67L28.16,93.50L26.53,91.23L25.02,88.85L23.65,86.37L22.43,83.80L21.35,81.16L20.43,78.44L19.67,75.65L19.07,72.82L18.64,69.94L18.38,67.03L18.29,64.09L18.37,61.14L18.63,58.18L19.07,55.23L19.69,52.30L20.48,49.40L21.44,46.54L22.58,43.72L23.89,40.97L25.37,38.29L27.01,35.68L28.81,33.17L30.76,30.76L32.86,28.46L35.11,26.27L37.49,24.22L39.99,22.30L42.62,20.52L45.36,18.90L48.21,17.44L51.15,16.14L54.17,15.01L57.27,14.06L60.43,13.29L63.65,12.70L66.91,12.31L70.20,12.11L73.51,12.10L76.82,12.29L80.14,12.68L83.44,13.27L86.71,14.05L89.94,15.03L93.12,16.20L96.24,17.57L99.29,19.12L102.25,20.86L105.11,22.78L107.87,24.87L110.51,27.13L113.02,29.55L115.39,32.13L117.61,34.85L119.68,37.71L121.58,40.70L123.31,43.81L124.85,47.03L126.21,50.34L127.38,53.74L128.35,57.22L129.11,60.77L129.66,64.36L130.00,68.00" fill="none" stroke="#3D5A82" stroke-width="1.25" stroke-linecap="round" opacity="0.9"/>
+        <circle cx="68" cy="68" r="5" fill="#1C2F4A" opacity="0.92"/>
+      </svg>
+    </div>
+
+    <div class="card highlight">
+      <h2>A довга · тонка ★</h2>
+      <p class="meta">4.5 оберти · stroke 0.85 · крок ~12 px</p>
+      <svg width="136" height="136" viewBox="0 0 136 136">
+        <circle cx="68" cy="68" r="67.4" fill="none" stroke="#3D5A82" stroke-width="1.15" opacity="0.35"/>
+        <path id="long-thin" fill="none" stroke="#3D5A82" stroke-width="0.85" stroke-linecap="round" opacity="0.88"/>
+        <circle cx="68" cy="68" r="5" fill="#1C2F4A" opacity="0.92"/>
+      </svg>
+    </div>
+
+    <div class="card">
+      <h2>A довга · 0.7 px</h2>
+      <p class="meta">ті самі 4.5 оберти · ще тонше</p>
+      <svg width="136" height="136" viewBox="0 0 136 136">
+        <circle cx="68" cy="68" r="67.4" fill="none" stroke="#3D5A82" stroke-width="1.15" opacity="0.35"/>
+        <path id="long-thinner" fill="none" stroke="#3D5A82" stroke-width="0.7" stroke-linecap="round" opacity="0.9"/>
+        <circle cx="68" cy="68" r="5" fill="#1C2F4A" opacity="0.92"/>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    const cx = 68, cy = 68;
+    function archInward(turns, maxR, minR) {
+      const dr = maxR - minR;
+      const b = dr / (turns * 2 * Math.PI);
+      const steps = Math.round(turns * 90);
+      let d = '';
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const theta = -Math.PI / 2 + t * turns * 2 * Math.PI;
+        const r = maxR - b * (t * turns * 2 * Math.PI);
+        const x = cx + r * Math.cos(theta);
+        const y = cy + r * Math.sin(theta);
+        d += (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + y.toFixed(2);
+      }
+      return d;
+    }
+    const path = archInward(4.5, 62, 8);
+    document.getElementById('long-thin').setAttribute('d', path);
+    document.getElementById('long-thinner').setAttribute('d', path);
+  </script>
+</body>
+</html>

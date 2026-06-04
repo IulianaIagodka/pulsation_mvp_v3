@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useFocusEffect, usePathname, useRouter } from "expo-router";
 import { Animated, Easing, StyleSheet, View } from "react-native";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { AboutFooterLink } from "../src/design/components/AboutFooterLink";
 import { CalmText } from "../src/design/components/CalmText";
 import { ExplanationText } from "../src/design/components/ExplanationText";
+import { InlineSpiralHintSlot } from "../src/design/components/InlineSpiralHintSlot";
 import { pickReturnExplanation, uiCopy } from "../src/modules/delivery-layer";
 import { DEFAULT_INTERVENTION } from "../src/interventions/registry";
 import { useAppStore } from "../src/state/app-store";
@@ -26,6 +27,7 @@ import {
 } from "../src/services/adaptive-preferences";
 import { playKeepForMeHaptic } from "../src/services/haptic-regulation";
 import { colors, spacing } from "../src/design/tokens";
+import { armInstantTriggerReturn } from "../src/design/flow-copy-reveal";
 import { goToTrigger } from "../src/navigation/go-to-trigger";
 
 export default function ReturnScreen() {
@@ -34,12 +36,13 @@ export default function ReturnScreen() {
   const highContrast = useHighContrast();
   const clear = useAppStore((s) => s.clearIntervention);
   const selected = useAppStore((s) => s.selectedIntervention) ?? DEFAULT_INTERVENTION;
-  const [returnExplanation, setReturnExplanation] = useState(() => pickReturnExplanation(selected));
+  const [returnExplanation] = useState(() => pickReturnExplanation(selected));
   const [isInterventionKept, setIsInterventionKept] = useState(() => hasKeptIntervention(selected));
   const [showKeepForMe, setShowKeepForMe] = useState(false);
   const [keepForMeSavedThisVisit, setKeepForMeSavedThisVisit] = useState(false);
   const [keepForMeFocusEpoch, setKeepForMeFocusEpoch] = useState(0);
   const keepForMeDismissedRef = useRef(false);
+  const hasRevealedOnceRef = useRef(false);
   const enteredAtRef = useRef<number>(Date.now());
   const keepForMeTappedRef = useRef(false);
   const engagementSavedRef = useRef(false);
@@ -49,11 +52,7 @@ export default function ReturnScreen() {
   const returnCopyEndDelayMs = getAuxiliaryCopyDelayMs(mainCopyDelayMs);
   const keepForMeDelayMs = getReturnKeepForMeDelayMs(mainCopyDelayMs);
   const hintDelayMs = getFlowSpiralHintDelayMs(returnCopyEndDelayMs);
-  const spiralHintPresentation = useSpiralHintPresentation(hintDelayMs);
-  const spiralHintSlot = useMemo(
-    () => ({ presentation: spiralHintPresentation, delayMs: hintDelayMs }),
-    [spiralHintPresentation, hintDelayMs],
-  );
+  const spiralHint = useSpiralHintPresentation(hintDelayMs);
 
   const persistEngagement = useCallback(() => {
     if (engagementSavedRef.current) return;
@@ -77,17 +76,22 @@ export default function ReturnScreen() {
   const onSpiralPress = useCallback(() => {
     persistEngagement();
     clear();
+    armInstantTriggerReturn();
     goToTrigger(router, pathname);
   }, [clear, pathname, persistEngagement, router]);
   useRegisterSpiralPress(onSpiralPress);
 
   useFocusEffect(
     useCallback(() => {
+      if (hasRevealedOnceRef.current) {
+        return;
+      }
+      hasRevealedOnceRef.current = true;
+
       enteredAtRef.current = Date.now();
       keepForMeTappedRef.current = false;
       keepForMeDismissedRef.current = false;
       engagementSavedRef.current = false;
-      setReturnExplanation(pickReturnExplanation(selected));
       setIsInterventionKept(hasKeptIntervention(selected));
       setShowKeepForMe(false);
       setKeepForMeSavedThisVisit(false);
@@ -149,30 +153,45 @@ export default function ReturnScreen() {
       </Animated.View>
     ) : null;
 
-  return (
-    <AnchoredSpiralScreen
-      centerContent
-      footer={keepForMeFooter}
-      spiralHint={spiralHintSlot}
-    >
-      <ExplanationText variant="main" holdAfterReveal delayMs={mainCopyDelayMs}>
-        {uiCopy.returnBody}
-      </ExplanationText>
+  const followUp = (
+    <View style={styles.belowMain}>
       <ExplanationText
-        key={returnExplanation}
         variant="explanation"
         holdAfterReveal
         delayMs={returnCopyEndDelayMs}
-        style={styles.followUp}
+        style={styles.explanationLine}
       >
         {returnExplanation}
       </ExplanationText>
+      <InlineSpiralHintSlot
+        presentation={spiralHint}
+        delayMs={hintDelayMs}
+        holdAfterReveal
+      />
+    </View>
+  );
+
+  return (
+    <AnchoredSpiralScreen
+      pinMainLikeTrigger
+      footer={keepForMeFooter}
+      mainLine={
+        <ExplanationText variant="main" holdAfterReveal>
+          {uiCopy.returnBody}
+        </ExplanationText>
+      }
+    >
+      {followUp}
     </AnchoredSpiralScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  followUp: {
+  belowMain: {
+    width: "100%",
+    alignItems: "center",
+  },
+  explanationLine: {
     marginTop: spacing.md,
   },
   keepFooter: {

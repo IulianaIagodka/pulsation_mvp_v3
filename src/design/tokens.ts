@@ -34,6 +34,7 @@ export const colors = {
   spiralInner: lighten(base.spiralInner, spiralLift),
   spiralInnerAlt: lighten(base.spiralInnerAlt, spiralLift),
   spiralRing: lighten(base.spiralRing, spiralLift),
+  spiralRingHighlight: lighten(base.spiralRing, spiralLift + 0.14),
   surfacePrimary: base.surfacePrimary,
   surfaceSecondary: base.surfaceSecondary,
   textPrimary: lighten(base.textPrimary, textPrimaryLift),
