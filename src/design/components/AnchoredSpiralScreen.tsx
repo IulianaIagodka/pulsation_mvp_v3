@@ -45,8 +45,6 @@ type Props = PropsWithChildren<{
   showPathsLink?: boolean;
   /** Fade in paths link with main copy (trigger). */
   pathsLinkRevealDelayMs?: number;
-  pathsLinkRevealId?: string;
-  pathsLinkForceVisible?: boolean;
   /** Tighter scroll top for App Store capture (full extended onboarding on one screen). */
   compactCapture?: boolean;
 }>;
@@ -60,8 +58,6 @@ export function AnchoredSpiralScreen({
   footer,
   showPathsLink = false,
   pathsLinkRevealDelayMs,
-  pathsLinkRevealId,
-  pathsLinkForceVisible,
   compactCapture = false,
   pinMainLikeTrigger = false,
 }: Props) {
@@ -103,8 +99,6 @@ export function AnchoredSpiralScreen({
               onPress={() => router.push("/paths")}
               delayMs={pathsLinkRevealDelayMs}
               holdAfterReveal
-              revealId={pathsLinkRevealId}
-              forceVisible={pathsLinkForceVisible}
             />
           ) : (
             <AboutFooterLink label={uiCopy.pathsLink} onPress={() => router.push("/paths")} />
@@ -269,8 +263,8 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     alignItems: "center",
-    zIndex: 5,
-    elevation: 4,
+    zIndex: 110,
+    elevation: 14,
   },
   footerStack: {
     alignItems: "center",

@@ -3,14 +3,9 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
 import { InlineSpiralHintSlot } from "../src/design/components/InlineSpiralHintSlot";
-import {
-  clearInstantTriggerReturn,
-  hasFlowCopyRevealed,
-  markTriggerFlowRevealed,
-  shouldInstantFlowReveal,
-} from "../src/design/flow-copy-reveal";
-import { flowRevealIds } from "../src/design/flow-reveal-ids";
+import { clearInstantTriggerReturn, markTriggerFlowRevealed } from "../src/design/flow-copy-reveal";
 import { uiCopy } from "../src/modules/delivery-layer";
+import { useFlowMainCopyRevealKey } from "../src/hooks/use-flow-main-copy-reveal-key";
 import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
 import { decideIntervention, registerPulsationDismissed } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
@@ -22,14 +17,20 @@ export default function TriggerScreen() {
   const router = useRouter();
   const setSelected = useAppStore((s) => s.setSelectedIntervention);
   const wentToActionRef = useRef(false);
+  const playedHapticRef = useRef(false);
+  const copyRevealKey = useFlowMainCopyRevealKey();
   const triggerPromptDelayMs = getMainCopyDelayMs();
-  const showTriggerInstant = shouldInstantFlowReveal(flowRevealIds.triggerMain);
 
   useFocusEffect(
     useCallback(() => {
       wentToActionRef.current = false;
       setSelected(decideIntervention());
       clearInstantTriggerReturn();
+
+      if (!playedHapticRef.current) {
+        playedHapticRef.current = true;
+        playTriggerHaptic();
+      }
 
       return () => {
         if (!wentToActionRef.current) {
@@ -48,38 +49,22 @@ export default function TriggerScreen() {
   const hintDelayMs = getFlowSpiralHintDelayMs(triggerPromptDelayMs);
   const spiralHint = useSpiralHintPresentation(hintDelayMs);
 
-  useFocusEffect(
-    useCallback(() => {
-      if (!hasFlowCopyRevealed(flowRevealIds.triggerMain)) {
-        playTriggerHaptic();
-      }
-    }, []),
-  );
-
   return (
     <AnchoredSpiralScreen
       showPathsLink
       pathsLinkRevealDelayMs={triggerPromptDelayMs}
-      pathsLinkRevealId={flowRevealIds.triggerPaths}
-      pathsLinkForceVisible={showTriggerInstant}
       pinMainLikeTrigger
       mainLine={
-        <ExplanationText
-          variant="main"
-          holdAfterReveal
-          revealId={flowRevealIds.triggerMain}
-          forceVisible={showTriggerInstant}
-        >
+        <ExplanationText key={`main-${copyRevealKey}`} variant="main" holdAfterReveal>
           {uiCopy.triggerPrompt}
         </ExplanationText>
       }
     >
       <InlineSpiralHintSlot
+        key={`hint-${copyRevealKey}`}
         presentation={spiralHint}
         delayMs={hintDelayMs}
         holdAfterReveal
-        revealId={flowRevealIds.triggerSpiralHint}
-        forceVisible={showTriggerInstant}
       />
     </AnchoredSpiralScreen>
   );

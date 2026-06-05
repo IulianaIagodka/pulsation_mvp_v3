@@ -40,21 +40,18 @@ export function PersistentSpiralLayer() {
   return (
     <View
       pointerEvents={flowVisible ? "box-none" : "none"}
-      style={[styles.overlay, !flowVisible && styles.hidden]}
+      style={[
+        styles.spiralSlot,
+        { top: spiralTop },
+        !flowVisible && styles.hidden,
+      ]}
     >
-      <View pointerEvents="box-none" style={[styles.spiralSlot, { top: spiralTop }]}>
-        <PersistentSpiral onPress={flowVisible ? (spiralPressHandler ?? undefined) : undefined} />
-      </View>
+      <PersistentSpiral onPress={flowVisible ? (spiralPressHandler ?? undefined) : undefined} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 100,
-    elevation: 12,
-  },
   hidden: {
     opacity: 0,
   },
@@ -63,5 +60,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     alignItems: "center",
+    zIndex: 50,
+    elevation: 12,
   },
 });

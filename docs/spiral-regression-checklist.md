@@ -13,7 +13,7 @@ Use this checklist before release whenever animation/layout is changed.
 ## Interaction (tap)
 
 - [ ] Tap the spiral on **each** flow screen and verify navigation / completion (spiral is wrapped in `Pressable`; layer has `zIndex` + `elevation`).
-- [ ] If tap feels dead, check Android: spiral layer should stay **above** the `ScrollView` hit target (`PersistentSpiralLayer` elevation).
+- [ ] If tap feels dead, check Android: spiral layer should stay **above** the `ScrollView` hit target (`PersistentSpiralLayer` elevation). Layer is **spiral-sized only** (no full-screen overlay) so footer links stay visible and tappable.
 - [ ] **About** on onboarding footer only; **Show my paths** / **Мої шляхи** only on **trigger** — fades in **with** “One action for you” / «Одна дія для тебе».
 - [ ] **Save this for me** / **Збережи це для мене** pinned in the **footer** on return (not in scroll body); tap → **Saved** / **Збережено** (not clickable).
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useFocusEffect, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import {
   Animated,
   Easing,
@@ -12,6 +12,7 @@ import { CalmText } from "../src/design/components/CalmText";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
 import { InlineSpiralHintSlot } from "../src/design/components/InlineSpiralHintSlot";
+import { useFlowMainCopyRevealKey } from "../src/hooks/use-flow-main-copy-reveal-key";
 import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
 import {
   activeLocale,
@@ -53,18 +54,8 @@ export default function ActionScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const highContrast = useHighContrast();
-  const hasFocusedOnceRef = useRef(false);
-  const [copyRevealKey, setCopyRevealKey] = useState(0);
+  const copyRevealKey = useFlowMainCopyRevealKey();
   const mainLineDelayMs = getMainCopyDelayMs();
-  useFocusEffect(
-    useCallback(() => {
-      if (hasFocusedOnceRef.current) {
-        setCopyRevealKey((key) => key + 1);
-      } else {
-        hasFocusedOnceRef.current = true;
-      }
-    }, []),
-  );
   const phaseLabelOpacity = legibleOpacity(
     breathingRhythm.explanationText.textOpacity,
     highContrast,
@@ -298,11 +289,11 @@ export default function ActionScreen() {
 
   const inlineHint = (
     <InlineSpiralHintSlot
+      key={`hint-${copyRevealKey}`}
       presentation={underSpiralHint.presentation}
       delayMs={underSpiralHint.delayMs}
       visible={underSpiralHint.visible}
       holdAfterReveal
-      revealId="action-spiral-hint"
     />
   );
 

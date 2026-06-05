@@ -26,8 +26,8 @@ export function AboutFooterLink({
   onBlur,
 }: Props) {
   const highContrast = useHighContrast();
-  const linkOpacity = legibleOpacity(0.48, highContrast, "faint");
-  const linkOpacityActive = legibleOpacity(0.72, highContrast, "muted");
+  const linkOpacity = legibleOpacity(0.62, highContrast, "muted");
+  const linkOpacityActive = legibleOpacity(0.82, highContrast, "muted");
 
   return (
     <CalmPressable

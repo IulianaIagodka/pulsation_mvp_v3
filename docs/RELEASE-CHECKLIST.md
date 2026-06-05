@@ -180,12 +180,17 @@ npm audit --omit=dev
 - [ ] **Expo compatibility:** `npx expo-doctor` без критичних fail
 - [ ] **Security:** `npm audit --omit=dev` переглянуто; high/critical відсутні або задокументовані з планом fix
 
-Поточний зафіксований стан (локальна перевірка 2026-06-04):
-- `npm test` ✅
-- iOS **version** `1.0.1`, `buildNumber` **28** у `app.json` (попередній Store — build **27**)
+Поточний зафіксований стан (локальна перевірка 2026-06-04, build **30**):
+- `npm test` ✅ (21 suites, 84 tests)
+- iOS **version** `1.0.1`, **buildNumber** **30** (EAS production, submitted 2026-06-05)
 - `npx tsc --noEmit` ✅
-- `npx expo-doctor` ✅
+- `npx expo-doctor` ✅ (після `expo install` patch sync)
 - `npm audit --omit=dev` ⚠️ moderate в Expo transitive deps; high/critical немає
+
+Останні зміни в build **30**:
+- Footer links видимі: спіраль без full-screen overlay; paths / save for me з вищим контрастом
+- Unified fade-in головного тексту на trigger / action / return
+- `signal-collector.test.ts`: mock scheduling repo (стабільний Jest)
 
 ### D2. UX/UI перевірка для adaptive spiral hint
 

@@ -18,6 +18,7 @@ import {
 } from "../src/design/animation-rhythm";
 import { legibleOpacity } from "../src/design/accessibility";
 import { useHighContrast } from "../src/hooks/use-high-contrast";
+import { useFlowMainCopyRevealKey } from "../src/hooks/use-flow-main-copy-reveal-key";
 import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
 import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
 import {
@@ -42,12 +43,12 @@ export default function ReturnScreen() {
   const [keepForMeSavedThisVisit, setKeepForMeSavedThisVisit] = useState(false);
   const [keepForMeFocusEpoch, setKeepForMeFocusEpoch] = useState(0);
   const keepForMeDismissedRef = useRef(false);
-  const hasRevealedOnceRef = useRef(false);
   const enteredAtRef = useRef<number>(Date.now());
   const keepForMeTappedRef = useRef(false);
   const engagementSavedRef = useRef(false);
   const keepForMeOpacity = useRef(new Animated.Value(0)).current;
 
+  const copyRevealKey = useFlowMainCopyRevealKey();
   const mainCopyDelayMs = getMainCopyDelayMs();
   const returnCopyEndDelayMs = getAuxiliaryCopyDelayMs(mainCopyDelayMs);
   const keepForMeDelayMs = getReturnKeepForMeDelayMs(mainCopyDelayMs);
@@ -83,11 +84,6 @@ export default function ReturnScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      if (hasRevealedOnceRef.current) {
-        return;
-      }
-      hasRevealedOnceRef.current = true;
-
       enteredAtRef.current = Date.now();
       keepForMeTappedRef.current = false;
       keepForMeDismissedRef.current = false;
@@ -135,26 +131,32 @@ export default function ReturnScreen() {
   const savedLabelOpacity = legibleOpacity(0.52, highContrast, "faint");
 
   const keepForMeFooter =
-    showKeepForMe && !isInterventionKept ? (
-      <Animated.View style={[styles.keepFooter, { opacity: keepForMeOpacity }]}>
-        {keepForMeSavedThisVisit ? (
-          <CalmText
-            style={[
-              styles.keepSavedLabel,
-              { opacity: savedLabelOpacity },
-              highContrast && styles.keepSavedLabelHighContrast,
-            ]}
-          >
-            {uiCopy.keepForMeSaved}
-          </CalmText>
+    !isInterventionKept ? (
+      <View style={styles.keepFooter}>
+        {showKeepForMe ? (
+          <Animated.View style={{ opacity: keepForMeOpacity }}>
+            {keepForMeSavedThisVisit ? (
+              <CalmText
+                style={[
+                  styles.keepSavedLabel,
+                  { opacity: savedLabelOpacity },
+                  highContrast && styles.keepSavedLabelHighContrast,
+                ]}
+              >
+                {uiCopy.keepForMeSaved}
+              </CalmText>
+            ) : (
+              <AboutFooterLink label={uiCopy.keepForMe} onPress={onKeepForMePress} />
+            )}
+          </Animated.View>
         ) : (
-          <AboutFooterLink label={uiCopy.keepForMe} onPress={onKeepForMePress} />
+          <View style={styles.keepFooterPlaceholder} />
         )}
-      </Animated.View>
+      </View>
     ) : null;
 
   const followUp = (
-    <View style={styles.belowMain}>
+    <View key={`below-main-${copyRevealKey}`} style={styles.belowMain}>
       <ExplanationText
         variant="explanation"
         holdAfterReveal
@@ -164,6 +166,7 @@ export default function ReturnScreen() {
         {returnExplanation}
       </ExplanationText>
       <InlineSpiralHintSlot
+        key={`hint-${copyRevealKey}`}
         presentation={spiralHint}
         delayMs={hintDelayMs}
         holdAfterReveal
@@ -176,7 +179,7 @@ export default function ReturnScreen() {
       pinMainLikeTrigger
       footer={keepForMeFooter}
       mainLine={
-        <ExplanationText variant="main" holdAfterReveal>
+        <ExplanationText key={`main-${copyRevealKey}`} variant="main" holdAfterReveal>
           {uiCopy.returnBody}
         </ExplanationText>
       }
@@ -197,6 +200,9 @@ const styles = StyleSheet.create({
   keepFooter: {
     alignItems: "center",
     width: "100%",
+  },
+  keepFooterPlaceholder: {
+    minHeight: 44,
   },
   keepSavedLabel: {
     color: colors.textSecondary,
