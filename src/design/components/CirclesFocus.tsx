@@ -3,13 +3,13 @@ import { useEffect, useRef } from "react";
 import { breathingRhythm } from "../animation-rhythm";
 import { isPressableHighlighted } from "../pressable-highlight";
 import { CalmPressable } from "./CalmPressable";
-import { SpiralRings } from "./SpiralRings";
+import { CirclesRings } from "./CirclesRings";
 
 type Props = { onPress?: () => void; startDelayMs?: number };
 
-export function SpiralFocus({ onPress, startDelayMs = 0 }: Props) {
+export function CirclesFocus({ onPress, startDelayMs = 0 }: Props) {
   const scale = useRef(new Animated.Value(1)).current;
-  const opacity = useRef(new Animated.Value(breathingRhythm.spiral.opacityExhale)).current;
+  const opacity = useRef(new Animated.Value(breathingRhythm.circles.opacityExhale)).current;
   const {
     inhaleMs,
     holdMs,
@@ -19,7 +19,7 @@ export function SpiralFocus({ onPress, startDelayMs = 0 }: Props) {
     scaleInhale,
     opacityExhale,
     opacityInhale,
-  } = breathingRhythm.spiral;
+  } = breathingRhythm.circles;
 
   useEffect(() => {
     let loop: Animated.CompositeAnimation | null = null;
@@ -106,7 +106,7 @@ export function SpiralFocus({ onPress, startDelayMs = 0 }: Props) {
   ]);
 
   if (!onPress) {
-    return <SpiralRings opacity={opacity} scale={scale} />;
+    return <CirclesRings opacity={opacity} scale={scale} />;
   }
 
   return (
@@ -117,7 +117,7 @@ export function SpiralFocus({ onPress, startDelayMs = 0 }: Props) {
       accessibilityRole="button"
     >
       {(state) => (
-        <SpiralRings
+        <CirclesRings
           opacity={opacity}
           scale={scale}
           highlighted={isPressableHighlighted(state)}

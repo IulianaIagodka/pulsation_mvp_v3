@@ -48,10 +48,10 @@ Schema is defined in `src/data/schema.ts`. See `docs/adaptive-scheduling.md` for
 
 ## UX Flow
 
-1. **Onboarding** (`app/index.tsx`): extended first-install flow (`ExtendedOnboardingFlow`). Scrollable copy, Dynamic Type up to Accessibility XXL. **How it works:** headline + four steps + **Tap the spiral — it's the button here** (inline, appears last). Footer: **About** only. Shown once per install (`extended_onboarding_completed`).
-2. **Trigger** (`app/trigger.tsx`): same spiral slot; main prompt (**One action for you**) and footer **Show my paths** / **Мої шляхи** fade in **together**; short **tap the spiral** under the rings (later). Paths → `app/paths.tsx`.
-3. **Action** (`app/action.tsx`): one micro-intervention (feet / find 3 / triangle breath / relax jaw / drop shoulders / notice 3 sounds / press palms together). Main line pinned at shared Y; bullets / phases / hint flow **below** main. **Find 3 things** shows three cues from **7 rotating sets** (`find-three-variants.ts`); same set never repeats back-to-back. Until all three bullets are visible, **spiral tap reveals the next bullet** instead of completing the action. **Triangle breath**: soft haptic at inhale start and light haptic at exhale start (`startTriangleBreathHapticLoop`). Inline hint appears **last** (after all bullets or after 3 breath cycles). **Spiral is the same visual everywhere** (`spiral-visual.ts` + `SpiralRings`). Action → return uses **`router.replace`** (no stack fade — `animation: "none"` on flow screens).
-4. **Return** (`app/return.tsx`): **You are here** (pinned main, fade-in) → explanation (fade after main) → **tap the spiral** (fade after explanation). Optional **Save this for me** in the **footer** (becomes **Saved**, not clickable; hidden on later visits if already saved). Tap spiral → trigger.
+1. **Onboarding** (`app/index.tsx`): extended first-install flow (`ExtendedOnboardingFlow`). Scrollable copy, Dynamic Type up to Accessibility XXL. **How it works:** headline + four steps + **Tap circles — it's the button here** (under circles, appears last). Footer: **About** only. Shown once per install (`extended_onboarding_completed`).
+2. **Trigger** (`app/trigger.tsx`): same circles slot; main prompt (**One action for you**) and footer **Show my paths** / **Мої шляхи** fade in **together**; **tap to continue** fixed under circles. Paths → `app/paths.tsx`.
+3. **Action** (`app/action.tsx`): one micro-intervention (feet / find 3 / triangle breath / relax jaw / drop shoulders / notice 3 sounds / press palms together). Main line pinned at shared Y; bullets / phases / hint flow **below** main. **Find 3 things** shows three cues from **7 rotating sets** (`find-three-variants.ts`); same set never repeats back-to-back. Until all three bullets are visible, **circles tap reveals the next bullet** instead of completing the action. **Triangle breath**: soft haptic at inhale start and light haptic at exhale start (`startTriangleBreathHapticLoop`). Inline hint appears **last** (after all bullets or after 3 breath cycles). **Circles are the same visual everywhere** (`circles-visual.ts` + `CirclesRings`). Action → return uses **`router.replace`** (no stack fade — `animation: "none"` on flow screens).
+4. **Return** (`app/return.tsx`): **You are here** (pinned main, fade-in) → explanation (fade after main) → **tap to continue** under circles (fade after explanation). Optional **Save this for me** in the **footer** (becomes **Saved**, not clickable; hidden on later visits if already saved). Tap circles → trigger.
 
 Stack navigation uses a calm **fade** between routes (`app/_layout.tsx`, `breathingRhythm.motion.screenFadeMs`).
 
@@ -64,7 +64,7 @@ Standalone **About** screen: `app/about.tsx` (reachable from onboarding footer o
 Dark minimal palette from technical requirements is implemented in `src/design/tokens.ts` and applied across all screens:
 
 - Background: `#0D121E`, `#0E1420`
-- Spiral: `#4F6B91`, `#2A3954` / `#233045`
+- Circles: `#4F6B91`, `#2A3954` / `#233045`
 - Surfaces: `#141B2C`, `#1A2235`
 
 ### Copy & motion (high level)
@@ -75,19 +75,19 @@ Dark minimal palette from technical requirements is implemented in `src/design/t
 | Soft explanation-style fades | `ExplanationText` + `breathingRhythm.explanationText` |
 | Onboarding step rhythm | `onboardingRhythm` + `getOnboardingExplanationDelayMs` |
 | Gentle screen text entrance | `GentleTextTransition` (opacity only) |
-| Spiral hint (“tap the spiral”) | **Onboarding**: inline after steps (last line). **Trigger / action / return**: inline below main copy (or below explanation on return), after all screen copy on that screen (`getFlowSpiralHintDelayMs`). Shown only for the first **3 completed cycles**, then hidden. **Triangle breath**: hint after **3 breath cycles**. |
+| Tap hint | **Onboarding**: **Tap circles — it's the button here** under circles. **Trigger / action / return**: **tap to continue** fixed under circles (`getFlowTapHintDelayMs`). Shown only for the first **3 completed cycles**, then hidden. **Triangle breath**: hint after **3 breath cycles**. |
 | Find 3 sequential bullets | `findThreeThings.autoRevealIntervalMs` |
-| Action → return (“You are here”) | Spiral tap on action (`app/action.tsx`); find 3 requires all bullets first |
+| Action → return (“You are here”) | Circles tap on action (`app/action.tsx`); find 3 requires all bullets first |
 | Save for me | `app/return.tsx` + `src/services/adaptive-preferences.ts` (`keptInterventions`) |
 | Paths stats | `app/paths.tsx` + `src/services/paths-stats.ts` |
 | Dynamic Type cap | `src/design/accessibility.ts` (`MAX_FONT_SIZE_MULTIPLIER` ≈ XXL) |
 
-Triangle breath pattern (labels + spiral): **inhale 4s → hold 2s → exhale 5s → hold 2s**, ×3 cycles (~39s spiral timing). Both holds show the “hold / затримка” label.
+Triangle breath pattern (labels + circles): **inhale 4s → hold 2s → exhale 5s → hold 2s**, ×3 cycles (~39s circles timing). Both holds show the “hold / затримка” label.
 
 ### Docs for release & QA
 
 - `docs/adaptive-scheduling.md` — adaptive interval + personalization design
-- `docs/spiral-regression-checklist.md` — manual spiral / animation checks
+- `docs/circles-regression-checklist.md` — manual circles / animation checks
 - `docs/app-store-metadata.md` — store copy (EN/UK)
 - `docs/RELEASE-CHECKLIST.md` — TestFlight → App Store checklist
 - `docs/TESTFLIGHT.md` — builds & submit

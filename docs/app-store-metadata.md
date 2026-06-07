@@ -77,10 +77,10 @@ Feet on ground, Find 3 things, Triangle breath, Relax your jaw, Drop your should
 
 ### What's New (1.0.1 — build 28)
 
-- Clearer onboarding: **How it works** with four short steps; **Tap the spiral — it's the button here** appears last.
+- Clearer onboarding: **How it works** with four short steps; **Tap circles — it's the button here** appears last.
 - **Show my paths** on the main screen — see today's actions and saved preferences (local only).
 - **Save this for me** on return becomes **Saved** after you tap; saved actions won't ask again.
-- Smoother spiral animation and calmer layout across the flow.
+- Smoother circles animation and calmer layout across the flow.
 - Better readability with larger text sizes (Dynamic Type).
 
 ### App Review Notes (version 1.0.1 — build 28)
@@ -90,12 +90,12 @@ Hello App Review Team,
 Thank you for reviewing our previous submission (build 26, version 1.0.0). This build (1.0.1, build 28) addresses the minimum functionality feedback and further polishes the core flow.
 
 Pulsation is a wellbeing app with a minimal path:
-onboarding (How it works + tap the spiral as the button) → **One action for you** → one micro-action → return (**You are here** + short explanation).
+onboarding (How it works + tap circles as the button) → **One action for you** → one micro-action → return (**You are here** + short explanation).
 
 How to test the full path:
-1. Complete onboarding — tap the spiral on the last step.
+1. Complete onboarding — tap circles on the last step.
 2. On the trigger screen, read **One action for you** and optionally open **Show my paths** (local stats only).
-3. Tap the spiral to start the action. On **Find 3 things**, tap the spiral or wait to reveal all three cues before the spiral completes the action.
+3. Tap circles to start the action. On **Find 3 things**, tap circles or wait to reveal all three cues before circles complete the action.
 4. On return, optional **Save this for me** saves the action locally (label becomes **Saved**; not shown on later visits for already saved actions).
 
 Other notes:
@@ -162,10 +162,10 @@ Pulsation створено для спокою, а не тиску.
 
 ### What's New (1.0.1 — build 28)
 
-- Зрозуміліший онбординг: **Як це працює:** + чотири кроки; **Торкнися спіралі — це кнопка тут** з’являється останнім.
+- Зрозуміліший онбординг: **Як це працює:** + чотири кроки; **Торкнись кіл — це кнопка тут** з’являється останнім.
 - **Мої шляхи** на головному екрані — сьогоднішні дії та збережені вподобання (лише локально).
 - **Збережи це для мене** на return стає **Збережено** після натискання; для збережених дій більше не питає.
-- Плавніша анімація спіралі та спокійніший layout у флоу.
+- Плавніша анімація кіл та спокійніший layout у флоу.
 - Краща читабельність при великому тексті (Dynamic Type).
 
 ### App Review Notes (версія 1.0.1 — build 28)
@@ -175,12 +175,12 @@ Pulsation створено для спокою, а не тиску.
 Дякуємо за попередній рев’ю (build 26, версія 1.0.0). Цей build (1.0.1, build 28) враховує зауваження щодо мінімальної функціональності та доопрацьовує основний шлях.
 
 Pulsation — застосунок добробуту з мінімальним флоу:
-онбординг (Як це працює + торкнись спіралі як кнопка) → **Одна дія для тебе** → одна м’яка дія → повернення (**Ти тут** + коротке пояснення).
+онбординг (Як це працює + торкнись кіл як кнопка) → **Одна дія для тебе** → одна м’яка дія → повернення (**Ти тут** + коротке пояснення).
 
 Як перевірити повний шлях:
-1. Пройти онбординг — торкнутися спіралі на останньому кроці.
+1. Пройти онбординг — торкнутися кіл на останньому кроці.
 2. На trigger прочитати **Одна дія для тебе**; опційно відкрити **Мої шляхи** (лише локальна статистика).
-3. Торкнутися спіралі для дії. У **Знайди 3 речі** — торкатися спіралі або дочекатися всіх трьох підказок, перш ніж спіраль завершить дію.
+3. Торкнутися кіл для дії. У **Знайди 3 речі** — торкатися кіл або дочекатися всіх трьох підказок, перш ніж кола завершать дію.
 4. На return опційно **Збережи це для мене** зберігає дію локально (стає **Збережено**; на наступних візитах для вже збережених дій не показується).
 
 Інше:

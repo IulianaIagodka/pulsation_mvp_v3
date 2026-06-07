@@ -1,18 +1,18 @@
 import { StyleSheet } from "react-native";
 import { colors } from "./tokens";
-import { spiralLayout } from "./animation-rhythm";
+import { circlesLayout } from "./animation-rhythm";
 
-/** Shared concentric-ring spiral — matches SpiralFocus on every screen. */
-export const spiralVisualStyles = StyleSheet.create({
+/** Shared concentric rings — matches CirclesFocus on every screen. */
+export const circlesVisualStyles = StyleSheet.create({
   outer: {
-    width: spiralLayout.size,
-    height: spiralLayout.size,
-    borderRadius: spiralLayout.size / 2,
+    width: circlesLayout.size,
+    height: circlesLayout.size,
+    borderRadius: circlesLayout.size / 2,
     backgroundColor: "transparent",
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1.15,
-    borderColor: colors.spiralRing,
+    borderColor: colors.circlesRing,
     shadowColor: "#000",
     shadowOpacity: 0.12,
     shadowRadius: 14,
@@ -24,7 +24,7 @@ export const spiralVisualStyles = StyleSheet.create({
     height: 110,
     borderRadius: 55,
     borderWidth: 1,
-    borderColor: colors.spiralRing,
+    borderColor: colors.circlesRing,
     opacity: 0.68,
   },
   ringXLHighContrast: {
@@ -37,7 +37,7 @@ export const spiralVisualStyles = StyleSheet.create({
     height: 86,
     borderRadius: 43,
     borderWidth: 1,
-    borderColor: colors.spiralRing,
+    borderColor: colors.circlesRing,
     opacity: 0.72,
   },
   ringLHighContrast: {
@@ -50,7 +50,7 @@ export const spiralVisualStyles = StyleSheet.create({
     height: 62,
     borderRadius: 31,
     borderWidth: 1,
-    borderColor: colors.spiralRing,
+    borderColor: colors.circlesRing,
     opacity: 0.76,
   },
   ringMHighContrast: {
@@ -63,7 +63,7 @@ export const spiralVisualStyles = StyleSheet.create({
     height: 38,
     borderRadius: 19,
     borderWidth: 1,
-    borderColor: colors.spiralRing,
+    borderColor: colors.circlesRing,
     opacity: 0.8,
   },
   ringSHighContrast: {
@@ -74,31 +74,31 @@ export const spiralVisualStyles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: colors.spiralInner,
+    backgroundColor: colors.circlesInner,
     opacity: 0.92,
   },
   centerDotHighContrast: {
     opacity: 0.86,
   },
   outerHighlighted: {
-    borderColor: colors.spiralRingHighlight,
+    borderColor: colors.circlesRingHighlight,
     shadowOpacity: 0.22,
     shadowRadius: 18,
   },
   ringXLHighlighted: {
-    borderColor: colors.spiralRingHighlight,
+    borderColor: colors.circlesRingHighlight,
     opacity: 0.82,
   },
   ringLHighlighted: {
-    borderColor: colors.spiralRingHighlight,
+    borderColor: colors.circlesRingHighlight,
     opacity: 0.86,
   },
   ringMHighlighted: {
-    borderColor: colors.spiralRingHighlight,
+    borderColor: colors.circlesRingHighlight,
     opacity: 0.9,
   },
   ringSHighlighted: {
-    borderColor: colors.spiralRingHighlight,
+    borderColor: colors.circlesRingHighlight,
     opacity: 0.94,
   },
   centerDotHighlighted: {

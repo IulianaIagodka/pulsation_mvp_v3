@@ -27,7 +27,7 @@ export type OutcomesProfile = {
   recentInterventions: InterventionType[];
   /** Last “find 3 things” prompt set (0–6); avoids repeating the same combo back-to-back. */
   lastFindThreeVariantIndex?: number;
-  /** Legacy flag; set on first spiral tap from onboarding. */
+  /** Legacy flag; set on first circles tap from onboarding. */
   onboardingCompleted?: boolean;
   /** First install: multi-step intro completed. */
   extendedOnboardingCompleted?: boolean;

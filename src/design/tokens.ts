@@ -12,10 +12,10 @@ function lighten(hex: string, amount: number): string {
 const base = {
   backgroundPrimary: "#070D18",
   backgroundSecondary: "#0A1222",
-  spiralOuter: "#2F4366",
-  spiralInner: "#162238",
-  spiralInnerAlt: "#111C2F",
-  spiralRing: "#314765",
+  circlesOuter: "#2F4366",
+  circlesInner: "#162238",
+  circlesInnerAlt: "#111C2F",
+  circlesRing: "#314765",
   surfacePrimary: "#101A2B",
   surfaceSecondary: "#162236",
   textPrimary: "#BCC8DA",
@@ -23,18 +23,18 @@ const base = {
   borderSoft: "#1E2F49",
 } as const;
 
-const spiralLift = 0.2;
+const circlesLift = 0.2;
 const textPrimaryLift = 0.28;
 const textSecondaryLift = 0.24;
 
 export const colors = {
   backgroundPrimary: base.backgroundPrimary,
   backgroundSecondary: base.backgroundSecondary,
-  spiralOuter: lighten(base.spiralOuter, spiralLift),
-  spiralInner: lighten(base.spiralInner, spiralLift),
-  spiralInnerAlt: lighten(base.spiralInnerAlt, spiralLift),
-  spiralRing: lighten(base.spiralRing, spiralLift),
-  spiralRingHighlight: lighten(base.spiralRing, spiralLift + 0.14),
+  circlesOuter: lighten(base.circlesOuter, circlesLift),
+  circlesInner: lighten(base.circlesInner, circlesLift),
+  circlesInnerAlt: lighten(base.circlesInnerAlt, circlesLift),
+  circlesRing: lighten(base.circlesRing, circlesLift),
+  circlesRingHighlight: lighten(base.circlesRing, circlesLift + 0.14),
   surfacePrimary: base.surfacePrimary,
   surfaceSecondary: base.surfaceSecondary,
   textPrimary: lighten(base.textPrimary, textPrimaryLift),

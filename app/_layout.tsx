@@ -6,8 +6,8 @@ import { InactivityTriggerListener } from "../src/components/InactivityTriggerLi
 import { NotificationOpenListener } from "../src/components/NotificationOpenListener";
 import { configureInactivityNotifications } from "../src/services/inactivity-notification";
 import { breathingRhythm } from "../src/design/animation-rhythm";
-import { ensureSpiralBreathEngineStarted } from "../src/design/spiral-breath-engine";
-import { PersistentSpiralLayer } from "../src/design/components/PersistentSpiralLayer";
+import { ensureCirclesBreathEngineStarted } from "../src/design/circles-breath-engine";
+import { PersistentCirclesLayer } from "../src/design/components/PersistentCirclesLayer";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaProvider, initialWindowMetrics } from "react-native-safe-area-context";
 
@@ -15,7 +15,7 @@ export default function Layout() {
   useEffect(() => {
     bootstrapPulsation();
     configureInactivityNotifications();
-    ensureSpiralBreathEngineStarted();
+    ensureCirclesBreathEngineStarted();
   }, []);
 
   return (
@@ -36,7 +36,7 @@ export default function Layout() {
           <Stack.Screen name="action" options={{ animation: "none" }} />
           <Stack.Screen name="return" options={{ animation: "none" }} />
         </Stack>
-        <PersistentSpiralLayer />
+        <PersistentCirclesLayer />
       </View>
     </SafeAreaProvider>
   );

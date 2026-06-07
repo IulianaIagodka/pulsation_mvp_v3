@@ -9,7 +9,7 @@ import { colors, spacing } from "../tokens";
 
 type Props = PropsWithChildren<{
   centered?: boolean;
-  /** No inner padding — full-bleed layout (anchored spiral screens). */
+  /** No inner padding — full-bleed layout (anchored circles screens). */
   flush?: boolean;
 }>;
 

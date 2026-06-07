@@ -1,7 +1,7 @@
 import { useFocusEffect, usePathname } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { getSchedulingProfile } from "../data/repositories/scheduling-profile-repo";
-import { SpiralHintPresentation, getSpiralHintPresentation, getSpiralTapCount } from "../services/spiral-hint";
+import { CirclesHintPresentation, getCirclesHintPresentation, getCirclesTapCount } from "../services/circles-hint";
 
 function getPathSalt(pathname: string): number {
   let hash = 0;
@@ -11,22 +11,22 @@ function getPathSalt(pathname: string): number {
   return hash;
 }
 
-export function useSpiralHintPresentation(baseDelayMs: number): SpiralHintPresentation {
+export function useCirclesHintPresentation(baseDelayMs: number): CirclesHintPresentation {
   const pathname = usePathname();
-  const [spiralTapCount, setSpiralTapCount] = useState(() => getSpiralTapCount());
+  const [circlesTapCount, setCirclesTapCount] = useState(() => getCirclesTapCount());
   const [completedCycles, setCompletedCycles] = useState(
     () => getSchedulingProfile().totalCompleted,
   );
 
   useFocusEffect(
     useCallback(() => {
-      setSpiralTapCount(getSpiralTapCount());
+      setCirclesTapCount(getCirclesTapCount());
       setCompletedCycles(getSchedulingProfile().totalCompleted);
     }, []),
   );
 
   return useMemo(
-    () => getSpiralHintPresentation(spiralTapCount, baseDelayMs, getPathSalt(pathname), completedCycles),
-    [baseDelayMs, completedCycles, pathname, spiralTapCount],
+    () => getCirclesHintPresentation(circlesTapCount, baseDelayMs, getPathSalt(pathname), completedCycles),
+    [baseDelayMs, completedCycles, pathname, circlesTapCount],
   );
 }

@@ -16,7 +16,7 @@ type Props = Omit<PressableProps, "children" | "style"> & {
   style?: StyleProp<ViewStyle> | ((state: CalmPressableVisualState) => StyleProp<ViewStyle>);
 };
 
-/** Tracks hover/press/focus for a brief brighten on links, icons, and the spiral. */
+/** Tracks hover/press/focus for a brief brighten on links, icons, and circles. */
 export function CalmPressable({
   children,
   style,

@@ -25,7 +25,7 @@ describe("flow-copy-reveal", () => {
     markTriggerFlowRevealed();
     expect(hasFlowCopyRevealed(flowRevealIds.triggerMain)).toBe(true);
     expect(hasFlowCopyRevealed(flowRevealIds.triggerPaths)).toBe(true);
-    expect(hasFlowCopyRevealed(flowRevealIds.triggerSpiralHint)).toBe(true);
+    expect(hasFlowCopyRevealed(flowRevealIds.triggerCirclesHint)).toBe(true);
   });
 
   it("arms instant trigger return only for trigger reveal ids", () => {

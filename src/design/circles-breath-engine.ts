@@ -1,14 +1,14 @@
 import { Animated, Easing } from "react-native";
 import { breathingRhythm, getTriangleBreathIntroDelayMs } from "./animation-rhythm";
 
-export type SpiralAnimationMode = "calm" | "triangle";
+export type CirclesAnimationMode = "calm" | "triangle";
 
 const scale = new Animated.Value(1);
-const opacity = new Animated.Value(breathingRhythm.spiral.opacityExhale);
+const opacity = new Animated.Value(breathingRhythm.circles.opacityExhale);
 
 let runningAnimation: Animated.CompositeAnimation | null = null;
 let triangleIntroTimer: ReturnType<typeof setTimeout> | null = null;
-let requestedMode: SpiralAnimationMode = "calm";
+let requestedMode: CirclesAnimationMode = "calm";
 let calmLoopActive = false;
 let engineStarted = false;
 
@@ -34,7 +34,7 @@ function buildCalmLoop() {
     scaleInhale,
     opacityExhale,
     opacityInhale,
-  } = breathingRhythm.spiral;
+  } = breathingRhythm.circles;
 
   return Animated.loop(
     Animated.sequence([
@@ -100,7 +100,7 @@ function buildCalmLoop() {
 
 function buildTriangleBreathSequence() {
   const { inhaleMs, holdMs, exhaleMs, cycles } = breathingRhythm.triangleBreath;
-  const { scaleExhale, scaleInhale, opacityExhale, opacityInhale } = breathingRhythm.spiral;
+  const { scaleExhale, scaleInhale, opacityExhale, opacityInhale } = breathingRhythm.circles;
 
   const makeTriangleCycle = () =>
     Animated.sequence([
@@ -149,8 +149,8 @@ function startCalmLoop(force = false, options?: { preserveTriangleIntro?: boolea
   stopRunning();
   calmLoopActive = false;
 
-  scale.setValue(breathingRhythm.spiral.scaleExhale);
-  opacity.setValue(breathingRhythm.spiral.opacityExhale);
+  scale.setValue(breathingRhythm.circles.scaleExhale);
+  opacity.setValue(breathingRhythm.circles.opacityExhale);
 
   calmLoopActive = true;
 
@@ -185,7 +185,7 @@ function startTriangleMode() {
   }, getTriangleBreathIntroDelayMs());
 }
 
-/** Re-attach breath loop once the spiral view is mounted (native driver stops without a view). */
+/** Re-attach breath loop once circles view is mounted (native driver stops without a view). */
 export function resumeCalmLoopAfterViewMount() {
   if (requestedMode === "calm") {
     startCalmLoop(true);
@@ -199,7 +199,7 @@ export function resumeCalmLoopAfterViewMount() {
 }
 
 /** Keeps one shared breath loop across navigation and remounts. */
-export function setSpiralAnimationMode(mode: SpiralAnimationMode) {
+export function setCirclesAnimationMode(mode: CirclesAnimationMode) {
   if (mode === requestedMode) {
     return;
   }
@@ -214,7 +214,7 @@ export function setSpiralAnimationMode(mode: SpiralAnimationMode) {
   startTriangleMode();
 }
 
-export function ensureSpiralBreathEngineStarted() {
+export function ensureCirclesBreathEngineStarted() {
   if (engineStarted) {
     return;
   }
@@ -222,6 +222,6 @@ export function ensureSpiralBreathEngineStarted() {
   requestedMode = "calm";
 }
 
-export function getSpiralBreathValues() {
+export function getCirclesBreathValues() {
   return { scale, opacity };
 }

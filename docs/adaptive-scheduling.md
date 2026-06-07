@@ -185,7 +185,7 @@ Completion rates update via existing EMA in `memory-update.ts` (70/30 blend). Pe
 | 1 | Ignore trigger | +15m, dismissalStreak = 1 |
 | 2 | Ignore again | +30m, dismissalStreak = 2 |
 | 3 | Ignore again | +45m, dismissalStreak = 3 → **eligibility blocked** |
-| 4 | User completes onboarding spiral later | Streak resets on next completion |
+| 4 | User completes onboarding circles later | Streak resets on next completion |
 
 **Feel:** Clear boundary — Pulsation steps back until the user is ready.
 

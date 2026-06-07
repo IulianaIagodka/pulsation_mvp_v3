@@ -1,14 +1,17 @@
 import { create } from "zustand";
 import { InterventionType } from "../types/domain";
+import type { CirclesHintRegistration } from "../types/circles-hint-registration";
 
 type AppState = {
   selectedIntervention?: InterventionType;
   findThreeVariantIndex?: number;
-  spiralPressHandler: (() => void) | null;
+  circlesPressHandler: (() => void) | null;
+  circlesHint: CirclesHintRegistration | null;
   highContrastPreviewEnabled: boolean;
   setSelectedIntervention: (it: InterventionType) => void;
   setFindThreeVariantIndex: (index: number) => void;
-  setSpiralPressHandler: (handler: (() => void) | null) => void;
+  setCirclesPressHandler: (handler: (() => void) | null) => void;
+  setCirclesHint: (hint: CirclesHintRegistration | null) => void;
   setHighContrastPreviewEnabled: (enabled: boolean) => void;
   clearIntervention: () => void;
 };
@@ -16,11 +19,13 @@ type AppState = {
 export const useAppStore = create<AppState>((set) => ({
   selectedIntervention: undefined,
   findThreeVariantIndex: undefined,
-  spiralPressHandler: null,
+  circlesPressHandler: null,
+  circlesHint: null,
   highContrastPreviewEnabled: false,
   setSelectedIntervention: (it) => set({ selectedIntervention: it }),
   setFindThreeVariantIndex: (index) => set({ findThreeVariantIndex: index }),
-  setSpiralPressHandler: (handler) => set({ spiralPressHandler: handler }),
+  setCirclesPressHandler: (handler) => set({ circlesPressHandler: handler }),
+  setCirclesHint: (hint) => set({ circlesHint: hint }),
   setHighContrastPreviewEnabled: (enabled) => set({ highContrastPreviewEnabled: enabled }),
   clearIntervention: () => set({ selectedIntervention: undefined, findThreeVariantIndex: undefined }),
 }));

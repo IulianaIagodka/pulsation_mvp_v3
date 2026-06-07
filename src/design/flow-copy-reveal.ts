@@ -15,7 +15,7 @@ export function markFlowCopyRevealed(revealId: string): void {
 export function markTriggerFlowRevealed(): void {
   markFlowCopyRevealed(flowRevealIds.triggerMain);
   markFlowCopyRevealed(flowRevealIds.triggerPaths);
-  markFlowCopyRevealed(flowRevealIds.triggerSpiralHint);
+  markFlowCopyRevealed(flowRevealIds.triggerCirclesHint);
 }
 
 let instantTriggerReturnPending = false;
@@ -38,7 +38,7 @@ function isTriggerRevealId(revealId: string): boolean {
   return (
     revealId === flowRevealIds.triggerMain ||
     revealId === flowRevealIds.triggerPaths ||
-    revealId === flowRevealIds.triggerSpiralHint
+    revealId === flowRevealIds.triggerCirclesHint
   );
 }
 

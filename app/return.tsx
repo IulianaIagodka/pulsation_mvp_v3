@@ -1,26 +1,26 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFocusEffect, usePathname, useRouter } from "expo-router";
 import { Animated, Easing, StyleSheet, View } from "react-native";
-import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
+import { AnchoredCirclesScreen } from "../src/design/components/AnchoredCirclesScreen";
 import { AboutFooterLink } from "../src/design/components/AboutFooterLink";
 import { CalmText } from "../src/design/components/CalmText";
 import { ExplanationText } from "../src/design/components/ExplanationText";
-import { InlineSpiralHintSlot } from "../src/design/components/InlineSpiralHintSlot";
 import { pickReturnExplanation, uiCopy } from "../src/modules/delivery-layer";
 import { DEFAULT_INTERVENTION } from "../src/interventions/registry";
 import { useAppStore } from "../src/state/app-store";
 import {
   copyReveal,
   getAuxiliaryCopyDelayMs,
-  getFlowSpiralHintDelayMs,
+  getFlowTapHintDelayMs,
   getMainCopyDelayMs,
   getReturnKeepForMeDelayMs,
 } from "../src/design/animation-rhythm";
 import { legibleOpacity } from "../src/design/accessibility";
 import { useHighContrast } from "../src/hooks/use-high-contrast";
 import { useFlowMainCopyRevealKey } from "../src/hooks/use-flow-main-copy-reveal-key";
-import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
-import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
+import { useRegisterCirclesHint } from "../src/hooks/use-register-circles-hint";
+import { useRegisterCirclesPress } from "../src/hooks/use-register-circles-press";
+import { useCirclesHintPresentation } from "../src/hooks/use-circles-hint-presentation";
 import {
   hasKeptIntervention,
   markInterventionKept,
@@ -52,8 +52,18 @@ export default function ReturnScreen() {
   const mainCopyDelayMs = getMainCopyDelayMs();
   const returnCopyEndDelayMs = getAuxiliaryCopyDelayMs(mainCopyDelayMs);
   const keepForMeDelayMs = getReturnKeepForMeDelayMs(mainCopyDelayMs);
-  const hintDelayMs = getFlowSpiralHintDelayMs(returnCopyEndDelayMs);
-  const spiralHint = useSpiralHintPresentation(hintDelayMs);
+  const hintDelayMs = getFlowTapHintDelayMs(returnCopyEndDelayMs);
+  const circlesHintPresentation = useCirclesHintPresentation(hintDelayMs);
+  const hintRegistration = useMemo(
+    () => ({
+      presentation: circlesHintPresentation,
+      delayMs: hintDelayMs,
+      label: uiCopy.tapContinueHint,
+      holdAfterReveal: true,
+    }),
+    [hintDelayMs, circlesHintPresentation],
+  );
+  useRegisterCirclesHint(hintRegistration);
 
   const persistEngagement = useCallback(() => {
     if (engagementSavedRef.current) return;
@@ -74,13 +84,13 @@ export default function ReturnScreen() {
     setKeepForMeSavedThisVisit(true);
   }, [persistEngagement, selected]);
 
-  const onSpiralPress = useCallback(() => {
+  const onCirclesPress = useCallback(() => {
     persistEngagement();
     clear();
     armInstantTriggerReturn();
     goToTrigger(router, pathname);
   }, [clear, pathname, persistEngagement, router]);
-  useRegisterSpiralPress(onSpiralPress);
+  useRegisterCirclesPress(onCirclesPress);
 
   useFocusEffect(
     useCallback(() => {
@@ -165,17 +175,11 @@ export default function ReturnScreen() {
       >
         {returnExplanation}
       </ExplanationText>
-      <InlineSpiralHintSlot
-        key={`hint-${copyRevealKey}`}
-        presentation={spiralHint}
-        delayMs={hintDelayMs}
-        holdAfterReveal
-      />
     </View>
   );
 
   return (
-    <AnchoredSpiralScreen
+    <AnchoredCirclesScreen
       pinMainLikeTrigger
       footer={keepForMeFooter}
       mainLine={
@@ -185,7 +189,7 @@ export default function ReturnScreen() {
       }
     >
       {followUp}
-    </AnchoredSpiralScreen>
+    </AnchoredCirclesScreen>
   );
 }
 

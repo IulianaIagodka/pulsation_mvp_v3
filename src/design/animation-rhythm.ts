@@ -7,7 +7,7 @@ export const copyReveal = {
 } as const;
 
 export const breathingRhythm = {
-  spiral: {
+  circles: {
     /** Expand + brighten — quicker rise, brief peak. */
     inhaleMs: 2200,
     holdMs: 500,
@@ -87,25 +87,25 @@ export function getOnboardingExplanationDelayMs(lineIndex: number): number {
   return firstAuxiliaryMs + getOnboardingStepGapMs() * lineIndex;
 }
 
-/** Onboarding: “tap the spiral” after headline or after all steps. */
-export function getOnboardingSpiralHintDelayMs(stepCount: number): number {
+/** Onboarding: “tap circles” after headline or after all steps. */
+export function getOnboardingCirclesHintDelayMs(stepCount: number): number {
   const stepGap = getOnboardingStepGapMs();
   if (stepCount === 0) {
-    return getFlowSpiralHintDelayMs(copyReveal.delayMs);
+    return getFlowTapHintDelayMs(copyReveal.delayMs);
   }
   const lastStepDelayMs = getAuxiliaryCopyDelayMs(copyReveal.delayMs) + stepGap * (stepCount - 1);
-  return getFlowSpiralHintDelayMs(lastStepDelayMs);
+  return getFlowTapHintDelayMs(lastStepDelayMs);
 }
 
 const flowHintGapMs = copyReveal.lineGapMs;
 
 /** Flow screens: hint after the last line finishes fading. */
-export function getFlowSpiralHintDelayMs(lastLineDelayMs: number): number {
+export function getFlowTapHintDelayMs(lastLineDelayMs: number): number {
   return lastLineDelayMs + copyReveal.fadeMs + flowHintGapMs;
 }
 
 /** Hint after the last find-three bullet begins appearing. */
-export function getFindThreeSpiralHintDelayMs(
+export function getFindThreeTapHintDelayMs(
   bulletCount: number,
   mainLineDelayMs: number = getMainCopyDelayMs(),
 ): number {
@@ -117,18 +117,18 @@ export function getFindThreeSpiralHintDelayMs(
 }
 
 /** Delay from mount when gated content (e.g. all bullets) just became visible. */
-export function getFlowSpiralHintDelayAfterRevealMs(): number {
+export function getFlowTapHintDelayAfterRevealMs(): number {
   return copyReveal.fadeMs + flowHintGapMs;
 }
 
-/** "Tap the spiral" delays — always after other copy on that screen. */
-export const spiralHintTiming = {
-  onboardingAfterMainMs: getOnboardingSpiralHintDelayMs(0),
-  triggerAfterPromptMs: getFlowSpiralHintDelayMs(copyReveal.delayMs),
-  returnAfterFollowUpMs: getFlowSpiralHintDelayMs(getAuxiliaryCopyDelayMs(copyReveal.delayMs)),
-  returnAfterBodyMs: getFlowSpiralHintDelayMs(copyReveal.delayMs),
-  actionAfterFeetInstructionMs: getFlowSpiralHintDelayMs(copyReveal.delayMs),
-  actionAfterFindThreeMs: getFindThreeSpiralHintDelayMs(3),
+/** Tap-hint delays — always after other copy on that screen. */
+export const tapHintTiming = {
+  onboardingAfterMainMs: getOnboardingCirclesHintDelayMs(0),
+  triggerAfterPromptMs: getFlowTapHintDelayMs(copyReveal.delayMs),
+  returnAfterFollowUpMs: getFlowTapHintDelayMs(getAuxiliaryCopyDelayMs(copyReveal.delayMs)),
+  returnAfterBodyMs: getFlowTapHintDelayMs(copyReveal.delayMs),
+  actionAfterFeetInstructionMs: getFlowTapHintDelayMs(copyReveal.delayMs),
+  actionAfterFindThreeMs: getFindThreeTapHintDelayMs(3),
 } as const;
 
 /** Return screen: "Save this for me" when the follow-up explanation begins. */
@@ -136,7 +136,7 @@ export function getReturnKeepForMeDelayMs(mainLineDelayMs: number = getMainCopyD
   return getAuxiliaryCopyDelayMs(mainLineDelayMs);
 }
 
-export const spiralLayout = {
+export const circlesLayout = {
   size: 136,
   anchorRatio: 0.36,
   textGap: 12,
@@ -158,7 +158,7 @@ export function getTriangleBreathIntroDelayMs(mainLineDelayMs: number = getMainC
   return getAuxiliaryCopyDelayMs(mainLineDelayMs);
 }
 
-export function getTriangleBreathSpiralCycleMs(): number {
+export function getTriangleBreathCirclesCycleMs(): number {
   const { inhaleMs, holdMs, exhaleMs } = breathingRhythm.triangleBreath;
   return inhaleMs + holdMs + exhaleMs;
 }

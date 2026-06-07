@@ -15,8 +15,8 @@ export const mainCopyTextStyle: TextStyle = {
   fontFamily: Platform.select({ ios: "Times New Roman", default: "serif" }),
 };
 
-/** Quiet CTA under the spiral — smaller than main copy. */
-export const spiralHintTextStyle: TextStyle = {
+/** Quiet CTA under circles — smaller than main copy. */
+export const tapHintTextStyle: TextStyle = {
   color: colors.textSecondary,
   fontSize: 12,
   fontWeight: "400",

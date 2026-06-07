@@ -1,17 +1,17 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
-import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
+import { AnchoredCirclesScreen } from "../src/design/components/AnchoredCirclesScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
-import { InlineSpiralHintSlot } from "../src/design/components/InlineSpiralHintSlot";
 import { clearInstantTriggerReturn, markTriggerFlowRevealed } from "../src/design/flow-copy-reveal";
 import { uiCopy } from "../src/modules/delivery-layer";
 import { useFlowMainCopyRevealKey } from "../src/hooks/use-flow-main-copy-reveal-key";
-import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
+import { useRegisterCirclesHint } from "../src/hooks/use-register-circles-hint";
+import { useRegisterCirclesPress } from "../src/hooks/use-register-circles-press";
 import { decideIntervention, registerPulsationDismissed } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
 import { playTriggerHaptic } from "../src/services/haptic-regulation";
-import { getFlowSpiralHintDelayMs, getMainCopyDelayMs } from "../src/design/animation-rhythm";
-import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
+import { getFlowTapHintDelayMs, getMainCopyDelayMs } from "../src/design/animation-rhythm";
+import { useCirclesHintPresentation } from "../src/hooks/use-circles-hint-presentation";
 
 export default function TriggerScreen() {
   const router = useRouter();
@@ -40,17 +40,27 @@ export default function TriggerScreen() {
     }, [setSelected]),
   );
 
-  const onSpiralPress = useCallback(() => {
+  const onCirclesPress = useCallback(() => {
     wentToActionRef.current = true;
     markTriggerFlowRevealed();
     router.push("/action");
   }, [router]);
-  useRegisterSpiralPress(onSpiralPress);
-  const hintDelayMs = getFlowSpiralHintDelayMs(triggerPromptDelayMs);
-  const spiralHint = useSpiralHintPresentation(hintDelayMs);
+  useRegisterCirclesPress(onCirclesPress);
+  const hintDelayMs = getFlowTapHintDelayMs(triggerPromptDelayMs);
+  const circlesHintPresentation = useCirclesHintPresentation(hintDelayMs);
+  const hintRegistration = useMemo(
+    () => ({
+      presentation: circlesHintPresentation,
+      delayMs: hintDelayMs,
+      label: uiCopy.tapContinueHint,
+      holdAfterReveal: true,
+    }),
+    [hintDelayMs, circlesHintPresentation],
+  );
+  useRegisterCirclesHint(hintRegistration);
 
   return (
-    <AnchoredSpiralScreen
+    <AnchoredCirclesScreen
       showPathsLink
       pathsLinkRevealDelayMs={triggerPromptDelayMs}
       pinMainLikeTrigger
@@ -59,13 +69,6 @@ export default function TriggerScreen() {
           {uiCopy.triggerPrompt}
         </ExplanationText>
       }
-    >
-      <InlineSpiralHintSlot
-        key={`hint-${copyRevealKey}`}
-        presentation={spiralHint}
-        delayMs={hintDelayMs}
-        holdAfterReveal
-      />
-    </AnchoredSpiralScreen>
+    />
   );
 }

@@ -35,9 +35,9 @@ const COPY = {
     "One small action for you",
     "A quiet return — «you are here»",
   ],
-  onboardingSpiralHint: "Tap the spiral — it's the button here",
+  onboardingCirclesHint: "Tap circles — it's the button here",
   triggerPrompt: "One action for you",
-  spiralHint: "tap the spiral",
+  tapContinueHint: "tap to continue",
   actionText:
     "Place your feet on the ground, notice the pressure under them, take one slow breath",
   returnBody: "You are here",
@@ -150,14 +150,14 @@ const SCREENS = {
         const block = mutedText(step, y + 56 + i * 44, 28, 0.58);
         return block;
       }),
-      mutedText(COPY.onboardingSpiralHint, y + 56 + COPY.onboardingSteps.length * 44 + 20, 24, 0.58),
+      mutedText(COPY.onboardingCirclesHint, y + 56 + COPY.onboardingSteps.length * 44 + 20, 24, 0.58),
       footerLink(COPY.aboutLink, H - 120),
     ].join("");
     return screenSvg(body);
   },
   "02-trigger": () => {
     const body = [
-      mutedText(COPY.spiralHint, 500, 22, 0.58),
+      mutedText(COPY.tapContinueHint, 500, 22, 0.58),
       mainText(COPY.triggerPrompt, 720, 34),
       footerLink(COPY.pathsLink, H - 120),
     ].join("");
@@ -166,7 +166,7 @@ const SCREENS = {
   "03-action": () => {
     const body = [
       mainText(COPY.actionText, 680, 32),
-      mutedText(COPY.spiralHint, 520, 22, 0.58),
+      mutedText(COPY.tapContinueHint, 520, 22, 0.58),
     ].join("");
     return screenSvg(body);
   },
@@ -174,7 +174,7 @@ const SCREENS = {
     const body = [
       mainText(COPY.returnBody, 720, 34),
       mutedText(COPY.returnExplanation, 820, 28, 0.58),
-      mutedText(COPY.spiralHint, 520, 22, 0.58),
+      mutedText(COPY.tapContinueHint, 520, 22, 0.58),
       footerLink(COPY.keepForMe, H - 120),
     ].join("");
     return screenSvg(body);

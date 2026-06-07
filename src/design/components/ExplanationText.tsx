@@ -4,8 +4,8 @@ import { legibleOpacity } from "../accessibility";
 import { breathingRhythm, copyReveal } from "../animation-rhythm";
 import { shouldInstantFlowReveal } from "../flow-copy-reveal";
 import { useFlowCopyReveal } from "../use-flow-copy-reveal";
-import { mainCopyTextStyle, spiralHintTextStyle } from "../main-copy";
-import { getMainCopySlotHeight } from "../spiral-anchor-layout";
+import { mainCopyTextStyle, tapHintTextStyle } from "../main-copy";
+import { getMainCopySlotHeight } from "../circles-anchor-layout";
 import { colors, spacing } from "../tokens";
 import { useHighContrast } from "../../hooks/use-high-contrast";
 import { CalmText } from "./CalmText";
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   textHighContrast: {
     color: colors.textPrimary,
   },
-  hintText: spiralHintTextStyle,
+  hintText: tapHintTextStyle,
   hintTextHighContrast: {
     color: colors.textPrimary,
     opacity: 0.82,

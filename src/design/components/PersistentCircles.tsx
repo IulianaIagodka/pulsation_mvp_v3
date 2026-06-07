@@ -1,17 +1,17 @@
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { isPressableHighlighted } from "../pressable-highlight";
-import { getSpiralBreathValues, resumeCalmLoopAfterViewMount } from "../spiral-breath-engine";
+import { getCirclesBreathValues, resumeCalmLoopAfterViewMount } from "../circles-breath-engine";
 import { CalmPressable } from "./CalmPressable";
-import { SpiralRings } from "./SpiralRings";
+import { CirclesRings } from "./CirclesRings";
 
 type Props = {
   onPress?: () => void;
 };
 
-/** Renders the shared spiral motion — animation lives in `spiral-breath-engine`. */
-export function PersistentSpiral({ onPress }: Props) {
-  const { scale, opacity } = getSpiralBreathValues();
+/** Renders the shared circles motion — animation lives in `circles-breath-engine`. */
+export function PersistentCircles({ onPress }: Props) {
+  const { scale, opacity } = getCirclesBreathValues();
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -20,7 +20,7 @@ export function PersistentSpiral({ onPress }: Props) {
     return () => cancelAnimationFrame(frame);
   }, []);
 
-  const rings = <SpiralRings opacity={opacity} scale={scale} />;
+  const rings = <CirclesRings opacity={opacity} scale={scale} />;
 
   if (!onPress) {
     return <View style={styles.pressWrap}>{rings}</View>;
@@ -34,7 +34,7 @@ export function PersistentSpiral({ onPress }: Props) {
       accessibilityRole="button"
     >
       {(state) => (
-        <SpiralRings
+        <CirclesRings
           opacity={opacity}
           scale={scale}
           highlighted={isPressableHighlighted(state)}

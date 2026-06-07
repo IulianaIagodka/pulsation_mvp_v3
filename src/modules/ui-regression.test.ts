@@ -5,16 +5,16 @@ import {
   getMainCopyFadeMs,
   getTriangleBreathLabelCycleMs,
   getTriangleBreathTotalMs,
-  spiralLayout,
+  circlesLayout,
 } from "../design/animation-rhythm";
 
-describe("spiral layout regression checks", () => {
-  it("keeps one shared spiral slot size", () => {
-    expect(spiralLayout.slotMinHeight).toBe(160);
+describe("circles layout regression checks", () => {
+  it("keeps one shared circles slot size", () => {
+    expect(circlesLayout.slotMinHeight).toBe(160);
   });
 
-  it("keeps spiral breathing phases stable and ordered", () => {
-    const s = breathingRhythm.spiral;
+  it("keeps circles breathing phases stable and ordered", () => {
+    const s = breathingRhythm.circles;
     expect(s.inhaleMs).toBeGreaterThan(0);
     expect(s.holdMs).toBeGreaterThan(0);
     expect(s.exhaleMs).toBeGreaterThan(s.inhaleMs);

@@ -9,16 +9,17 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { CalmText } from "../src/design/components/CalmText";
-import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
+import { AnchoredCirclesScreen } from "../src/design/components/AnchoredCirclesScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
-import { InlineSpiralHintSlot } from "../src/design/components/InlineSpiralHintSlot";
 import { useFlowMainCopyRevealKey } from "../src/hooks/use-flow-main-copy-reveal-key";
-import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
+import { useRegisterCirclesHint } from "../src/hooks/use-register-circles-hint";
+import { useRegisterCirclesPress } from "../src/hooks/use-register-circles-press";
 import {
   activeLocale,
   getTriangleBreathPhaseLabels,
   interventionGuidance,
   triangleBreathCopy,
+  uiCopy,
 } from "../src/modules/delivery-layer";
 import { getFindThreeIntro, getFindThreeVariant } from "../src/modules/find-three-variants";
 import { assignNextFindThreeVariant } from "../src/services/find-three-flow";
@@ -35,13 +36,13 @@ import { colors, spacing } from "../src/design/tokens";
 import {
   breathingRhythm,
   getFindThreeIntroDelayMs,
-  getFindThreeSpiralHintDelayMs,
-  getFlowSpiralHintDelayAfterRevealMs,
-  getFlowSpiralHintDelayMs,
+  getFindThreeTapHintDelayMs,
+  getFlowTapHintDelayAfterRevealMs,
+  getFlowTapHintDelayMs,
   getMainCopyDelayMs,
   getTriangleBreathIntroDelayMs,
 } from "../src/design/animation-rhythm";
-import { useSpiralHintPresentation } from "../src/hooks/use-spiral-hint-presentation";
+import { useCirclesHintPresentation } from "../src/hooks/use-circles-hint-presentation";
 import { legibleOpacity } from "../src/design/accessibility";
 import { CalmPressable } from "../src/design/components/CalmPressable";
 import { useHighContrast } from "../src/hooks/use-high-contrast";
@@ -77,20 +78,20 @@ export default function ActionScreen() {
   const exhaleOpacity = useRef(new Animated.Value(0)).current;
   const completionRef = useRef(false);
   const isTransitioningRef = useRef(false);
-  const [showTriangleSpiralHint, setShowTriangleSpiralHint] = useState(false);
+  const [showTriangleTapHint, setShowTriangleTapHint] = useState(false);
   const [findThreeRevealedCount, setFindThreeRevealedCount] = useState(0);
   const [findThreeSequenceStarted, setFindThreeSequenceStarted] = useState(false);
   const findThreeIntroTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const findThreeSessionRef = useRef(0);
   const findThreeAllRevealed =
     presentation === "find_three" && findThreeRevealedCount >= findThreeQueue.length;
-  const hintAfterRevealMs = getFlowSpiralHintDelayAfterRevealMs();
-  const simpleHintDelayMs = getFlowSpiralHintDelayMs(mainLineDelayMs);
-  const findThreeHintDelayMs = getFindThreeSpiralHintDelayMs(findThreeQueue.length, mainLineDelayMs);
-  const nonTriangleHint = useSpiralHintPresentation(
+  const hintAfterRevealMs = getFlowTapHintDelayAfterRevealMs();
+  const simpleHintDelayMs = getFlowTapHintDelayMs(mainLineDelayMs);
+  const findThreeHintDelayMs = getFindThreeTapHintDelayMs(findThreeQueue.length, mainLineDelayMs);
+  const nonTriangleHint = useCirclesHintPresentation(
     presentation === "find_three" ? findThreeHintDelayMs : simpleHintDelayMs,
   );
-  const triangleHint = useSpiralHintPresentation(hintAfterRevealMs);
+  const triangleHint = useCirclesHintPresentation(hintAfterRevealMs);
 
   const completeAction = useCallback(() => {
     if (completionRef.current) return;
@@ -114,7 +115,7 @@ export default function ActionScreen() {
     setFindThreeRevealedCount((c) => Math.min(c + 1, findThreeQueue.length));
   }, [cancelFindThreeIntroTimer, findThreeQueue.length]);
 
-  const onSpiralTap = useCallback(() => {
+  const onCirclesTap = useCallback(() => {
     if (presentation === "find_three" && !findThreeAllRevealed) {
       revealNextFindThreeBullet();
       return;
@@ -122,12 +123,12 @@ export default function ActionScreen() {
     completeAction();
   }, [completeAction, findThreeAllRevealed, presentation, revealNextFindThreeBullet]);
 
-  useRegisterSpiralPress(onSpiralTap);
+  useRegisterCirclesPress(onCirclesTap);
 
   useEffect(() => {
     completionRef.current = false;
     isTransitioningRef.current = false;
-    setShowTriangleSpiralHint(false);
+    setShowTriangleTapHint(false);
     setFindThreeRevealedCount(0);
     setFindThreeSequenceStarted(false);
     cancelFindThreeIntroTimer();
@@ -233,7 +234,7 @@ export default function ActionScreen() {
       if (cancelled) return;
       fullBreath.start(({ finished }) => {
         if (!finished || completionRef.current || cancelled) return;
-        setShowTriangleSpiralHint(true);
+        setShowTriangleTapHint(true);
       });
     }, introDelayMs);
 
@@ -264,38 +265,33 @@ export default function ActionScreen() {
     };
   }, [presentation]);
 
-  const underSpiralHint = useMemo(() => {
+  const hintRegistration = useMemo(() => {
     if (presentation === "triangle_breath") {
       return {
         presentation: triangleHint,
         delayMs: hintAfterRevealMs,
-        visible: showTriangleSpiralHint,
+        visible: showTriangleTapHint,
+        label: uiCopy.tapContinueHint,
+        holdAfterReveal: true,
       };
     }
     return {
       presentation: nonTriangleHint,
       delayMs: presentation === "find_three" ? hintAfterRevealMs : simpleHintDelayMs,
       visible: presentation === "find_three" ? findThreeAllRevealed : true,
+      label: uiCopy.tapContinueHint,
+      holdAfterReveal: true,
     };
   }, [
     findThreeAllRevealed,
     hintAfterRevealMs,
     nonTriangleHint,
     presentation,
-    showTriangleSpiralHint,
+    showTriangleTapHint,
     simpleHintDelayMs,
     triangleHint,
   ]);
-
-  const inlineHint = (
-    <InlineSpiralHintSlot
-      key={`hint-${copyRevealKey}`}
-      presentation={underSpiralHint.presentation}
-      delayMs={underSpiralHint.delayMs}
-      visible={underSpiralHint.visible}
-      holdAfterReveal
-    />
-  );
+  useRegisterCirclesHint(hintRegistration);
 
   const mainLineOnly =
     presentation === "find_three" ? (
@@ -340,7 +336,6 @@ export default function ActionScreen() {
               )
             : null}
         </CalmPressable>
-        {inlineHint}
       </>
     ) : presentation === "triangle_breath" ? (
       <>
@@ -363,10 +358,7 @@ export default function ActionScreen() {
             </Animated.View>
           </View>
         </View>
-        {inlineHint}
       </>
-    ) : isSimpleInstruction(selected) ? (
-      inlineHint
     ) : null;
 
   const belowEquator =
@@ -383,9 +375,9 @@ export default function ActionScreen() {
     ) : null;
 
   return (
-    <AnchoredSpiralScreen pinMainLikeTrigger belowEquator={belowEquator} mainLine={mainLineOnly}>
+    <AnchoredCirclesScreen pinMainLikeTrigger belowEquator={belowEquator} mainLine={mainLineOnly}>
       {afterMainLine}
-    </AnchoredSpiralScreen>
+    </AnchoredCirclesScreen>
   );
 }
 

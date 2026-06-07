@@ -1,31 +1,38 @@
 import { useRouter } from "expo-router";
-import { useCallback } from "react";
-import { StyleSheet } from "react-native";
-import { AnchoredSpiralScreen } from "./AnchoredSpiralScreen";
+import { useCallback, useMemo } from "react";
+import { AnchoredCirclesScreen } from "./AnchoredCirclesScreen";
 import { AboutFooterLink } from "./AboutFooterLink";
 import { ExplanationText } from "./ExplanationText";
-import { InlineSpiralHintSlot } from "./InlineSpiralHintSlot";
-import { getOnboardingSpiralHintDelayMs } from "../animation-rhythm";
-import { spacing } from "../tokens";
+import { getOnboardingCirclesHintDelayMs } from "../animation-rhythm";
 import { uiCopy } from "../../modules/delivery-layer";
-import { useRegisterSpiralPress } from "../../hooks/use-register-spiral-press";
-import { useSpiralHintPresentation } from "../../hooks/use-spiral-hint-presentation";
+import { useRegisterCirclesHint } from "../../hooks/use-register-circles-hint";
+import { useRegisterCirclesPress } from "../../hooks/use-register-circles-press";
+import { useCirclesHintPresentation } from "../../hooks/use-circles-hint-presentation";
 import { markExtendedOnboardingCompleted } from "../../services/onboarding-gate";
 
 export function ShortOnboardingFlow() {
   const router = useRouter();
+  const hintDelayMs = getOnboardingCirclesHintDelayMs(0);
+  const circlesHintPresentation = useCirclesHintPresentation(hintDelayMs);
+  const hintRegistration = useMemo(
+    () => ({
+      presentation: circlesHintPresentation,
+      delayMs: hintDelayMs,
+      label: uiCopy.onboardingCirclesHint,
+      holdAfterReveal: true,
+    }),
+    [hintDelayMs, circlesHintPresentation],
+  );
+  useRegisterCirclesHint(hintRegistration);
 
-  const onSpiralPress = useCallback(() => {
+  const onCirclesPress = useCallback(() => {
     markExtendedOnboardingCompleted();
     router.replace("/trigger");
   }, [router]);
-  useRegisterSpiralPress(onSpiralPress);
-
-  const hintDelayMs = getOnboardingSpiralHintDelayMs(0);
-  const spiralHint = useSpiralHintPresentation(hintDelayMs);
+  useRegisterCirclesPress(onCirclesPress);
 
   return (
-    <AnchoredSpiralScreen
+    <AnchoredCirclesScreen
       footer={<AboutFooterLink label={uiCopy.aboutLink} onPress={() => router.push("/about")} />}
       pinMainLikeTrigger
       mainLine={
@@ -33,21 +40,6 @@ export function ShortOnboardingFlow() {
           {uiCopy.onboardingLine}
         </ExplanationText>
       }
-      belowEquator={
-        <InlineSpiralHintSlot
-          presentation={spiralHint}
-          delayMs={hintDelayMs}
-          label={uiCopy.onboardingSpiralHint}
-          style={styles.bodyLine}
-        />
-      }
     />
   );
 }
-
-const styles = StyleSheet.create({
-  bodyLine: {
-    marginTop: spacing.md,
-    width: "100%",
-  },
-});

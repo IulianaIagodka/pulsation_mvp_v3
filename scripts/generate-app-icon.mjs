@@ -1,5 +1,5 @@
 /**
- * Renders the same concentric-ring spiral as SpiralFocus (136px) at 1024×1024.
+ * Renders the same concentric rings as CirclesFocus (136px) at 1024×1024.
  */
 import sharp from "sharp";
 import { writeFileSync } from "fs";
@@ -56,4 +56,4 @@ for (const name of ["icon.png", "adaptive-icon.png", "splash-icon.png"]) {
 const favicon = await sharp(png).resize(48, 48).png().toBuffer();
 await sharp(favicon).toFile(join(assetsDir, "favicon.png"));
 
-console.log("Generated:", join(assetsDir, "icon.png"), "(1024×1024, matches SpiralFocus)");
+console.log("Generated:", join(assetsDir, "icon.png"), "(1024×1024, matches CirclesFocus)");

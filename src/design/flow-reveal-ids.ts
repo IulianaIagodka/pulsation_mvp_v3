@@ -2,5 +2,5 @@
 export const flowRevealIds = {
   triggerMain: "trigger-main",
   triggerPaths: "trigger-paths",
-  triggerSpiralHint: "trigger-spiral-hint",
+  triggerCirclesHint: "trigger-circles-hint",
 } as const;

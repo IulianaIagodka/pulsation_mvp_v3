@@ -1,5 +1,5 @@
 import { Animated, StyleProp, View, ViewStyle } from "react-native";
-import { spiralVisualStyles as styles } from "../spiral-visual";
+import { circlesVisualStyles as styles } from "../circles-visual";
 import { useHighContrast } from "../../hooks/use-high-contrast";
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
   highlighted?: boolean;
 };
 
-export function SpiralRings({ style, opacity, scale, highlighted = false }: Props) {
+export function CirclesRings({ style, opacity, scale, highlighted = false }: Props) {
   const highContrast = useHighContrast();
   const animatedStyle =
     opacity != null || scale != null

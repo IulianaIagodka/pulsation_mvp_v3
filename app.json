@@ -23,6 +23,7 @@
       }
     },
     "android": {
+      "package": "com.maksym.pulsation",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0D121E"

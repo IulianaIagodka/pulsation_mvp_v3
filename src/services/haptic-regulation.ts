@@ -67,8 +67,8 @@ export function playKeepForMeHaptic() {
   void subtleSelection();
 }
 
-/** Light ack when the user taps the spiral button. */
-export function playSpiralTapHaptic() {
+/** Light ack when the user taps circles button. */
+export function playCirclesTapHaptic() {
   void softImpact();
 }
 

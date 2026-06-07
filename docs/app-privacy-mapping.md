@@ -18,7 +18,7 @@ Use this file when filling **App Privacy** in App Store Connect.
 Pulsation stores only in-app state needed for app behavior:
 
 - `events` table:
-  - signal/intervention events (for example: trigger evaluations, intervention outcomes, spiral tap count events),
+  - signal/intervention events (for example: trigger evaluations, intervention outcomes, circles tap count events),
   - timestamps and event payload needed for local flow logic.
 - `safety_state` table:
   - quiet hours, daily cap, cooldown windows, intervention counters.

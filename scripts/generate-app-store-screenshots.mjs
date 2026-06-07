@@ -28,8 +28,8 @@ const PULSATION = {
   bgBottom: "#081021",
   textPrimary: "#BCC8DA",
   textSecondary: "#74839A",
-  spiralRing: "#3D5A82",
-  spiralInner: "#1C2F4A",
+  circlesRing: "#3D5A82",
+  circlesInner: "#1C2F4A",
   phoneBorder: "#3D5A82",
   phoneFill: "#070D18",
 };
@@ -57,9 +57,9 @@ const SLIDES_EN = SLIDE_NAMES.map((base) => ({
             : "Calm, not pressure",
   sub:
     base === "01-onboarding"
-      ? "Four steps — then tap the spiral"
+      ? "Four steps — then tap circles"
       : base === "02-trigger"
-        ? "Tap the spiral to begin"
+        ? "Tap circles to begin"
         : base === "03-action"
           ? "Seven calm micro-actions"
           : base === "04-return"
@@ -82,9 +82,9 @@ const SLIDES_UK = SLIDE_NAMES.map((base) => ({
             : "Спокій, не тиск",
   sub:
     base === "01-onboarding"
-      ? "Чотири кроки — потім торкнися спіралі"
+      ? "Чотири кроки — потім торкнись кіл"
       : base === "02-trigger"
-        ? "Торкнися спіралі, щоб почати"
+        ? "Торкнись кіл, щоб почати"
         : base === "03-action"
           ? "Сім спокійних мікродій"
           : base === "04-return"
@@ -130,10 +130,10 @@ function marketingRingsMarkup(cx, cy, scale) {
   const circles = rings
     .map(
       ({ r, opacity, sw }) =>
-        `<circle cx="${cx}" cy="${cy}" r="${(r * scale).toFixed(1)}" fill="none" stroke="${PULSATION.spiralRing}" stroke-width="${sw}" opacity="${opacity}"/>`,
+        `<circle cx="${cx}" cy="${cy}" r="${(r * scale).toFixed(1)}" fill="none" stroke="${PULSATION.circlesRing}" stroke-width="${sw}" opacity="${opacity}"/>`,
     )
     .join("\n    ");
-  const dot = `<circle cx="${cx}" cy="${cy}" r="${(5 * scale).toFixed(1)}" fill="${PULSATION.spiralInner}" opacity="0.92"/>`;
+  const dot = `<circle cx="${cx}" cy="${cy}" r="${(5 * scale).toFixed(1)}" fill="${PULSATION.circlesInner}" opacity="0.92"/>`;
   return `${circles}\n    ${dot}`;
 }
 
@@ -150,9 +150,9 @@ function marketingFrameSvg({ headline, sub }) {
       return `<tspan x="${cx}" y="${y}">${escapeXml(line)}</tspan>`;
     })
     .join("");
-  const spiralCx = W - 200;
-  const spiralCy = 300;
-  const ringsMarkup = marketingRingsMarkup(spiralCx, spiralCy, 0.55);
+  const circlesCx = W - 200;
+  const circlesCy = 300;
+  const ringsMarkup = marketingRingsMarkup(circlesCx, circlesCy, 0.55);
   const phoneX = Math.round((W - PHONE.outerW) / 2);
   const innerX = phoneX + PHONE.pad;
   const innerY = PHONE.y + PHONE.pad;
@@ -169,7 +169,7 @@ function marketingFrameSvg({ headline, sub }) {
       <stop offset="100%" stop-color="${PULSATION.bgBottom}"/>
     </linearGradient>
     <radialGradient id="softGlow" cx="50%" cy="18%" r="55%">
-      <stop offset="0%" stop-color="${PULSATION.spiralRing}" stop-opacity="0.12"/>
+      <stop offset="0%" stop-color="${PULSATION.circlesRing}" stop-opacity="0.12"/>
       <stop offset="100%" stop-color="${PULSATION.bgMid}" stop-opacity="0"/>
     </radialGradient>
     <filter id="phoneShadow" x="-15%" y="-8%" width="130%" height="115%">

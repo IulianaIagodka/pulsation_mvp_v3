@@ -4,7 +4,7 @@ import { PixelRatio, ScrollView, StyleSheet, View } from "react-native";
 import { MAX_FONT_SIZE_MULTIPLIER } from "../accessibility";
 import { useStableLayoutInsets } from "../../hooks/use-stable-layout-insets";
 import { useStableWindowDimensions } from "../../hooks/use-stable-window-dimensions";
-import { spiralLayout } from "../animation-rhythm";
+import { circlesLayout } from "../animation-rhythm";
 import { spacing } from "../tokens";
 import { CalmPressable } from "./CalmPressable";
 import { resolvePressableTextOpacity } from "../pressable-highlight";
@@ -14,9 +14,9 @@ import {
   getMainCopySlotHeight,
   getReturnFollowUpTop,
   getScreenEquatorY,
-  getSpiralAnchorMetrics,
+  getCirclesAnchorMetrics,
   getTriggerMainCopyTop,
-} from "../spiral-anchor-layout";
+} from "../circles-anchor-layout";
 import { useAppStore } from "../../state/app-store";
 import { uiCopy } from "../../modules/delivery-layer";
 import { AboutFooterLink } from "./AboutFooterLink";
@@ -26,8 +26,8 @@ import { CalmScreen } from "./CalmScreen";
 import { SoftCard } from "./SoftCard";
 
 type Props = PropsWithChildren<{
-  /** Omit when spiral is rendered by `PersistentSpiralLayer` in the root layout. */
-  spiral?: ReactNode;
+  /** Omit when circles are rendered by `PersistentCirclesLayer` in the root layout. */
+  circles?: ReactNode;
   /** Primary main line — pinned alone so hint / bullets never shift its Y. */
   mainLine?: ReactNode;
   /** Place main copy on the vertical screen equator (default). Set false for scroll-only layouts. */
@@ -49,8 +49,8 @@ type Props = PropsWithChildren<{
   compactCapture?: boolean;
 }>;
 
-export function AnchoredSpiralScreen({
-  spiral,
+export function AnchoredCirclesScreen({
+  circles,
   mainLine,
   children,
   centerContent = true,
@@ -68,7 +68,7 @@ export function AnchoredSpiralScreen({
   const highContrastPreviewEnabled = useAppStore((s) => s.highContrastPreviewEnabled);
   const setHighContrastPreviewEnabled = useAppStore((s) => s.setHighContrastPreviewEnabled);
 
-  const metrics = getSpiralAnchorMetrics(windowHeight, insets);
+  const metrics = getCirclesAnchorMetrics(windowHeight, insets);
   const footerBottomInset = Math.max(insets.bottom, scaleByWidth(spacing.sm, windowWidth));
   const footerLinkCount = (showPathsLink ? 1 : 0) + (footer ? 1 : 0);
   const footerRowHeight = clamp(scaleByWidth(44, windowWidth) * fontScale, 44, 132);
@@ -76,7 +76,7 @@ export function AnchoredSpiralScreen({
   const scrollBottomPad =
     footerLinkCount > 0 ? footerHeight + footerBottomInset : scaleByWidth(spacing.xl, windowWidth);
   const contentZoneTop = compactCapture
-    ? metrics.spiralBottomY + scaleByWidth(spacing.xs, windowWidth)
+    ? metrics.circlesBottomY + scaleByWidth(spacing.xs, windowWidth)
     : getContentZoneTopWithoutHint(metrics, windowWidth);
   const triggerMainCopyTop = getTriggerMainCopyTop(metrics, windowWidth);
   const mainCopySlotHeight = getMainCopySlotHeight(windowWidth, fontScale);
@@ -110,12 +110,12 @@ export function AnchoredSpiralScreen({
   return (
     <CalmScreen flush>
       <View style={styles.root}>
-        {spiral ? (
+        {circles ? (
           <View
             pointerEvents="box-none"
-            style={[styles.spiralLayer, { top: metrics.spiralCenterY - spiralLayout.size / 2 }]}
+            style={[styles.circlesLayer, { top: metrics.circlesCenterY - circlesLayout.size / 2 }]}
           >
-            {spiral}
+            {circles}
           </View>
         ) : null}
 
@@ -207,7 +207,7 @@ export function AnchoredSpiralScreen({
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  spiralLayer: {
+  circlesLayer: {
     position: "absolute",
     left: 0,
     right: 0,
