@@ -82,7 +82,7 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 
 Порядок у App Store (зверху вниз):
 
-1. [ ] **Онбординг** — спіраль + «How it works:» / «Як це працює:» + кроки + «Tap the spiral» в кінці
+1. [ ] **Онбординг** — кола + «How it works:» / «Як це працює:» + кроки + «Tap the circles — it's the button here» під колами
 2. [ ] **Trigger** — «Одна дія для тебе зараз?»
 3. [ ] **Action** — одна з дій (feet / find 3 / triangle breath / relax jaw / drop shoulders / notice 3 sounds / press palms; для find 3 — три прості підказки: форма · колір · відчуття)
 4. [ ] **Return** — «Ти тут» + коротке одно-реченнєве пояснення (варіанти ротуются).
@@ -182,15 +182,15 @@ npm audit --omit=dev
 
 Поточний зафіксований стан (локальна перевірка 2026-06-04):
 - `npm test` ✅
-- iOS **version** `1.0.1`, `buildNumber` **28** у `app.json` (попередній Store — build **27**)
+- iOS **version** `1.0.1`, `buildNumber` **30** у `app.json` (попередній Store — build **27**)
 - `npx tsc --noEmit` ✅
 - `npx expo-doctor` ✅
 - `npm audit --omit=dev` ⚠️ moderate в Expo transitive deps; high/critical немає
 
-### D2. UX/UI перевірка для adaptive spiral hint
+### D2. UX/UI перевірка для adaptive circles hint
 
-- [ ] Перші **3 завершені цикли**: «торкнись спіралі» **inline** під текстом на **кожному** екрані флоу
-- [ ] **Return**: порядок — **You are here** → пояснення → tap the spiral (усі з fade-in)
+- [ ] Перші **3 завершені цикли**: «торкнись, щоб продовжити» під колами на **кожному** екрані флоу
+- [ ] **Return**: порядок — **You are here** → пояснення → tap to continue під колами (усі з fade-in)
 - [ ] **Return**: **You are here** не стрибає по Y при появі пояснення / hint (pinned `mainLine`)
 - [ ] **Accessibility XXL**: main line лишається на місці; довгий текст переноситься без зсуву якоря
 - [ ] **Мої шляхи** / paths: лише на trigger; з’являється одночасно з «One action for you»
@@ -202,7 +202,7 @@ npm audit --omit=dev
 - [ ] `triangle_breath`: хінт не з’являється раніше завершення 3 циклів дихання
 - [ ] `find_three`: спіраль не завершує дію, поки не показані всі 3 буліти
 - [ ] `return`: **Збережи це для мене** не показується повторно для вже збереженої дії
-- [ ] Онбординг: **How it works** + **tap the spiral** останнім (inline)
+- [ ] Онбординг: **How it works** + **Tap the circles — it's the button here** під колами
 - [ ] Контраст і читабельність у темній темі залишаються комфортними
 
 ---

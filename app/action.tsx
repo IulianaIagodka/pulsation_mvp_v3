@@ -11,7 +11,6 @@ import {
 import { CalmText } from "../src/design/components/CalmText";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
-import { InlineSpiralHintSlot } from "../src/design/components/InlineSpiralHintSlot";
 import { useRegisterSpiralPress } from "../src/hooks/use-register-spiral-press";
 import {
   activeLocale,
@@ -296,16 +295,6 @@ export default function ActionScreen() {
     triangleHint,
   ]);
 
-  const inlineHint = (
-    <InlineSpiralHintSlot
-      presentation={underSpiralHint.presentation}
-      delayMs={underSpiralHint.delayMs}
-      visible={underSpiralHint.visible}
-      holdAfterReveal
-      revealId="action-spiral-hint"
-    />
-  );
-
   const mainLineOnly =
     presentation === "find_three" ? (
       <ExplanationText key={`main-${copyRevealKey}`} holdAfterReveal variant="main">
@@ -349,7 +338,6 @@ export default function ActionScreen() {
               )
             : null}
         </CalmPressable>
-        {inlineHint}
       </>
     ) : presentation === "triangle_breath" ? (
       <>
@@ -372,10 +360,9 @@ export default function ActionScreen() {
             </Animated.View>
           </View>
         </View>
-        {inlineHint}
       </>
     ) : isSimpleInstruction(selected) ? (
-      inlineHint
+      null
     ) : null;
 
   const belowEquator =
@@ -392,7 +379,18 @@ export default function ActionScreen() {
     ) : null;
 
   return (
-    <AnchoredSpiralScreen pinMainLikeTrigger belowEquator={belowEquator} mainLine={mainLineOnly}>
+    <AnchoredSpiralScreen
+      pinMainLikeTrigger
+      belowEquator={belowEquator}
+      mainLine={mainLineOnly}
+      circlesHint={{
+        presentation: underSpiralHint.presentation,
+        delayMs: underSpiralHint.delayMs,
+        visible: underSpiralHint.visible,
+        holdAfterReveal: true,
+        revealId: "action-spiral-hint",
+      }}
+    >
       {afterMainLine}
     </AnchoredSpiralScreen>
   );

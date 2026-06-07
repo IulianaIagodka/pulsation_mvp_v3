@@ -1,11 +1,9 @@
 import { StyleSheet, View } from "react-native";
 import { ExplanationText } from "./ExplanationText";
-import { InlineSpiralHintSlot } from "./InlineSpiralHintSlot";
-import { getOnboardingExplanationDelayMs, getOnboardingSpiralHintDelayMs } from "../animation-rhythm";
+import { getOnboardingExplanationDelayMs } from "../animation-rhythm";
 import { spacing } from "../tokens";
 import { uiCopy } from "../../modules/delivery-layer";
 import { isAppStoreScreenshotMode } from "../../modules/app-store-screenshot-mode";
-import { useSpiralHintPresentation } from "../../hooks/use-spiral-hint-presentation";
 
 const screenshotMode = isAppStoreScreenshotMode();
 
@@ -18,14 +16,8 @@ export function OnboardingHeadline() {
   );
 }
 
-/** Subtitle, steps, and spiral hint below the main line. */
+/** Subtitle and steps below the main line. */
 export function OnboardingIntroBelow() {
-  const hintDelayMs = getOnboardingSpiralHintDelayMs(uiCopy.onboardingSteps.length);
-  const spiralHintLive = useSpiralHintPresentation(hintDelayMs);
-  const spiralHint = screenshotMode
-    ? { shouldShow: true, delayMs: hintDelayMs, textOpacity: spiralHintLive.textOpacity }
-    : spiralHintLive;
-
   return (
     <View style={styles.below}>
       <ExplanationText
@@ -48,14 +40,6 @@ export function OnboardingIntroBelow() {
           {step}
         </ExplanationText>
       ))}
-
-      <InlineSpiralHintSlot
-        presentation={spiralHint}
-        delayMs={hintDelayMs}
-        label={uiCopy.onboardingSpiralHint}
-        forceVisible={screenshotMode}
-        style={styles.bodyLine}
-      />
     </View>
   );
 }

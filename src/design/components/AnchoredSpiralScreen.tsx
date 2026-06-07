@@ -10,12 +10,14 @@ import { CalmPressable } from "./CalmPressable";
 import { resolvePressableTextOpacity } from "../pressable-highlight";
 import { clamp, scaleByWidth } from "../responsive";
 import {
-  getContentZoneTopWithoutHint,
+  getContentZoneTopBelowCirclesHint,
   getMainCopySlotHeight,
   getReturnFollowUpTop,
   getScreenEquatorY,
+  getSpiralBreathBottomOverflow,
   getSpiralAnchorMetrics,
   getTriggerMainCopyTop,
+  getUnderCirclesHintSlotHeight,
 } from "../spiral-anchor-layout";
 import { useAppStore } from "../../state/app-store";
 import { uiCopy } from "../../modules/delivery-layer";
@@ -24,6 +26,8 @@ import { FooterRevealLink } from "./FooterRevealLink";
 import { CalmText } from "./CalmText";
 import { CalmScreen } from "./CalmScreen";
 import { SoftCard } from "./SoftCard";
+import { SpiralUnderHint } from "./SpiralUnderHint";
+import type { SpiralHintPresentation } from "../../modules/spiral-hint-presentation";
 
 type Props = PropsWithChildren<{
   /** Omit when spiral is rendered by `PersistentSpiralLayer` in the root layout. */
@@ -49,6 +53,16 @@ type Props = PropsWithChildren<{
   pathsLinkForceVisible?: boolean;
   /** Tighter scroll top for App Store capture (full extended onboarding on one screen). */
   compactCapture?: boolean;
+  /** Hint rendered inside the fixed circles block, below the circles. */
+  circlesHint?: {
+    presentation: SpiralHintPresentation;
+    visible?: boolean;
+    delayMs?: number;
+    label?: string;
+    revealId?: string;
+    forceVisible?: boolean;
+    holdAfterReveal?: boolean;
+  };
 }>;
 
 export function AnchoredSpiralScreen({
@@ -63,6 +77,7 @@ export function AnchoredSpiralScreen({
   pathsLinkRevealId,
   pathsLinkForceVisible,
   compactCapture = false,
+  circlesHint,
   pinMainLikeTrigger = false,
 }: Props) {
   const router = useRouter();
@@ -79,11 +94,16 @@ export function AnchoredSpiralScreen({
   const footerHeight = footerLinkCount > 0 ? footerRowHeight * footerLinkCount + scaleByWidth(spacing.xs, windowWidth) : 0;
   const scrollBottomPad =
     footerLinkCount > 0 ? footerHeight + footerBottomInset : scaleByWidth(spacing.xl, windowWidth);
-  const contentZoneTop = compactCapture
-    ? metrics.spiralBottomY + scaleByWidth(spacing.xs, windowWidth)
-    : getContentZoneTopWithoutHint(metrics, windowWidth);
   const triggerMainCopyTop = getTriggerMainCopyTop(metrics, windowWidth);
   const mainCopySlotHeight = getMainCopySlotHeight(windowWidth, fontScale);
+  const circlesHintTop =
+    metrics.spiralBottomY +
+    getSpiralBreathBottomOverflow(windowWidth) +
+    scaleByWidth(spacing.xs, windowWidth);
+  const circlesHintSlotHeight = getUnderCirclesHintSlotHeight(windowWidth, fontScale);
+  const contentZoneTop = compactCapture
+    ? circlesHintTop + circlesHintSlotHeight
+    : getContentZoneTopBelowCirclesHint(metrics, windowWidth);
   const screenEquatorY = getScreenEquatorY(windowHeight, insets);
   const belowEquatorTop = pinMainLikeTrigger
     ? getReturnFollowUpTop(metrics, windowWidth, fontScale)
@@ -122,6 +142,26 @@ export function AnchoredSpiralScreen({
             style={[styles.spiralLayer, { top: metrics.spiralCenterY - spiralLayout.size / 2 }]}
           >
             {spiral}
+          </View>
+        ) : null}
+
+        {circlesHint ? (
+          <View
+            pointerEvents="none"
+            style={[
+              styles.circlesHintLayer,
+              { top: circlesHintTop, minHeight: circlesHintSlotHeight },
+            ]}
+          >
+            <SpiralUnderHint
+              presentation={circlesHint.presentation}
+              visible={circlesHint.visible}
+              delayMs={circlesHint.delayMs}
+              label={circlesHint.label}
+              holdAfterReveal={circlesHint.holdAfterReveal}
+              revealId={circlesHint.revealId}
+              forceVisible={circlesHint.forceVisible}
+            />
           </View>
         ) : null}
 
@@ -220,6 +260,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     zIndex: 10,
     elevation: 12,
+  },
+  circlesHintLayer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingHorizontal: spacing.md,
+    zIndex: 9,
+    elevation: 1,
   },
   equatorRoot: {
     flex: 1,

@@ -1,3 +1,9 @@
+jest.mock("../data/repositories/scheduling-profile-repo", () => ({
+  getSchedulingProfile: jest.fn(() => ({})),
+  recordAppBackgrounded: jest.fn(),
+  clearAppBackgrounded: jest.fn(),
+}));
+
 import { collectSignal } from "./signal-collector";
 import { __sessionRuntimeInternals } from "./session-runtime";
 

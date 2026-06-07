@@ -32,11 +32,14 @@ export function getSpiralBreathBottomOverflow(windowWidth: number): number {
   return scaleOverflow + shadowSlack;
 }
 
-/** Reserved height for inline hint below main copy (includes top margin). */
-export function getInlineHintSlotHeight(windowWidth: number, fontScale = PixelRatio.getFontScale()): number {
+/** Fixed under-circles hint slot, kept even while the hint is transparent. */
+export function getUnderCirclesHintSlotHeight(
+  windowWidth: number,
+  fontScale = PixelRatio.getFontScale(),
+): number {
   const capped = Math.min(fontScale, MAX_FONT_SIZE_MULTIPLIER);
-  const lineHeight = clamp(Math.round(scaleByWidth(22, windowWidth) * capped), 20, 48);
-  return lineHeight + scaleByWidth(spacing.sm, windowWidth) * 2;
+  const lineHeight = clamp(Math.round(scaleByWidth(20, windowWidth) * capped), 20, 44);
+  return lineHeight + scaleByWidth(spacing.xs, windowWidth) * 2;
 }
 
 /** Fixed slot for the primary main line — shared across flow screens. */
@@ -53,12 +56,12 @@ export function getScreenEquatorY(
   return windowHeight / 2 - insets.top;
 }
 
-/** Main line Y — shared across flow screens (no under-spiral hint gap). */
+/** Main line Y — shared across flow screens below the fixed circles hint slot. */
 export function getTriggerMainCopyTop(
   metrics: SpiralAnchorMetrics,
   windowWidth: number,
 ): number {
-  return getContentZoneTopWithoutHint(metrics, windowWidth);
+  return getContentZoneTopBelowCirclesHint(metrics, windowWidth);
 }
 
 /** Return follow-up — below pinned main line slot. */
@@ -73,11 +76,16 @@ export function getReturnFollowUpTop(
   return mainTop + mainSlotHeight + gap;
 }
 
-/** Top of main copy below the spiral. */
-export function getContentZoneTopWithoutHint(
+/** Top of main copy below the fixed circles + hint block. */
+export function getContentZoneTopBelowCirclesHint(
   metrics: SpiralAnchorMetrics,
   windowWidth: number,
 ): number {
   const gap = scaleByWidth(spiralLayout.textGap, windowWidth);
-  return metrics.spiralBottomY + getSpiralBreathBottomOverflow(windowWidth) + gap;
+  return (
+    metrics.spiralBottomY +
+    getSpiralBreathBottomOverflow(windowWidth) +
+    getUnderCirclesHintSlotHeight(windowWidth) +
+    gap
+  );
 }

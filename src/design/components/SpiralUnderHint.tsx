@@ -10,17 +10,15 @@ type Props = {
   delayMs?: number;
   fadeMs?: number;
   fadeEasing?: EasingFunction;
-  /** Defaults to `uiCopy.spiralHint` (short, under-spiral). Onboarding uses `uiCopy.onboardingSpiralHint` inline. */
+  /** Defaults to `uiCopy.spiralHint` (short text under the circles). */
   label?: string;
   style?: StyleProp<ViewStyle>;
-  /** Onboarding: same rhythm as body copy. Other screens: quiet label under the spiral. */
-  placement?: "inline" | "underSpiral";
   holdAfterReveal?: boolean;
   revealId?: string;
   forceVisible?: boolean;
 };
 
-/** “Tap the spiral” — under the spiral on flow screens; inline after copy on onboarding. */
+/** Hint text rendered under the circles in the fixed circles block. */
 export function SpiralUnderHint({
   presentation,
   visible = true,
@@ -29,7 +27,6 @@ export function SpiralUnderHint({
   fadeEasing,
   label,
   style,
-  placement = "underSpiral",
   holdAfterReveal = false,
   revealId,
   forceVisible = false,
@@ -38,15 +35,13 @@ export function SpiralUnderHint({
     return null;
   }
 
-  const isInline = placement === "inline";
-
   return (
     <ExplanationText
-      variant={isInline ? "explanation" : "hint"}
+      variant="hint"
       delayMs={delayMs ?? presentation.delayMs}
       fadeMs={fadeMs}
       fadeEasing={fadeEasing}
-      textOpacity={isInline ? undefined : presentation.textOpacity}
+      textOpacity={presentation.textOpacity}
       style={style}
       holdAfterReveal={holdAfterReveal}
       revealId={revealId}

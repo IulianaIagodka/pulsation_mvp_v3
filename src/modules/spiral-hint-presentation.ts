@@ -4,7 +4,7 @@ export type SpiralHintPresentation = {
   textOpacity: number;
 };
 
-/** Show “tap the spiral” on flow screens only for the first N completed cycles. */
+/** Show the circles hint on flow screens only for the first N completed cycles. */
 export const SPIRAL_HINT_FULL_CYCLES = 3;
 
 const fullHintOpacity = 0.58;

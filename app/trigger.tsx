@@ -2,7 +2,6 @@ import { useCallback, useRef } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
 import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
-import { InlineSpiralHintSlot } from "../src/design/components/InlineSpiralHintSlot";
 import {
   clearInstantTriggerReturn,
   hasFlowCopyRevealed,
@@ -62,6 +61,13 @@ export default function TriggerScreen() {
       pathsLinkRevealDelayMs={triggerPromptDelayMs}
       pathsLinkRevealId={flowRevealIds.triggerPaths}
       pathsLinkForceVisible={showTriggerInstant}
+      circlesHint={{
+        presentation: spiralHint,
+        delayMs: hintDelayMs,
+        holdAfterReveal: true,
+        revealId: flowRevealIds.triggerSpiralHint,
+        forceVisible: showTriggerInstant,
+      }}
       pinMainLikeTrigger
       mainLine={
         <ExplanationText
@@ -73,14 +79,6 @@ export default function TriggerScreen() {
           {uiCopy.triggerPrompt}
         </ExplanationText>
       }
-    >
-      <InlineSpiralHintSlot
-        presentation={spiralHint}
-        delayMs={hintDelayMs}
-        holdAfterReveal
-        revealId={flowRevealIds.triggerSpiralHint}
-        forceVisible={showTriggerInstant}
-      />
-    </AnchoredSpiralScreen>
+    />
   );
 }

@@ -87,7 +87,7 @@ export function getOnboardingExplanationDelayMs(lineIndex: number): number {
   return firstAuxiliaryMs + getOnboardingStepGapMs() * lineIndex;
 }
 
-/** Onboarding: “tap the spiral” after headline or after all steps. */
+/** Onboarding: circles hint after headline or after all steps. */
 export function getOnboardingSpiralHintDelayMs(stepCount: number): number {
   const stepGap = getOnboardingStepGapMs();
   if (stepCount === 0) {
@@ -121,7 +121,7 @@ export function getFlowSpiralHintDelayAfterRevealMs(): number {
   return copyReveal.fadeMs + flowHintGapMs;
 }
 
-/** "Tap the spiral" delays — always after other copy on that screen. */
+/** Circles hint delays — always after other copy on that screen. */
 export const spiralHintTiming = {
   onboardingAfterMainMs: getOnboardingSpiralHintDelayMs(0),
   triggerAfterPromptMs: getFlowSpiralHintDelayMs(copyReveal.delayMs),
