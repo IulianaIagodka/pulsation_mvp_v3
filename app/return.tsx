@@ -5,7 +5,6 @@ import { AnchoredSpiralScreen } from "../src/design/components/AnchoredSpiralScr
 import { AboutFooterLink } from "../src/design/components/AboutFooterLink";
 import { CalmText } from "../src/design/components/CalmText";
 import { ExplanationText } from "../src/design/components/ExplanationText";
-import { InlineSpiralHintSlot } from "../src/design/components/InlineSpiralHintSlot";
 import { pickReturnExplanation, uiCopy } from "../src/modules/delivery-layer";
 import { DEFAULT_INTERVENTION } from "../src/interventions/registry";
 import { useAppStore } from "../src/state/app-store";
@@ -163,11 +162,6 @@ export default function ReturnScreen() {
       >
         {returnExplanation}
       </ExplanationText>
-      <InlineSpiralHintSlot
-        presentation={spiralHint}
-        delayMs={hintDelayMs}
-        holdAfterReveal
-      />
     </View>
   );
 
@@ -175,6 +169,11 @@ export default function ReturnScreen() {
     <AnchoredSpiralScreen
       pinMainLikeTrigger
       footer={keepForMeFooter}
+      circlesHint={{
+        presentation: spiralHint,
+        delayMs: hintDelayMs,
+        holdAfterReveal: true,
+      }}
       mainLine={
         <ExplanationText variant="main" holdAfterReveal>
           {uiCopy.returnBody}

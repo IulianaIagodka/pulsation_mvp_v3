@@ -7,10 +7,17 @@ import { uiCopy } from "../../modules/delivery-layer";
 import { useRegisterSpiralPress } from "../../hooks/use-register-spiral-press";
 import { markExtendedOnboardingCompleted } from "../../services/onboarding-gate";
 import { isAppStoreScreenshotMode } from "../../modules/app-store-screenshot-mode";
+import { getOnboardingSpiralHintDelayMs } from "../animation-rhythm";
+import { useSpiralHintPresentation } from "../../hooks/use-spiral-hint-presentation";
 
 export function ExtendedOnboardingFlow() {
   const router = useRouter();
   const captureMode = isAppStoreScreenshotMode();
+  const hintDelayMs = getOnboardingSpiralHintDelayMs(uiCopy.onboardingSteps.length);
+  const spiralHintLive = useSpiralHintPresentation(hintDelayMs);
+  const spiralHint = captureMode
+    ? { shouldShow: true, delayMs: hintDelayMs, textOpacity: spiralHintLive.textOpacity }
+    : spiralHintLive;
 
   const onSpiralPress = useCallback(() => {
     markExtendedOnboardingCompleted();
@@ -24,6 +31,12 @@ export function ExtendedOnboardingFlow() {
       centerContent={!captureMode}
       pinMainLikeTrigger={!captureMode}
       compactCapture={captureMode}
+      circlesHint={{
+        presentation: spiralHint,
+        delayMs: hintDelayMs,
+        label: uiCopy.onboardingSpiralHint,
+        forceVisible: captureMode,
+      }}
       belowEquator={captureMode ? undefined : <OnboardingIntroBelow />}
       mainLine={captureMode ? undefined : <OnboardingHeadline />}
     >
