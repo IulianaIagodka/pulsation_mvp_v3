@@ -3,6 +3,7 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { AnchoredCirclesScreen } from "../src/design/components/AnchoredCirclesScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
 import { clearInstantTriggerReturn, markTriggerFlowRevealed } from "../src/design/flow-copy-reveal";
+import { flowRevealIds } from "../src/design/flow-reveal-ids";
 import { uiCopy } from "../src/modules/delivery-layer";
 import { useFlowMainCopyRevealKey } from "../src/hooks/use-flow-main-copy-reveal-key";
 import { useRegisterCirclesHint } from "../src/hooks/use-register-circles-hint";
@@ -10,7 +11,11 @@ import { useRegisterCirclesPress } from "../src/hooks/use-register-circles-press
 import { decideIntervention, registerPulsationDismissed } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
 import { playTriggerHaptic } from "../src/services/haptic-regulation";
-import { getFlowTapHintDelayMs, getMainCopyDelayMs } from "../src/design/animation-rhythm";
+import {
+  getMainCopyDelayMs,
+  getTriggerPathsLinkDelayMs,
+  getTriggerTapHintDelayMs,
+} from "../src/design/animation-rhythm";
 import { useCirclesHintPresentation } from "../src/hooks/use-circles-hint-presentation";
 
 export default function TriggerScreen() {
@@ -46,16 +51,17 @@ export default function TriggerScreen() {
     router.push("/action");
   }, [router]);
   useRegisterCirclesPress(onCirclesPress);
-  const hintDelayMs = getFlowTapHintDelayMs(triggerPromptDelayMs);
+  const hintDelayMs = getTriggerTapHintDelayMs(triggerPromptDelayMs);
   const circlesHintPresentation = useCirclesHintPresentation(hintDelayMs);
   const hintRegistration = useMemo(
     () => ({
       presentation: circlesHintPresentation,
       delayMs: hintDelayMs,
       label: uiCopy.tapContinueHint,
+      revealId: flowRevealIds.triggerCirclesHint,
       holdAfterReveal: true,
     }),
-    [hintDelayMs, circlesHintPresentation],
+    [copyRevealKey, hintDelayMs, circlesHintPresentation],
   );
   useRegisterCirclesHint(hintRegistration);
 
@@ -63,9 +69,15 @@ export default function TriggerScreen() {
     <AnchoredCirclesScreen
       showPathsLink
       pathsLinkRevealDelayMs={triggerPromptDelayMs}
+      pathsLinkRevealKey={copyRevealKey}
       pinMainLikeTrigger
       mainLine={
-        <ExplanationText key={`main-${copyRevealKey}`} variant="main" holdAfterReveal>
+        <ExplanationText
+          key={`main-${copyRevealKey}`}
+          variant="main"
+          revealId={flowRevealIds.triggerMain}
+          holdAfterReveal
+        >
           {uiCopy.triggerPrompt}
         </ExplanationText>
       }

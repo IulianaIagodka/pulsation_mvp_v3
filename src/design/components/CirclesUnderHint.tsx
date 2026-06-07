@@ -1,8 +1,7 @@
 import { StyleProp, StyleSheet, View, ViewStyle, useWindowDimensions, type EasingFunction } from "react-native";
 import { uiCopy } from "../../modules/delivery-layer";
 import type { CirclesHintPresentation } from "../../modules/circles-hint-presentation";
-import { getUnderCirclesHintSlotHeight } from "../circles-anchor-layout";
-import { spacing } from "../tokens";
+import { getCirclesToHintGap, getUnderCirclesHintSlotHeight } from "../circles-anchor-layout";
 import { ExplanationText } from "./ExplanationText";
 
 type Props = {
@@ -37,6 +36,7 @@ export function CirclesUnderHint({
   reserveSlot = true,
 }: Props) {
   const { width } = useWindowDimensions();
+  const hintGap = getCirclesToHintGap(width);
   const slotHeight = getUnderCirclesHintSlotHeight(width);
   const active = visible && presentation.shouldShow;
 
@@ -48,6 +48,7 @@ export function CirclesUnderHint({
     <View
       style={[
         styles.slot,
+        { marginTop: hintGap },
         reserveSlot ? { minHeight: slotHeight } : null,
         style,
       ]}
@@ -80,7 +81,6 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "flex-start",
-    marginTop: spacing.xs,
   },
   inner: {
     width: "100%",

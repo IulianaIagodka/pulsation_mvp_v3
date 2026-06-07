@@ -11,17 +11,38 @@ export const mainCopyTextStyle: TextStyle = {
   letterSpacing: 0.15,
   width: "100%",
   maxWidth: "100%",
+  alignSelf: "stretch",
   flexShrink: 1,
   fontFamily: Platform.select({ ios: "Times New Roman", default: "serif" }),
 };
 
-/** Quiet CTA under circles — smaller than main copy. */
-export const tapHintTextStyle: TextStyle = {
+/** Footer links — Save / Return / Paths / About. */
+export const footerLinkTextStyle: TextStyle = {
   color: colors.textSecondary,
-  fontSize: 12,
+  fontSize: 11,
+  lineHeight: 15,
   fontWeight: "400",
   textAlign: "center",
-  letterSpacing: 0.2,
+  letterSpacing: 0.16,
+};
+
+/** Quieter copy — explanations, onboarding steps, return follow-up. */
+export const explanationTextStyle: TextStyle = {
+  color: colors.textSecondary,
+  fontSize: 12,
+  lineHeight: 16,
+  fontWeight: "400",
+  textAlign: "center",
+  letterSpacing: 0.15,
+  alignSelf: "stretch",
+  width: "100%",
+  maxWidth: "100%",
+  flexShrink: 1,
+};
+
+/** Tap hint under circles — same size and tone as footer links. */
+export const tapHintTextStyle: TextStyle = {
+  ...footerLinkTextStyle,
   width: "100%",
   maxWidth: "100%",
   flexShrink: 1,

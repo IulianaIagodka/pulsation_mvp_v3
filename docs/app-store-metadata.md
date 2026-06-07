@@ -83,6 +83,40 @@ Feet on ground, Find 3 things, Triangle breath, Relax your jaw, Drop your should
 - Smoother circles animation and calmer layout across the flow.
 - Better readability with larger text sizes (Dynamic Type).
 
+### What's New (1.0.1 — build 31)
+
+- **Clearer onboarding** — **How it works:** and all four steps use the same readable size as the opening line; **Tap circles** appears last.
+- **Aligned flow** — **One action for you**, action text, and **You are here** share one calm line across screens.
+- **Find 3 things:** — bullets sit closer to the title; section headers use colons (**How it works:**, **Saved for you:**).
+- **Show my paths** — appears with **One action for you**; saved list scrolls when you have many items.
+- **Scroll only when needed** — About, paths, and long explanations scroll with a native indicator when text does not fit.
+- **Better small-text readability** — footer links and secondary copy stay legible; app text no longer shrinks below default when iOS text size is set to minimum.
+- **Tap to continue** — always appears last under the circles on every flow screen.
+
+### App Review Notes (version 1.0.1 — build 31)
+
+Hello App Review Team,
+
+This build (1.0.1, build 31) is a layout and readability polish on top of build 28. Core flow is unchanged:
+onboarding → **One action for you** → one micro-action → return (**You are here** + short explanation).
+
+What changed since build 28:
+- Main line copy is vertically aligned across trigger, action, and return.
+- Onboarding **How it works:** and steps use the same size as the opening line.
+- **Find 3 things:** bullets sit closer to the title (no large empty gap).
+- Scroll areas (explanations, About, paths) scroll only when content overflows.
+- **Show my paths** with main copy; **tap to continue** always last under circles.
+- Text no longer shrinks below app default when iOS text size is minimum; Dynamic Type still scales up.
+
+How to test:
+1. Complete onboarding — tap circles on the last step.
+2. Trigger → action (try **Find 3 things** and a simple action like **Feet on ground**) → return.
+3. Optional: **Show my paths**, **Save this for me** on return (local only).
+
+No login required. All data on device. Pulsation does not read other apps.
+
+Thank you.
+
 ### App Review Notes (version 1.0.1 — build 28)
 
 Hello App Review Team,
@@ -167,6 +201,40 @@ Pulsation створено для спокою, а не тиску.
 - **Збережи це для мене** на return стає **Збережено** після натискання; для збережених дій більше не питає.
 - Плавніша анімація кіл та спокійніший layout у флоу.
 - Краща читабельність при великому тексті (Dynamic Type).
+
+### What's New (1.0.1 — build 31)
+
+- **Зрозуміліший онбординг** — **Як це працює:** і всі чотири кроки того ж розміру, що й відкривальний рядок; **Торкнись кіл** — останнім.
+- **Вирівняний флоу** — **Одна дія для тебе**, текст дії та **Ти тут** на одному спокійному рівні.
+- **Знайди 3 речі:** — булети ближче до заголовка; заголовки з двокрапкою (**Як це працює:**, **Збережені для тебе:**).
+- **Мої шляхи** — разом з **Одна дія для тебе**; список збережених скролиться, коли їх багато.
+- **Скрол лише за потреби** — About, paths і довгі пояснення з індикатором, коли не вміщуються.
+- **Читабельність** — footer і вторинний текст не стискаються нижче дефолту при мінімальному системному шрифті.
+- **Торкни, щоб продовжити** — завжди останнім під колами на кожному екрані флоу.
+
+### App Review Notes (версія 1.0.1 — build 31)
+
+Вітаємо, команда App Review,
+
+Цей build (1.0.1, build 31) — поліш layout і читабельності поверх build 28. Основний шлях без змін:
+онбординг → **Одна дія для тебе** → одна м’яка дія → повернення (**Ти тут** + коротке пояснення).
+
+Що змінилось від build 28:
+- Головний рядок вирівняний на trigger, action і return.
+- Онбординг: **Як це працює:** і кроки — той самий розмір, що відкривальний рядок.
+- Булети **Знайди 3 речі:** ближче до заголовка (без великого порожнього блоку).
+- Скрол (пояснення, About, paths) лише коли текст не вміщується.
+- **Мої шляхи** з main copy; **торкни, щоб продовжити** — останнім під колами.
+- Текст не стискається нижче дефолту при мінімальному системному шрифті; Dynamic Type вгору — так.
+
+Як перевірити:
+1. Онбординг → торкнутися кіл на останньому кроці.
+2. Trigger → action (**Знайди 3 речі**, **Стопи на опорі**) → return.
+3. Опційно: **Мої шляхи**, **Збережи це для мене** (лише локально).
+
+Логін не потрібен. Дані на пристрої. Інші додатки не читаються.
+
+Дякуємо.
 
 ### App Review Notes (версія 1.0.1 — build 28)
 

@@ -8,6 +8,7 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
+import { getCappedFontScale } from "../src/design/accessibility";
 import { CalmText } from "../src/design/components/CalmText";
 import { AnchoredCirclesScreen } from "../src/design/components/AnchoredCirclesScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
@@ -54,6 +55,9 @@ const showDebugActionSelector = process.env.EXPO_PUBLIC_ENABLE_DEBUG_ACTION_SELE
 export default function ActionScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
+  const fontScale = getCappedFontScale();
+  const phaseSlotHeight = Math.round(scaleByWidth(15, width) * fontScale) + scaleByWidth(spacing.sm, width);
+  const findThreeLineMinHeight = Math.round(scaleByWidth(15, width) * fontScale);
   const highContrast = useHighContrast();
   const copyRevealKey = useFlowMainCopyRevealKey();
   const mainLineDelayMs = getMainCopyDelayMs();
@@ -310,7 +314,7 @@ export default function ActionScreen() {
 
   const afterMainLine =
     presentation === "find_three" ? (
-      <>
+      <View style={styles.findThreeBelow}>
         <CalmPressable
           onPress={revealNextFindThreeBullet}
           accessibilityRole="button"
@@ -327,7 +331,10 @@ export default function ActionScreen() {
                     delayMs={0}
                     style={[
                       index === 0 ? styles.findThreeFirstLine : styles.findThreeLine,
-                      { marginTop: scaleByWidth(index === 0 ? 12 : 4, width) },
+                      {
+                        marginTop: index === 0 ? 0 : scaleByWidth(2, width),
+                        minHeight: findThreeLineMinHeight,
+                      },
                     ]}
                   >
                     {`• ${item}`}
@@ -336,11 +343,19 @@ export default function ActionScreen() {
               )
             : null}
         </CalmPressable>
-      </>
+      </View>
     ) : presentation === "triangle_breath" ? (
-      <>
+      <View style={styles.triangleBelow}>
         <View style={styles.trianglePhasesWrap}>
-          <View style={[styles.phaseWordLayer, { marginTop: scaleByWidth(spacing.md, width) }]}>
+          <View
+            style={[
+              styles.phaseWordLayer,
+              {
+                marginTop: scaleByWidth(spacing.md, width),
+                minHeight: phaseSlotHeight,
+              },
+            ]}
+          >
             <Animated.View style={[styles.phaseWord, { opacity: inhaleOpacity }]}>
               <CalmText style={[styles.phaseLabel, { opacity: phaseLabelOpacity }, highContrast && styles.phaseLabelHighContrast]}>
                 {phaseLabels.breatheIn}
@@ -358,7 +373,7 @@ export default function ActionScreen() {
             </Animated.View>
           </View>
         </View>
-      </>
+      </View>
     ) : null;
 
   const belowEquator =
@@ -382,27 +397,39 @@ export default function ActionScreen() {
 }
 
 const styles = StyleSheet.create({
+  findThreeBelow: {
+    width: "100%",
+    alignSelf: "stretch",
+    minWidth: 0,
+    alignItems: "stretch",
+    marginTop: spacing.md,
+  },
+  triangleBelow: {
+    width: "100%",
+    alignSelf: "stretch",
+    minWidth: 0,
+    alignItems: "stretch",
+  },
   trianglePhasesWrap: {
     width: "100%",
-    alignItems: "center",
+    alignItems: "stretch",
+    alignSelf: "stretch",
+    minWidth: 0,
   },
   findThreeBulletPress: {
     width: "100%",
-    alignItems: "center",
+    alignSelf: "stretch",
+    minWidth: 0,
+    alignItems: "stretch",
     borderRadius: 12,
-    paddingVertical: spacing.xs,
   },
-  findThreeLine: {
-    minHeight: 30,
-  },
-  findThreeFirstLine: {
-    minHeight: 30,
-  },
+  findThreeLine: {},
+  findThreeFirstLine: {},
   phaseLabel: {
     color: colors.textSecondary,
     textAlign: "center",
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: 12,
+    lineHeight: 16,
     letterSpacing: 0.15,
     width: "100%",
   },
@@ -410,7 +437,6 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   phaseWordLayer: {
-    minHeight: 60,
     width: "100%",
     alignItems: "center",
     justifyContent: "center",

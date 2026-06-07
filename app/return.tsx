@@ -11,9 +11,9 @@ import { useAppStore } from "../src/state/app-store";
 import {
   copyReveal,
   getAuxiliaryCopyDelayMs,
-  getFlowTapHintDelayMs,
   getMainCopyDelayMs,
   getReturnKeepForMeDelayMs,
+  getReturnTapHintDelayMs,
 } from "../src/design/animation-rhythm";
 import { legibleOpacity } from "../src/design/accessibility";
 import { useHighContrast } from "../src/hooks/use-high-contrast";
@@ -27,6 +27,7 @@ import {
   registerExplanationEngagement,
 } from "../src/services/adaptive-preferences";
 import { playKeepForMeHaptic } from "../src/services/haptic-regulation";
+import { footerLinkTextStyle } from "../src/design/main-copy";
 import { colors, spacing } from "../src/design/tokens";
 import { armInstantTriggerReturn } from "../src/design/flow-copy-reveal";
 import { goToTrigger } from "../src/navigation/go-to-trigger";
@@ -52,7 +53,7 @@ export default function ReturnScreen() {
   const mainCopyDelayMs = getMainCopyDelayMs();
   const returnCopyEndDelayMs = getAuxiliaryCopyDelayMs(mainCopyDelayMs);
   const keepForMeDelayMs = getReturnKeepForMeDelayMs(mainCopyDelayMs);
-  const hintDelayMs = getFlowTapHintDelayMs(returnCopyEndDelayMs);
+  const hintDelayMs = getReturnTapHintDelayMs(mainCopyDelayMs);
   const circlesHintPresentation = useCirclesHintPresentation(hintDelayMs);
   const hintRegistration = useMemo(
     () => ({
@@ -138,7 +139,7 @@ export default function ReturnScreen() {
     [persistEngagement],
   );
 
-  const savedLabelOpacity = legibleOpacity(0.52, highContrast, "faint");
+  const savedLabelOpacity = legibleOpacity(0.48, highContrast, "faint");
 
   const keepForMeFooter =
     !isInterventionKept ? (
@@ -196,7 +197,9 @@ export default function ReturnScreen() {
 const styles = StyleSheet.create({
   belowMain: {
     width: "100%",
-    alignItems: "center",
+    alignSelf: "stretch",
+    minWidth: 0,
+    alignItems: "stretch",
   },
   explanationLine: {
     marginTop: spacing.md,
@@ -209,11 +212,8 @@ const styles = StyleSheet.create({
     minHeight: 44,
   },
   keepSavedLabel: {
-    color: colors.textSecondary,
-    fontSize: 12,
-    letterSpacing: 0.25,
-    textAlign: "center",
-    paddingVertical: spacing.xs,
+    ...footerLinkTextStyle,
+    paddingVertical: 4,
     paddingHorizontal: spacing.md,
     minHeight: 44,
   },

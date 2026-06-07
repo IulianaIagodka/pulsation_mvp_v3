@@ -174,7 +174,7 @@ const triangleBreathCopyByLocale: Record<
   { intro: string; phases: TriangleBreathPhaseLabels }
 > = {
   en: {
-    intro: "Take 3 deep breaths, follow the triangle",
+    intro: "Take 3 deep breaths. Follow the rhythm.",
     phases: {
       breatheIn: "Breathe in",
       hold: "hold",
@@ -182,7 +182,7 @@ const triangleBreathCopyByLocale: Record<
     },
   },
   uk: {
-    intro: "Зроби 3 цикли дихання, слідуй за трикутником",
+    intro: "Зроби 3 глибокі вдихи. Слідуй за ритмом.",
     phases: {
       breatheIn: "Вдихни",
       hold: "затримка",
@@ -235,7 +235,7 @@ const uiCopyByLocale: Record<
       "One small action for you",
       "A quiet return — «you are here»",
     ] as const,
-    onboardingCirclesHint: "Tap circles — it's the button here",
+    onboardingCirclesHint: "Tap circles — it's a button here",
     triggerPrompt: "One action for you",
     triggerPauseMessage: "Not now, you can continue gently",
     triggerAccept: "I can take this moment",
@@ -265,7 +265,7 @@ const uiCopyByLocale: Record<
     pathsTodayNone: "No actions for yourself yet today",
     pathsTodayCountLabel: (count) =>
       count === 1 ? "action for yourself today" : "actions for yourself today",
-    pathsSavedLabel: "Saved for you",
+    pathsSavedLabel: "Saved for you:",
     pathsSavedEmpty: "Nothing saved yet. After a return, tap «Save this for me» — it becomes Saved.",
     pathsRemoveSavedA11y: (label) => `Remove ${label}`,
   },
@@ -313,7 +313,7 @@ const uiCopyByLocale: Record<
       if (n >= 2 && n <= 4 && (n100 < 10 || n100 >= 20)) return "дії для себе сьогодні";
       return "дій для себе сьогодні";
     },
-    pathsSavedLabel: "Збережені для тебе",
+    pathsSavedLabel: "Збережені для тебе:",
     pathsSavedEmpty: "Поки нічого збережено. Після повернення натисни «Збережи це для мене» — стане Збережено.",
     pathsRemoveSavedA11y: (label) => `Прибрати ${label}`,
   },

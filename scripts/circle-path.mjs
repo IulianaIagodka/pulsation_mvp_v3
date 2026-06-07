@@ -1,21 +1,21 @@
-/** Shared spiral path builder for icon / App Store scripts (mirrors spiral-archimedean-path.ts). */
+/** Shared circle path builder for icon / App Store scripts (mirrors circle-archimedean-path.ts). */
 
-export const SPIRAL_VIEW_SIZE = 160;
-export const SPIRAL_R_MIN = 0.5;
-export const SPIRAL_R_MAX = SPIRAL_VIEW_SIZE / 2 - 1;
-export const SPIRAL_RADIAL_PITCH = 13;
-export const SPIRAL_INNER_BOUNDARY_R = 16;
-export const SPIRAL_INNER_PITCH = 6;
-export const SPIRAL_CORE_BOUNDARY_R = 6;
-export const SPIRAL_CORE_PITCH = 3;
+export const CIRCLE_VIEW_SIZE = 160;
+export const CIRCLE_R_MIN = 0.5;
+export const CIRCLE_R_MAX = CIRCLE_VIEW_SIZE / 2 - 1;
+export const CIRCLE_RADIAL_PITCH = 13;
+export const CIRCLE_INNER_BOUNDARY_R = 16;
+export const CIRCLE_INNER_PITCH = 6;
+export const CIRCLE_CORE_BOUNDARY_R = 6;
+export const CIRCLE_CORE_PITCH = 3;
 
 const SEGMENTS = [
-  { rOuter: SPIRAL_R_MAX, rInner: SPIRAL_INNER_BOUNDARY_R, pitch: SPIRAL_RADIAL_PITCH },
-  { rOuter: SPIRAL_INNER_BOUNDARY_R, rInner: SPIRAL_CORE_BOUNDARY_R, pitch: SPIRAL_INNER_PITCH },
-  { rOuter: SPIRAL_CORE_BOUNDARY_R, rInner: SPIRAL_R_MIN, pitch: SPIRAL_CORE_PITCH },
+  { rOuter: CIRCLE_R_MAX, rInner: CIRCLE_INNER_BOUNDARY_R, pitch: CIRCLE_RADIAL_PITCH },
+  { rOuter: CIRCLE_INNER_BOUNDARY_R, rInner: CIRCLE_CORE_BOUNDARY_R, pitch: CIRCLE_INNER_PITCH },
+  { rOuter: CIRCLE_CORE_BOUNDARY_R, rInner: CIRCLE_R_MIN, pitch: CIRCLE_CORE_PITCH },
 ];
 
-export function buildArchimedeanSpiralPath(cx, cy, scale = 1, pointsPerTurn = 56) {
+export function buildArchimedeanCirclePath(cx, cy, scale = 1, pointsPerTurn = 56) {
   const points = [];
   let theta = 0;
   const startAngle = -Math.PI / 2;

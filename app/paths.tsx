@@ -1,18 +1,20 @@
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
-import { PixelRatio, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
+import { StyleSheet, useWindowDimensions, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { AboutFooterLink } from "../src/design/components/AboutFooterLink";
+import { OverflowScrollView } from "../src/design/components/OverflowScrollView";
 import { CalmPressable } from "../src/design/components/CalmPressable";
 import { resolvePressableTextOpacity } from "../src/design/pressable-highlight";
 import { CalmScreen } from "../src/design/components/CalmScreen";
 import { CalmText } from "../src/design/components/CalmText";
-import { legibleOpacity, MAX_FONT_SIZE_MULTIPLIER } from "../src/design/accessibility";
+import { getCappedFontScale, legibleOpacity } from "../src/design/accessibility";
 import { useHighContrast } from "../src/hooks/use-high-contrast";
 import { interventionCopy, uiCopy } from "../src/modules/delivery-layer";
 import { removeKeptIntervention } from "../src/services/adaptive-preferences";
 import { getPathsSnapshot } from "../src/services/paths-stats";
 import type { InterventionType } from "../src/types/domain";
+import { explanationTextStyle } from "../src/design/main-copy";
 import { getContentMaxWidth } from "../src/design/responsive";
 import { colors, spacing, typography } from "../src/design/tokens";
 
@@ -40,7 +42,7 @@ export default function PathsScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const highContrast = useHighContrast();
-  const fontScale = Math.min(PixelRatio.getFontScale(), MAX_FONT_SIZE_MULTIPLIER);
+  const fontScale = getCappedFontScale();
   const [kept, setKept] = useState<InterventionType[]>([]);
   const [actionsToday, setActionsToday] = useState(0);
 
@@ -59,14 +61,8 @@ export default function PathsScreen() {
   );
 
   const footerRowHeight = Math.min(Math.max(44 * fontScale, 44), 132);
-  const scrollContentStyle = useMemo(
-    () => [
-      styles.scroll,
-      {
-        maxWidth: getContentMaxWidth(width),
-        paddingBottom: spacing.xl + footerRowHeight,
-      },
-    ],
+  const pageInnerStyle = useMemo(
+    () => [styles.pageInner, { maxWidth: getContentMaxWidth(width), paddingBottom: footerRowHeight }],
     [footerRowHeight, width],
   );
 
@@ -74,7 +70,6 @@ export default function PathsScreen() {
   const labelOpacity = legibleOpacity(0.52, highContrast, "faint");
   const faintOpacity = legibleOpacity(0.48, highContrast, "faint");
   const bodyOpacity = legibleOpacity(0.58, highContrast, "muted");
-  const sectionLabelOpacity = legibleOpacity(0.46, highContrast, "faint");
   const removeIconColor = colors.textSecondary;
   const removeIconOpacity = legibleOpacity(0.42, highContrast, "faint");
   const removeIconOpacityActive = legibleOpacity(0.62, highContrast, "muted");
@@ -87,11 +82,7 @@ export default function PathsScreen() {
   return (
     <CalmScreen>
       <View style={styles.root}>
-        <ScrollView
-          contentContainerStyle={scrollContentStyle}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
+        <View style={pageInnerStyle}>
           <View style={styles.todaySection}>
             {actionsToday > 0 ? (
               <>
@@ -106,6 +97,7 @@ export default function PathsScreen() {
                 </CalmText>
                 <CalmText
                   style={[
+                    styles.pathsMetaLabel,
                     styles.todayLabel,
                     { opacity: labelOpacity },
                     highContrast && styles.bodyHighContrast,
@@ -116,21 +108,32 @@ export default function PathsScreen() {
               </>
             ) : (
               <CalmText
-                style={[
-                  styles.todayEmpty,
-                  { opacity: faintOpacity },
-                  highContrast && styles.bodyHighContrast,
-                ]}
+                style={[styles.todayEmpty, { opacity: faintOpacity }, highContrast && styles.bodyHighContrast]}
               >
                 {uiCopy.pathsTodayNone}
               </CalmText>
             )}
           </View>
 
-          <View style={styles.savedSection}>
-            <CalmText style={[styles.sectionLabel, { opacity: sectionLabelOpacity }]}>{uiCopy.pathsSavedLabel}</CalmText>
+          <OverflowScrollView
+            style={styles.savedScroll}
+            contentContainerStyle={styles.savedScrollContent}
+            keyboardShouldPersistTaps="handled"
+          >
+            <CalmText
+              style={[
+                styles.pathsMetaLabel,
+                styles.savedSectionLabel,
+                { opacity: labelOpacity },
+                highContrast && styles.bodyHighContrast,
+              ]}
+            >
+              {uiCopy.pathsSavedLabel}
+            </CalmText>
             {kept.length === 0 ? (
-              <CalmText style={[styles.sectionBody, { opacity: faintOpacity }, highContrast && styles.bodyHighContrast]}>
+              <CalmText
+                style={[styles.sectionBody, { opacity: faintOpacity }, highContrast && styles.bodyHighContrast]}
+              >
                 {uiCopy.pathsSavedEmpty}
               </CalmText>
             ) : (
@@ -175,8 +178,8 @@ export default function PathsScreen() {
                 );
               })
             )}
-          </View>
-        </ScrollView>
+          </OverflowScrollView>
+        </View>
         <View style={styles.pinnedFooter}>
           <AboutFooterLink label={uiCopy.aboutBack} onPress={() => router.back()} />
         </View>
@@ -189,9 +192,11 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  scroll: {
+  pageInner: {
+    flex: 1,
+    flexBasis: 0,
+    minHeight: 0,
     paddingTop: spacing.md,
-    flexGrow: 1,
     width: "100%",
     alignSelf: "center",
   },
@@ -210,41 +215,45 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     opacity: 0.82,
   },
-  todayLabel: {
-    marginTop: spacing.xs,
+  pathsMetaLabel: {
     color: colors.textSecondary,
-    fontSize: typography.gentle,
-    lineHeight: 28,
+    fontSize: typography.body,
+    lineHeight: 22,
     textAlign: "center",
     width: "100%",
+  },
+  todayLabel: {
+    marginTop: spacing.xs,
   },
   todayEmpty: {
     color: colors.textSecondary,
-    fontSize: typography.gentle,
-    lineHeight: 28,
+    fontSize: typography.body,
+    lineHeight: 22,
     textAlign: "center",
     width: "100%",
   },
-  savedSection: {
-    marginTop: spacing.xl,
-    marginBottom: spacing.lg,
+  savedScroll: {
+    flex: 1,
+    flexBasis: 0,
+    minHeight: 0,
+    marginTop: spacing.lg,
     width: "100%",
+    alignSelf: "stretch",
   },
-  sectionLabel: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    letterSpacing: 0.35,
-    marginBottom: spacing.sm,
-    textTransform: "uppercase",
-    textAlign: "left",
+  savedScrollContent: {
+    flexGrow: 0,
     width: "100%",
+    alignSelf: "stretch",
+    paddingBottom: spacing.md,
+  },
+  savedSectionLabel: {
+    marginTop: 0,
+    marginBottom: spacing.sm,
   },
   sectionBody: {
+    ...explanationTextStyle,
     textAlign: "left",
     color: colors.textSecondary,
-    fontSize: 16,
-    lineHeight: 26,
-    width: "100%",
   },
   bodyHighContrast: {
     color: colors.textPrimary,
@@ -254,10 +263,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
+    minWidth: 0,
     marginTop: spacing.sm,
   },
   savedItemLabel: {
     flex: 1,
+    minWidth: 0,
+    flexShrink: 1,
+    width: undefined,
+    maxWidth: undefined,
     paddingRight: spacing.sm,
   },
   removeButton: {

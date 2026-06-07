@@ -1,7 +1,7 @@
-import { PropsWithChildren, ReactNode } from "react";
+import { PropsWithChildren, ReactNode, useCallback } from "react";
 import { useRouter } from "expo-router";
-import { PixelRatio, ScrollView, StyleSheet, View } from "react-native";
-import { MAX_FONT_SIZE_MULTIPLIER } from "../accessibility";
+import { StyleSheet, View } from "react-native";
+import { getCappedFontScale } from "../accessibility";
 import { useStableLayoutInsets } from "../../hooks/use-stable-layout-insets";
 import { useStableWindowDimensions } from "../../hooks/use-stable-window-dimensions";
 import { circlesLayout } from "../animation-rhythm";
@@ -15,14 +15,18 @@ import {
   getReturnFollowUpTop,
   getScreenEquatorY,
   getCirclesAnchorMetrics,
+  getFollowUpContentLayout,
   getTriggerMainCopyTop,
 } from "../circles-anchor-layout";
 import { useAppStore } from "../../state/app-store";
 import { uiCopy } from "../../modules/delivery-layer";
+import { resetPulsationLocalData } from "../../services/pulsation-flow";
 import { AboutFooterLink } from "./AboutFooterLink";
+import { flowRevealIds } from "../flow-reveal-ids";
 import { FooterRevealLink } from "./FooterRevealLink";
 import { CalmText } from "./CalmText";
 import { CalmScreen } from "./CalmScreen";
+import { OverflowScrollView } from "./OverflowScrollView";
 import { SoftCard } from "./SoftCard";
 
 type Props = PropsWithChildren<{
@@ -43,10 +47,14 @@ type Props = PropsWithChildren<{
   pinMainLikeTrigger?: boolean;
   /** Show “Show my paths” in the footer (trigger / “one action” screen only). */
   showPathsLink?: boolean;
-  /** Fade in paths link with main copy (trigger). */
+  /** Fade in paths link after main copy + tap hint (trigger). */
   pathsLinkRevealDelayMs?: number;
+  /** Remount paths link on trigger refocus so it replays after main copy. */
+  pathsLinkRevealKey?: number | string;
   /** Tighter scroll top for App Store capture (full extended onboarding on one screen). */
   compactCapture?: boolean;
+  /** Stretch main slot to the footer and vertically center its content (onboarding). */
+  expandMainToFooter?: boolean;
 }>;
 
 export function AnchoredCirclesScreen({
@@ -58,15 +66,24 @@ export function AnchoredCirclesScreen({
   footer,
   showPathsLink = false,
   pathsLinkRevealDelayMs,
+  pathsLinkRevealKey,
   compactCapture = false,
   pinMainLikeTrigger = false,
+  expandMainToFooter = false,
 }: Props) {
   const router = useRouter();
   const insets = useStableLayoutInsets();
   const { height: windowHeight, width: windowWidth } = useStableWindowDimensions();
-  const fontScale = Math.min(PixelRatio.getFontScale(), MAX_FONT_SIZE_MULTIPLIER);
+  const fontScale = getCappedFontScale();
   const highContrastPreviewEnabled = useAppStore((s) => s.highContrastPreviewEnabled);
   const setHighContrastPreviewEnabled = useAppStore((s) => s.setHighContrastPreviewEnabled);
+  const clearIntervention = useAppStore((s) => s.clearIntervention);
+
+  const onDevResetLocalData = useCallback(() => {
+    resetPulsationLocalData();
+    clearIntervention();
+    router.replace("/");
+  }, [clearIntervention, router]);
 
   const metrics = getCirclesAnchorMetrics(windowHeight, insets);
   const footerBottomInset = Math.max(insets.bottom, scaleByWidth(spacing.sm, windowWidth));
@@ -87,6 +104,22 @@ export function AnchoredCirclesScreen({
   const useEquatorLayout = centerContent && pinMainLikeTrigger;
   const afterMainTop = triggerMainCopyTop + mainCopySlotHeight;
   const pinnedAfterMain = mainLine != null ? children : null;
+  const mainOnlyScroll =
+    pinMainLikeTrigger &&
+    mainLine != null &&
+    pinnedAfterMain == null &&
+    belowEquator == null &&
+    !expandMainToFooter;
+  const hasFollowUpBelowMain = pinnedAfterMain != null || belowEquator != null;
+  const mainZoneBottom =
+    footerLinkCount > 0 ? footerHeight + footerBottomInset : scaleByWidth(spacing.sm, windowWidth);
+  const followUpLayout = hasFollowUpBelowMain
+    ? getFollowUpContentLayout(windowHeight, insets, windowWidth, fontScale, mainZoneBottom)
+    : null;
+  const pinnedMainTop = followUpLayout?.mainTop ?? triggerMainCopyTop;
+  const mainClampHeight = followUpLayout?.mainClampHeight;
+  const scrollBelowMainTop = followUpLayout?.scrollTop ?? belowEquatorTop;
+  const scrollBelowMainBottom = followUpLayout?.scrollBottom ?? mainZoneBottom;
 
   const pinnedFooter =
     footerLinkCount > 0 ? (
@@ -95,9 +128,11 @@ export function AnchoredCirclesScreen({
         {showPathsLink ? (
           pathsLinkRevealDelayMs != null ? (
             <FooterRevealLink
+              key={pathsLinkRevealKey != null ? `paths-${pathsLinkRevealKey}` : undefined}
               label={uiCopy.pathsLink}
               onPress={() => router.push("/paths")}
               delayMs={pathsLinkRevealDelayMs}
+              revealId={flowRevealIds.triggerPaths}
               holdAfterReveal
             />
           ) : (
@@ -125,33 +160,91 @@ export function AnchoredCirclesScreen({
               pointerEvents="box-none"
               style={[
                 styles.mainAnchorSlot,
-                { top: triggerMainCopyTop, minHeight: mainCopySlotHeight },
+                expandMainToFooter || mainOnlyScroll
+                  ? { top: triggerMainCopyTop, bottom: mainZoneBottom }
+                  : hasFollowUpBelowMain && mainClampHeight != null
+                    ? { top: pinnedMainTop, height: mainClampHeight }
+                    : { top: triggerMainCopyTop, minHeight: mainCopySlotHeight },
+                expandMainToFooter && styles.mainAnchorCentered,
+                (expandMainToFooter || pinMainLikeTrigger) && styles.mainAnchorStretch,
               ]}
             >
-              <SoftCard style={styles.equatorCard}>{mainLine ?? children}</SoftCard>
+              {mainOnlyScroll ? (
+                <OverflowScrollView
+                  style={styles.mainZoneScroll}
+                  contentContainerStyle={styles.mainZoneScrollContentTop}
+                  keyboardShouldPersistTaps="handled"
+                >
+                  <SoftCard flush>{mainLine}</SoftCard>
+                </OverflowScrollView>
+              ) : hasFollowUpBelowMain && mainLine != null && mainClampHeight != null ? (
+                <OverflowScrollView
+                  style={styles.mainClampScroll}
+                  contentContainerStyle={styles.mainClampScrollContent}
+                  keyboardShouldPersistTaps="handled"
+                >
+                  <SoftCard flush>{mainLine}</SoftCard>
+                </OverflowScrollView>
+              ) : expandMainToFooter ? (
+                <View style={styles.equatorMainFill}>{mainLine ?? children}</View>
+              ) : (
+                <SoftCard flush>{mainLine ?? children}</SoftCard>
+              )}
             </View>
             {pinnedAfterMain ? (
-              <View
-                pointerEvents="box-none"
-                style={[styles.afterMainAnchorSlot, { top: afterMainTop }]}
-              >
-                <SoftCard style={styles.equatorCard}>{pinnedAfterMain}</SoftCard>
-              </View>
+              pinMainLikeTrigger && mainLine != null ? (
+                <OverflowScrollView
+                  style={[
+                    styles.belowEquatorScroll,
+                    { top: scrollBelowMainTop, bottom: scrollBelowMainBottom },
+                  ]}
+                  contentContainerStyle={[
+                    styles.belowEquatorScrollContent,
+                    { paddingBottom: scaleByWidth(spacing.md, windowWidth) },
+                  ]}
+                  keyboardShouldPersistTaps="handled"
+                >
+                  {pinnedAfterMain}
+                </OverflowScrollView>
+              ) : (
+                <View
+                  pointerEvents="box-none"
+                  style={[styles.afterMainAnchorSlot, { top: afterMainTop }]}
+                >
+                  <SoftCard flush>{pinnedAfterMain}</SoftCard>
+                </View>
+              )
             ) : null}
             {belowEquator ? (
-              <View
-                pointerEvents="box-none"
-                style={[
-                  styles.belowEquator,
-                  { top: belowEquatorTop, paddingBottom: scrollBottomPad },
-                ]}
-              >
-                {belowEquator}
-              </View>
+              pinMainLikeTrigger && mainLine != null ? (
+                <OverflowScrollView
+                  style={[
+                    styles.belowEquatorScroll,
+                    { top: scrollBelowMainTop, bottom: scrollBelowMainBottom },
+                  ]}
+                  contentContainerStyle={[
+                    styles.belowEquatorScrollContent,
+                    { paddingBottom: scaleByWidth(spacing.md, windowWidth) },
+                  ]}
+                  keyboardShouldPersistTaps="handled"
+                >
+                  {belowEquator}
+                </OverflowScrollView>
+              ) : (
+                <View
+                  pointerEvents="box-none"
+                  style={[
+                    styles.belowEquator,
+                    { top: belowEquatorTop, paddingBottom: scrollBottomPad },
+                  ]}
+                >
+                  {belowEquator}
+                </View>
+              )
             ) : null}
           </View>
         ) : (
-          <ScrollView
+          <OverflowScrollView
             style={styles.scroll}
             contentContainerStyle={[
               styles.scrollContent,
@@ -160,17 +253,15 @@ export function AnchoredCirclesScreen({
                 paddingBottom: scrollBottomPad,
               },
             ]}
-            showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
-            alwaysBounceVertical={false}
           >
-            <SoftCard style={styles.equatorCard}>{children}</SoftCard>
+            <SoftCard flush>{children}</SoftCard>
             {belowEquator ? (
               <View pointerEvents="box-none" style={styles.scrollBelowEquator}>
                 {belowEquator}
               </View>
             ) : null}
-          </ScrollView>
+          </OverflowScrollView>
         )}
 
         {pinnedFooter ? (
@@ -181,23 +272,42 @@ export function AnchoredCirclesScreen({
 
         {__DEV__ ? (
           <View style={[styles.devToggleWrap, { top: insets.top + scaleByWidth(8, windowWidth) }]}>
-            <CalmPressable
-              onPress={() => setHighContrastPreviewEnabled(!highContrastPreviewEnabled)}
-              style={[styles.devToggle, highContrastPreviewEnabled && styles.devToggleActive]}
-              hitSlop={8}
-              accessibilityRole="button"
-            >
-              {(state) => (
-                <CalmText
-                  style={[
-                    styles.devToggleText,
-                    { opacity: resolvePressableTextOpacity(0.95, 1, state) },
-                  ]}
-                >
-                  {highContrastPreviewEnabled ? "HC ON" : "HC"}
-                </CalmText>
-              )}
-            </CalmPressable>
+            <View style={styles.devToggleRow}>
+              <CalmPressable
+                onPress={() => setHighContrastPreviewEnabled(!highContrastPreviewEnabled)}
+                style={[styles.devToggle, highContrastPreviewEnabled && styles.devToggleActive]}
+                hitSlop={8}
+                accessibilityRole="button"
+              >
+                {(state) => (
+                  <CalmText
+                    style={[
+                      styles.devToggleText,
+                      { opacity: resolvePressableTextOpacity(0.95, 1, state) },
+                    ]}
+                  >
+                    {highContrastPreviewEnabled ? "HC ON" : "HC"}
+                  </CalmText>
+                )}
+              </CalmPressable>
+              <CalmPressable
+                onPress={onDevResetLocalData}
+                style={styles.devToggle}
+                hitSlop={8}
+                accessibilityRole="button"
+              >
+                {(state) => (
+                  <CalmText
+                    style={[
+                      styles.devToggleText,
+                      { opacity: resolvePressableTextOpacity(0.95, 1, state) },
+                    ]}
+                  >
+                    Reset
+                  </CalmText>
+                )}
+              </CalmPressable>
+            </View>
           </View>
         ) : null}
       </View>
@@ -224,7 +334,14 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: "center",
     justifyContent: "flex-start",
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.sm,
+    zIndex: 2,
+  },
+  mainAnchorCentered: {
+    justifyContent: "center",
+  },
+  mainAnchorStretch: {
+    alignItems: "stretch",
   },
   afterMainAnchorSlot: {
     position: "absolute",
@@ -233,9 +350,39 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: spacing.md,
   },
-  equatorCard: {
-    paddingTop: 0,
-    paddingBottom: 0,
+  equatorMainFill: {
+    flex: 1,
+    width: "100%",
+    alignSelf: "stretch",
+    minWidth: 0,
+  },
+  mainZoneScroll: {
+    flex: 1,
+    width: "100%",
+    alignSelf: "stretch",
+  },
+  mainZoneScrollContentTop: {
+    flexGrow: 1,
+    justifyContent: "flex-start",
+    alignItems: "stretch",
+    alignSelf: "stretch",
+    width: "100%",
+    minWidth: 0,
+    paddingBottom: spacing.sm,
+  },
+  mainClampScroll: {
+    flex: 1,
+    width: "100%",
+    alignSelf: "stretch",
+    minHeight: 0,
+  },
+  mainClampScrollContent: {
+    flexGrow: 1,
+    justifyContent: "flex-start",
+    alignItems: "stretch",
+    alignSelf: "stretch",
+    width: "100%",
+    minWidth: 0,
   },
   belowEquator: {
     position: "absolute",
@@ -243,6 +390,19 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: "center",
     paddingHorizontal: spacing.md,
+  },
+  belowEquatorScroll: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    zIndex: 1,
+  },
+  belowEquatorScrollContent: {
+    alignItems: "stretch",
+    alignSelf: "stretch",
+    width: "100%",
+    minWidth: 0,
+    paddingHorizontal: spacing.sm,
   },
   scroll: { flex: 1 },
   scrollContent: {
@@ -274,6 +434,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: spacing.sm,
     zIndex: 40,
+  },
+  devToggleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
   },
   devToggle: {
     minHeight: 34,

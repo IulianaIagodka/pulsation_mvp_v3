@@ -1,24 +1,24 @@
 import {
-  SPIRAL_HINT_FULL_CYCLES,
+  CIRCLES_HINT_FULL_CYCLES,
   getCirclesHintPresentation,
 } from "../modules/circles-hint-presentation";
 
 describe("circles hint progression", () => {
   it("shows on every screen during the first 3 completed cycles", () => {
-    const hint = getCirclesHintPresentation(20, 1200, 5, SPIRAL_HINT_FULL_CYCLES - 1);
+    const hint = getCirclesHintPresentation(20, 1200, 5, CIRCLES_HINT_FULL_CYCLES - 1);
     expect(hint.shouldShow).toBe(true);
     expect(hint.delayMs).toBe(1200);
-    expect(hint.textOpacity).toBe(0.58);
+    expect(hint.textOpacity).toBe(0.48);
   });
 
   it("stops showing after 3 completed cycles regardless of tap count", () => {
-    const hint = getCirclesHintPresentation(2, 1200, 1, SPIRAL_HINT_FULL_CYCLES);
+    const hint = getCirclesHintPresentation(2, 1200, 1, CIRCLES_HINT_FULL_CYCLES);
     expect(hint.shouldShow).toBe(false);
     expect(hint.textOpacity).toBe(0);
   });
 
   it("stays hidden for long-term users", () => {
-    const hint = getCirclesHintPresentation(20, 800, 1, SPIRAL_HINT_FULL_CYCLES + 4);
+    const hint = getCirclesHintPresentation(20, 800, 1, CIRCLES_HINT_FULL_CYCLES + 4);
     expect(hint.shouldShow).toBe(false);
   });
 });

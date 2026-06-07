@@ -32,7 +32,7 @@ const variantsByLocale = {
 } as const satisfies Record<"en" | "uk", readonly FindThreeVariant[]>;
 
 export function getFindThreeIntro(locale: FindThreeLocale): string {
-  return locale === "uk" ? "Знайди 3 речі" : "Find 3 things";
+  return locale === "uk" ? "Знайди 3 речі:" : "Find 3 things:";
 }
 
 export function getFindThreeVariant(variantIndex: number, locale: FindThreeLocale): FindThreeVariant {

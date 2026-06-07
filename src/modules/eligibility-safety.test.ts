@@ -2,15 +2,16 @@ import { checkEligibility } from "./eligibility-safety";
 
 describe("checkEligibility", () => {
   it("blocks during cooldown", () => {
+    const now = new Date("2026-06-05T14:00:00").getTime();
     const result = checkEligibility(
-      { timestamp: Date.now(), distractingSessionMinutes: 30, appCategory: "social" },
+      { timestamp: now, distractingSessionMinutes: 30, appCategory: "social" },
       {
         quietHoursStart: 0,
         quietHoursEnd: 0,
         dailyCap: 4,
         cooldownMinutes: 60,
-        interventionsToday: 0,
-        lastInterventionAt: Date.now() - 10 * 60000,
+        interventionsToday: 1,
+        lastInterventionAt: now - 10 * 60000,
         dismissalStreak: 0,
       },
     );

@@ -1,11 +1,12 @@
 import { useRouter } from "expo-router";
 import Constants from "expo-constants";
 import { useMemo } from "react";
-import { PixelRatio, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
+import { StyleSheet, useWindowDimensions, View } from "react-native";
 import { AboutFooterLink } from "../src/design/components/AboutFooterLink";
+import { OverflowScrollView } from "../src/design/components/OverflowScrollView";
 import { CalmScreen } from "../src/design/components/CalmScreen";
 import { CalmText } from "../src/design/components/CalmText";
-import { legibleOpacity, MAX_FONT_SIZE_MULTIPLIER } from "../src/design/accessibility";
+import { getCappedFontScale, legibleOpacity } from "../src/design/accessibility";
 import { getContentMaxWidth } from "../src/design/responsive";
 import { useHighContrast } from "../src/hooks/use-high-contrast";
 import { uiCopy } from "../src/modules/delivery-layer";
@@ -15,7 +16,7 @@ export default function AboutScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const highContrast = useHighContrast();
-  const fontScale = Math.min(PixelRatio.getFontScale(), MAX_FONT_SIZE_MULTIPLIER);
+  const fontScale = getCappedFontScale();
   const version = Constants.expoConfig?.version ?? "1.0.0";
   const versionOpacity = legibleOpacity(0.55, highContrast, "faint");
   const footerRowHeight = Math.min(Math.max(44 * fontScale, 44), 132);
@@ -34,9 +35,9 @@ export default function AboutScreen() {
   return (
     <CalmScreen>
       <View style={styles.root}>
-        <ScrollView
+        <OverflowScrollView
+          style={styles.scrollView}
           contentContainerStyle={scrollContentStyle}
-          showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
           <CalmText style={[styles.title, highContrast && styles.titleHighContrast]}>{uiCopy.aboutTitle}</CalmText>
@@ -48,7 +49,7 @@ export default function AboutScreen() {
           <CalmText style={[styles.version, { opacity: versionOpacity }, highContrast && styles.paragraphHighContrast]}>
             {uiCopy.aboutVersionPrefix} {version}
           </CalmText>
-        </ScrollView>
+        </OverflowScrollView>
         <View style={styles.pinnedFooter}>
           <AboutFooterLink label={uiCopy.aboutBack} onPress={() => router.back()} />
         </View>
@@ -61,9 +62,11 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
+  scrollView: {
+    flex: 1,
+  },
   scroll: {
     paddingTop: spacing.md,
-    flexGrow: 1,
     width: "100%",
     alignSelf: "center",
   },

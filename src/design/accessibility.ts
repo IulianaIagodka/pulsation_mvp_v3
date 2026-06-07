@@ -1,5 +1,28 @@
-/** Cap scaling at iOS Accessibility XXL (~3.1× default body). */
-export const MAX_FONT_SIZE_MULTIPLIER = 3.1;
+import { PixelRatio, StyleSheet, type StyleProp, type TextStyle } from "react-native";
+import { clampFontScale, MAX_FONT_SIZE_MULTIPLIER, MIN_FONT_SIZE_MULTIPLIER } from "./accessibility-scale";
+
+export { MAX_FONT_SIZE_MULTIPLIER, MIN_FONT_SIZE_MULTIPLIER };
+
+export function getCappedFontScale(raw = PixelRatio.getFontScale()): number {
+  return clampFontScale(raw);
+}
+
+/** Applies capped system scale to explicit fontSize / lineHeight; use with allowFontScaling={false}. */
+export function applyCappedFontScale(style: StyleProp<TextStyle>): StyleProp<TextStyle> {
+  const flat = StyleSheet.flatten(style);
+  if (!flat) return style;
+
+  const scale = getCappedFontScale();
+  const scaled: TextStyle = {};
+  if (typeof flat.fontSize === "number") {
+    scaled.fontSize = flat.fontSize * scale;
+  }
+  if (typeof flat.lineHeight === "number") {
+    scaled.lineHeight = flat.lineHeight * scale;
+  }
+  if (Object.keys(scaled).length === 0) return style;
+  return StyleSheet.flatten([style, scaled]);
+}
 
 export type LegibleTone = "hint" | "muted" | "faint";
 

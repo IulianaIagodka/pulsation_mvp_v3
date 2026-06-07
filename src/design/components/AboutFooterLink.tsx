@@ -3,6 +3,7 @@ import { legibleOpacity } from "../accessibility";
 import { resolvePressableTextOpacity } from "../pressable-highlight";
 import { CalmPressable } from "./CalmPressable";
 import { CalmText } from "./CalmText";
+import { footerLinkTextStyle } from "../main-copy";
 import { colors, spacing } from "../tokens";
 import { useHighContrast } from "../../hooks/use-high-contrast";
 
@@ -26,8 +27,8 @@ export function AboutFooterLink({
   onBlur,
 }: Props) {
   const highContrast = useHighContrast();
-  const linkOpacity = legibleOpacity(0.62, highContrast, "muted");
-  const linkOpacityActive = legibleOpacity(0.82, highContrast, "muted");
+  const linkOpacity = legibleOpacity(0.48, highContrast, "faint");
+  const linkOpacityActive = legibleOpacity(0.65, highContrast, "faint");
 
   return (
     <CalmPressable
@@ -58,18 +59,13 @@ export function AboutFooterLink({
 
 const styles = StyleSheet.create({
   wrap: {
-    paddingVertical: spacing.xs,
+    paddingVertical: 4,
     paddingHorizontal: spacing.md,
     minHeight: 44,
     justifyContent: "center",
     borderRadius: 22,
   },
-  text: {
-    color: colors.textSecondary,
-    fontSize: 12,
-    letterSpacing: 0.25,
-    textAlign: "center",
-  },
+  text: footerLinkTextStyle,
   textHighContrast: {
     color: colors.textPrimary,
   },

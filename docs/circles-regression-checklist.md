@@ -14,7 +14,7 @@ Use this checklist before release whenever animation/layout is changed.
 
 - [ ] Tap circles on **each** flow screen and verify navigation / completion (circles are wrapped in `Pressable`; layer has `zIndex` + `elevation`).
 - [ ] If tap feels dead, check Android: circles layer should stay **above** the `ScrollView` hit target (`PersistentCirclesLayer` elevation). Layer is **circles-sized only** (no full-screen overlay) so footer links stay visible and tappable.
-- [ ] **About** on onboarding footer only; **Show my paths** / **Мої шляхи** only on **trigger** — fades in **with** “One action for you” / «Одна дія для тебе».
+- [ ] **About** on onboarding footer only; **Show my paths** / **Мої шляхи** only on **trigger** — fades in **with** “One action for you”; **tap to continue** / **торкни, щоб продовжити** fades in **last** on every flow screen.
 - [ ] **Save this for me** / **Збережи це для мене** pinned in the **footer** on return (not in scroll body); tap → **Saved** / **Збережено** (not clickable).
 
 ## Copy order (tap hint under circles)
@@ -35,11 +35,13 @@ Use this checklist before release whenever animation/layout is changed.
 - [ ] After all three bullets (and optional tap hint), circles tap goes to return — no auto-advance.
 - [ ] On return after find 3, explanation is a short single sentence and rotates across variants.
 - [ ] Action → return: only **one** return screen (back does not land on return again); **You are here** fades in like action main copy (`getMainCopyDelayMs` + `copyReveal.fadeMs`).
-- [ ] Return: **You are here** at the same Y as trigger **One action for you**; **no vertical jump** when explanation / hint appear (main line pinned via `mainLine` slot).
+- [ ] **One action for you**, **You are here**, and action main line (feet / find 3 / triangle) **start at the same Y** (`getTriggerMainCopyTop`); **no vertical jump** when explanation / bullets / hint appear.
+- [ ] **Find 3 things:** — gap to first bullet matches return main → explanation (~10px layout + 16px margin); no large empty slot under the title.
 - [ ] On `triangle_breath`, verify phase words (`inhale` / `hold` / `exhale`) crossfade gently; **both** holds show “hold / затримка”.
 - [ ] On `triangle_breath`, feel haptic at **inhale start** and **exhale start** (device build, not Expo Go only).
 - [ ] On return, **Save this for me** becomes **Saved** on tap (stays visible, not clickable); later visits with the same saved intervention do **not** show the control.
-- [ ] With **Accessibility XXL** text size (Settings → Display → Larger Text): main line stays pinned; onboarding scrolls; About / paths footer links remain reachable; return explanation + hint flow below main without shifting **You are here**.
+- [ ] With **Accessibility XXL** text size (Settings → Display → Larger Text): main line stays pinned; onboarding scrolls (pinned **How it works:**); About / paths scroll when overflow (`OverflowScrollView`); return explanation + hint flow below main without shifting **You are here**.
+- [ ] **Paths**: **Saved for you:** styled like «actions for yourself today»; saved list scrolls when many items.
 - [ ] Onboarding shows **How it works** steps + **tap circles** last; not “one action for you now?” on first screen.
 
 ## Automated safety net

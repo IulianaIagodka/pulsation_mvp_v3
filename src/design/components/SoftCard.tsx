@@ -5,17 +5,23 @@ import { getContentMaxWidth, scaleByWidth } from "../responsive";
 
 type Props = PropsWithChildren<{
   style?: StyleProp<ViewStyle>;
+  /** Flow main/explanation copy — no card padding or max-width cap. */
+  flush?: boolean;
 }>;
 
-export function SoftCard({ children, style }: Props) {
+export function SoftCard({ children, style, flush = false }: Props) {
   const { height, width } = useWindowDimensions();
   const isCompactHeight = height < 740;
   return (
     <View
       style={[
         styles.card,
-        { maxWidth: getContentMaxWidth(width), padding: scaleByWidth(spacing.lg, width) },
-        isCompactHeight && styles.cardCompact,
+        flush
+          ? styles.cardFlush
+          : [
+              { maxWidth: getContentMaxWidth(width), padding: scaleByWidth(spacing.lg, width) },
+              isCompactHeight && styles.cardCompact,
+            ],
         style,
       ]}
     >
@@ -29,8 +35,15 @@ const styles = StyleSheet.create({
     width: "100%",
     alignSelf: "center",
     alignItems: "center",
+    minWidth: 0,
     borderRadius: 0,
     backgroundColor: "transparent",
+  },
+  cardFlush: {
+    alignSelf: "stretch",
+    alignItems: "stretch",
+    maxWidth: "100%",
+    padding: 0,
   },
   cardCompact: {
     padding: spacing.md,

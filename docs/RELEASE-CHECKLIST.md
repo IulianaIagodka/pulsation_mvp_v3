@@ -4,9 +4,9 @@
 |--------|-------|--------|
 | **1.0.0** | 26 | **LIVE** в App Store ✅ |
 | **1.0.1** | 28 | **In Review** ⏳ |
-| **1.0.1** | 30 | у репо (наступний білд, якщо 28 reject або додатковий поліш) |
+| **1.0.1** | 31 | у репо → **наступний EAS build + submit** |
 
-**Зараз:** чекати відповідь Apple по **1.0.1 / build 28**. Connect не чіпати.
+**Зараз:** build **31** — layout/copy polish після review feedback; **28** ще In Review (Connect не чіпати для 28).
 
 Android: `docs/ANDROID-RELEASE-CHECKLIST.md`
 
@@ -179,23 +179,27 @@ npx expo-doctor
 npm audit --omit=dev
 ```
 
-- [ ] **Regression:** `npm test` зелений (усі suites pass)
-- [ ] **Type compatibility:** `npx tsc --noEmit` без помилок
-- [ ] **Expo compatibility:** `npx expo-doctor` без критичних fail
+- [x] **Regression:** `npm test` зелений (20 suites, 89 tests)
+- [x] **Type compatibility:** `npx tsc --noEmit` без помилок
+- [x] **Expo compatibility:** `npx expo-doctor` без критичних fail (18/18)
 - [ ] **Security:** `npm audit --omit=dev` переглянуто; high/critical відсутні або задокументовані з планом fix
 
-Поточний зафіксований стан (репо, build **30**; у review — build **28**):
-- `npm test` ✅ (21 suites, 84 tests)
-- iOS **version** `1.0.1`, **buildNumber** **30** у `app.json` (EAS наступний білд)
+Поточний зафіксований стан (репо, build **31**; у review — build **28**):
+- `npm test` ✅ (20 suites, 89 tests)
+- iOS **version** `1.0.1`, **buildNumber** **31** у `app.json`
 - **In Review:** 1.0.1 **build 28**
 - `npx tsc --noEmit` ✅
-- `npx expo-doctor` ✅ (після `expo install` patch sync)
+- `npx expo-doctor` ✅ (18/18)
 - `npm audit --omit=dev` ⚠️ moderate в Expo transitive deps; high/critical немає
 
-Останні зміни в build **30**:
-- Footer links видимі: кола без full-screen overlay; paths / save for me з вищим контрастом
-- Unified fade-in головного тексту на trigger / action / return
-- `signal-collector.test.ts`: mock scheduling repo (стабільний Jest)
+Останні зміни в build **31**:
+- **Єдиний Y головного рядка** на trigger / action / return (One action, You are here, текст дії)
+- **Find 3 things:** — відступ до булетів як на return; без великого порожнього слота
+- **OverflowScrollView** — скрол і індикатор лише коли текст не вміщується (about, paths, пояснення)
+- **Paths:** скрол списку збережених; **Saved for you:** не більший за «actions for yourself today»; повні назви дій
+- **Dynamic Type floor 1.0×** — текст не стискається нижче дефолту на мінімальному системному розмірі
+- **Онбординг:** **Pulsation exists** на правильній висоті; **How it works:** + кроки — той самий розмір (17pt)
+- **Tap hint** — останнім на всіх екранах; **Show my paths** — разом з **One action for you**
 
 ### D2. UX/UI перевірка для adaptive circles hint
 
@@ -203,7 +207,7 @@ npm audit --omit=dev
 - [ ] **Return**: порядок — **You are here** → пояснення → tap hint under circles (fade-in)
 - [ ] **Return**: **You are here** не стрибає по Y при появі пояснення / hint (pinned `mainLine`)
 - [ ] **Accessibility XXL**: main line лишається на місці; довгий текст переноситься без зсуву якоря
-- [ ] **Мої шляхи** / paths: лише на trigger; з’являється одночасно з «One action for you»
+- [ ] **Мої шляхи** / paths: лише на trigger; разом з «One action for you»; **tap hint** — останнім на всіх екранах
 - [ ] **Збережи це для мене** у footer на return → **Збережено** після натискання
 - [ ] 1–3 взаємодії (після 3 циклів — по tap count): хінт видимий одразу, стандартна виразність
 - [ ] 4–7 взаємодій: хінт приходить пізніше (прибл. +2.2…2.8с), менш контрастний
@@ -228,13 +232,13 @@ npm audit --omit=dev
 - [x] Connect → **1.0.1** → build **28** → **Submit for Review**
 - [ ] **Approve** → **Release** (замінить 1.0.0 у Store для користувачів)
 
-**Якщо Reject** → build **30** з репо:
+**Якщо Reject** → build **31** з репо:
 
 - [ ] Виправити за коментарем Apple
-- [ ] `npm run build:ios:testflight` + `submit` (build 30)
-- [ ] Оновити Review Notes (build 30) → resubmit
+- [ ] `npm run build:ios:testflight` + `submit` (build **31**) — in progress
+- [x] Review Notes (build **31**) у `docs/app-store-metadata.md`
 
-**Якщо Approve** — паралельно можна готувати build **30** як **1.0.2** (footer, fade-in, D2 polish) або відкласти.
+**Якщо Approve build 28** — build **31** можна випустити як наступне оновлення **1.0.1** (layout polish) або **1.0.2**.
 
 ---
 
@@ -256,7 +260,7 @@ npm audit --omit=dev
 ## Поки чекаєш review (build 28)
 
 1. [ ] **Нічого не міняти** в Connect для 1.0.1  
-2. [ ] (Опційно) TestFlight build **30** → D2 на iPhone — про запас  
+2. [ ] TestFlight build **31** → D2 на iPhone  
 3. [ ] Android: Play Console + перший AAB (`docs/ANDROID-RELEASE-CHECKLIST.md`)  
 
 ## Після approve build 28

@@ -1,47 +1,47 @@
-/** Spiral SVG / layout box (px) — single source for diameter on screen. */
-export const SPIRAL_VIEW_SIZE = 160;
+/** Circle SVG / layout box (px) — single source for diameter on screen. */
+export const CIRCLE_VIEW_SIZE = 160;
 
 /** Path ends almost at the geometric center (no center dot). */
-export const SPIRAL_R_MIN = 0.5;
+export const CIRCLE_R_MIN = 0.5;
 
-/** Outer spiral start — just inside the view rim. */
-export const SPIRAL_R_MAX = SPIRAL_VIEW_SIZE / 2 - 1;
+/** Outer circle start — just inside the view rim. */
+export const CIRCLE_R_MAX = CIRCLE_VIEW_SIZE / 2 - 1;
 
 /** Winding pitch for the main body — wider gap between coils. */
-export const SPIRAL_RADIAL_PITCH = 13;
+export const CIRCLE_RADIAL_PITCH = 13;
 
 /** Below this radius, tighter inner coils. */
-export const SPIRAL_INNER_BOUNDARY_R = 16;
+export const CIRCLE_INNER_BOUNDARY_R = 16;
 
-export const SPIRAL_INNER_PITCH = 6;
+export const CIRCLE_INNER_PITCH = 6;
 
 /** Final coils to the center — still tight, but fewer than before. */
-export const SPIRAL_CORE_BOUNDARY_R = 5;
+export const CIRCLE_CORE_BOUNDARY_R = 5;
 
-export const SPIRAL_CORE_PITCH = 3;
+export const CIRCLE_CORE_PITCH = 3;
 
 /** Total turns (outer + inner + core). */
-export const SPIRAL_TURNS =
-  (SPIRAL_R_MAX - SPIRAL_INNER_BOUNDARY_R) / SPIRAL_RADIAL_PITCH +
-  (SPIRAL_INNER_BOUNDARY_R - SPIRAL_CORE_BOUNDARY_R) / SPIRAL_INNER_PITCH +
-  (SPIRAL_CORE_BOUNDARY_R - SPIRAL_R_MIN) / SPIRAL_CORE_PITCH;
+export const CIRCLE_TURNS =
+  (CIRCLE_R_MAX - CIRCLE_INNER_BOUNDARY_R) / CIRCLE_RADIAL_PITCH +
+  (CIRCLE_INNER_BOUNDARY_R - CIRCLE_CORE_BOUNDARY_R) / CIRCLE_INNER_PITCH +
+  (CIRCLE_CORE_BOUNDARY_R - CIRCLE_R_MIN) / CIRCLE_CORE_PITCH;
 
-export const SPIRAL_STROKE_WIDTH = 1;
-export const SPIRAL_STROKE_WIDTH_HIGH_CONTRAST = 1.05;
+export const CIRCLE_STROKE_WIDTH = 1;
+export const CIRCLE_STROKE_WIDTH_HIGH_CONTRAST = 1.05;
 
 /** @deprecated Legacy ring radii — kept for regression docs only. */
-export const SPIRAL_RING_RADII = [5, 19, 31, 43, 55] as const;
+export const CIRCLE_RING_RADII = [5, 19, 31, 43, 55] as const;
 
-type SpiralSegment = {
+type CircleSegment = {
   rOuter: number;
   rInner: number;
   pitch: number;
 };
 
-const DEFAULT_SPIRAL_SEGMENTS: SpiralSegment[] = [
-  { rOuter: SPIRAL_R_MAX, rInner: SPIRAL_INNER_BOUNDARY_R, pitch: SPIRAL_RADIAL_PITCH },
-  { rOuter: SPIRAL_INNER_BOUNDARY_R, rInner: SPIRAL_CORE_BOUNDARY_R, pitch: SPIRAL_INNER_PITCH },
-  { rOuter: SPIRAL_CORE_BOUNDARY_R, rInner: SPIRAL_R_MIN, pitch: SPIRAL_CORE_PITCH },
+const DEFAULT_CIRCLE_SEGMENTS: CircleSegment[] = [
+  { rOuter: CIRCLE_R_MAX, rInner: CIRCLE_INNER_BOUNDARY_R, pitch: CIRCLE_RADIAL_PITCH },
+  { rOuter: CIRCLE_INNER_BOUNDARY_R, rInner: CIRCLE_CORE_BOUNDARY_R, pitch: CIRCLE_INNER_PITCH },
+  { rOuter: CIRCLE_CORE_BOUNDARY_R, rInner: CIRCLE_R_MIN, pitch: CIRCLE_CORE_PITCH },
 ];
 
 type ArchimedeanOptions = {
@@ -50,7 +50,7 @@ type ArchimedeanOptions = {
   rMin?: number;
   rMax?: number;
   radialPitch?: number;
-  segments?: SpiralSegment[];
+  segments?: CircleSegment[];
   /** Wind from outside toward center (matches preview “long thin”). */
   inward?: boolean;
   startAngle?: number;
@@ -58,32 +58,32 @@ type ArchimedeanOptions = {
 };
 
 /**
- * Archimedean spiral with constant pitch per segment.
+ * Archimedean circle path with constant pitch per segment.
  * Default: outer coils then tighter inner coils to the center.
  */
-export function buildArchimedeanSpiralPath({
+export function buildArchimedeanCirclePath({
   cx,
   cy,
-  rMin = SPIRAL_R_MIN,
-  rMax = SPIRAL_R_MAX,
-  radialPitch = SPIRAL_RADIAL_PITCH,
+  rMin = CIRCLE_R_MIN,
+  rMax = CIRCLE_R_MAX,
+  radialPitch = CIRCLE_RADIAL_PITCH,
   segments,
   inward = true,
   startAngle = -Math.PI / 2,
   pointsPerTurn = 56,
 }: ArchimedeanOptions): string {
-  const spiralSegments =
+  const circleSegments =
     segments ??
-    (rMin === SPIRAL_R_MIN &&
-    rMax === SPIRAL_R_MAX &&
-    radialPitch === SPIRAL_RADIAL_PITCH
-      ? DEFAULT_SPIRAL_SEGMENTS
+    (rMin === CIRCLE_R_MIN &&
+    rMax === CIRCLE_R_MAX &&
+    radialPitch === CIRCLE_RADIAL_PITCH
+      ? DEFAULT_CIRCLE_SEGMENTS
       : [{ rOuter: rMax, rInner: rMin, pitch: radialPitch }]);
 
   const points: string[] = [];
   let theta = 0;
 
-  for (const { rOuter, rInner, pitch } of spiralSegments) {
+  for (const { rOuter, rInner, pitch } of circleSegments) {
     const span = Math.abs(rOuter - rInner);
     if (span <= 0) continue;
 

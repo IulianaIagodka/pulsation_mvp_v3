@@ -5,7 +5,10 @@ import { useStableLayoutInsets } from "../../hooks/use-stable-layout-insets";
 import { useStableWindowDimensions } from "../../hooks/use-stable-window-dimensions";
 import { useAppStore } from "../../state/app-store";
 import { circlesLayout } from "../animation-rhythm";
-import { getCirclesAnchorMetrics, getUnderCirclesHintSlotHeight } from "../circles-anchor-layout";
+import {
+  getCirclesAnchorMetrics,
+  getUnderCirclesHintBlockHeight,
+} from "../circles-anchor-layout";
 import { setCirclesAnimationMode } from "../circles-breath-engine";
 import { PersistentCircles } from "./PersistentCircles";
 import { CirclesUnderHint } from "./CirclesUnderHint";
@@ -38,7 +41,7 @@ export function PersistentCirclesLayer() {
   const metrics = getCirclesAnchorMetrics(windowHeight, insets);
   const circlesTop = insets.top + metrics.circlesCenterY - circlesLayout.size / 2;
   const flowVisible = isFlowPath(pathname);
-  const hintSlotHeight = getUnderCirclesHintSlotHeight(windowWidth);
+  const hintBlockHeight = getUnderCirclesHintBlockHeight(windowWidth);
 
   return (
     <View
@@ -57,6 +60,7 @@ export function PersistentCirclesLayer() {
               presentation={circlesHint.presentation}
               visible={circlesHint.visible ?? true}
               delayMs={circlesHint.delayMs}
+              fadeMs={circlesHint.fadeMs}
               label={circlesHint.label}
               revealId={circlesHint.revealId}
               forceVisible={circlesHint.forceVisible}
@@ -64,7 +68,7 @@ export function PersistentCirclesLayer() {
               reserveSlot
             />
           ) : (
-            <View style={{ minHeight: hintSlotHeight }} />
+            <View style={{ minHeight: hintBlockHeight }} />
           )
         ) : null}
       </View>

@@ -5,9 +5,10 @@ export type CirclesHintPresentation = {
 };
 
 /** Show “tap circles” on flow screens only for the first N completed cycles. */
-export const SPIRAL_HINT_FULL_CYCLES = 3;
+export const CIRCLES_HINT_FULL_CYCLES = 3;
 
-const fullHintOpacity = 0.58;
+/** Matches footer links (`AboutFooterLink` faint tone). */
+const fullHintOpacity = 0.48;
 
 export function getCirclesHintPresentation(
   _circlesTapCount: number,
@@ -15,7 +16,7 @@ export function getCirclesHintPresentation(
   _screenSalt: number,
   completedCycles = 0,
 ): CirclesHintPresentation {
-  if (completedCycles >= SPIRAL_HINT_FULL_CYCLES) {
+  if (completedCycles >= CIRCLES_HINT_FULL_CYCLES) {
     return { shouldShow: false, delayMs: baseDelayMs, textOpacity: 0 };
   }
 

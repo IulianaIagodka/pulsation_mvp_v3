@@ -1,4 +1,5 @@
-import { initializeDb } from "../data/db";
+import { initializeDb, resetAllLocalData } from "../data/db";
+import { __flowCopyRevealInternals, clearInstantTriggerReturn } from "../design/flow-copy-reveal";
 import { recordEffectiveness } from "../data/repositories/effectiveness-repo";
 import { logEvent } from "../data/repositories/events-repo";
 import { getOutcomesProfile, saveOutcomesProfile } from "../data/repositories/outcomes-repo";
@@ -25,6 +26,14 @@ export function bootstrapPulsation() {
   } catch (error) {
     console.warn("[pulsation-flow] Failed to initialize DB:", error);
   }
+}
+
+/** Dev / QA: wipe SQLite + in-memory reveal state so hints and onboarding show again. */
+export function resetPulsationLocalData() {
+  resetAllLocalData();
+  bootstrapPulsation();
+  __flowCopyRevealInternals.resetForTests();
+  clearInstantTriggerReturn();
 }
 
 export function decideIntervention(): InterventionType {

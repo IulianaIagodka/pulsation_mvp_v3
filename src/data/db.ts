@@ -79,7 +79,8 @@ function applySchema() {
   ensureSchedulingProfileColumns();
 }
 
-function resetLocalDatabase() {
+/** Drops and recreates all local tables (onboarding, hints, paths, scheduling). */
+export function resetAllLocalData() {
   const tables = [
     "events",
     "intervention",
@@ -106,7 +107,7 @@ export function initializeDb() {
   } catch (error) {
     console.warn("[db] initialize failed, resetting local tables:", error);
     try {
-      resetLocalDatabase();
+      resetAllLocalData();
     } catch (resetError) {
       console.warn("[db] reset failed:", resetError);
     }

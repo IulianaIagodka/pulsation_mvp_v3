@@ -74,27 +74,68 @@ export const onboardingRhythm = {
   stepGapMs: copyReveal.lineGapMs,
 } as const;
 
-function getOnboardingStepGapMs(): number {
-  return copyReveal.fadeMs + copyReveal.lineGapMs;
+/** Extended onboarding — fade + read beat per line; tap hint after the last line is readable. */
+export const onboardingCopy = {
+  /** Brief beat to read the headline after it has fully faded in. */
+  headlineHoldMs: 1800,
+  headlineFadeOutMs: 800,
+  stepFadeMs: 1800,
+  /** Pause to read each how-it-works line after it has fully faded in. */
+  stepReadMs: 1400,
+  hintGapMs: copyReveal.lineGapMs,
+} as const;
+
+/** Beat to read the headline after it finishes fading in, before it fades out. */
+export function getOnboardingHeadlineHoldMs(): number {
+  return onboardingCopy.headlineHoldMs;
 }
 
-/** Onboarding subtitle (0) and each step (1…n). */
+export function getOnboardingHeadlineFadeOutMs(): number {
+  return onboardingCopy.headlineFadeOutMs;
+}
+
+/** Fade-in + read time — next line starts only after the previous is readable. */
+export function getOnboardingStepLineCycleMs(): number {
+  return onboardingCopy.stepFadeMs + onboardingCopy.stepReadMs;
+}
+
+/** When “How it works” block mounts (headline crossfade — matches `OnboardingPhasedContent`). */
+export function getOnboardingHowItWorksMountDelayMs(): number {
+  return copyReveal.delayMs + copyReveal.fadeMs + getOnboardingHeadlineHoldMs();
+}
+
+/** @deprecated Use {@link getOnboardingHowItWorksMountDelayMs} + headline fade-out. */
+export function getOnboardingHowItWorksStartDelayMs(): number {
+  return getOnboardingHowItWorksMountDelayMs() + getOnboardingHeadlineFadeOutMs();
+}
+
+/** Last line index: subtitle (0) + `stepCount` steps → index `stepCount`. */
+export function getOnboardingLastLineIndex(stepCount: number): number {
+  return stepCount;
+}
+
+/** Delay from “How it works” mount — subtitle (0), then each step (1…n). */
+export function getOnboardingStepRevealDelayMs(lineIndex: number): number {
+  return getOnboardingStepLineCycleMs() * lineIndex;
+}
+
+/** Absolute delay from screen mount (screenshot / tests). */
 export function getOnboardingExplanationDelayMs(lineIndex: number): number {
-  const firstAuxiliaryMs = getAuxiliaryCopyDelayMs(copyReveal.delayMs);
-  if (lineIndex === 0) {
-    return firstAuxiliaryMs;
-  }
-  return firstAuxiliaryMs + getOnboardingStepGapMs() * lineIndex;
+  return getOnboardingHowItWorksMountDelayMs() + getOnboardingStepRevealDelayMs(lineIndex);
 }
 
-/** Onboarding: “tap circles” after headline or after all steps. */
+/** Tap circles — after the last line (subtitle + all steps) has faded in and been readable. */
 export function getOnboardingCirclesHintDelayMs(stepCount: number): number {
-  const stepGap = getOnboardingStepGapMs();
   if (stepCount === 0) {
     return getFlowTapHintDelayMs(copyReveal.delayMs);
   }
-  const lastStepDelayMs = getAuxiliaryCopyDelayMs(copyReveal.delayMs) + stepGap * (stepCount - 1);
-  return getFlowTapHintDelayMs(lastStepDelayMs);
+  const lastLineStart = getOnboardingExplanationDelayMs(getOnboardingLastLineIndex(stepCount));
+  return (
+    lastLineStart +
+    onboardingCopy.stepFadeMs +
+    onboardingCopy.stepReadMs +
+    onboardingCopy.hintGapMs
+  );
 }
 
 const flowHintGapMs = copyReveal.lineGapMs;
@@ -102,6 +143,21 @@ const flowHintGapMs = copyReveal.lineGapMs;
 /** Flow screens: hint after the last line finishes fading. */
 export function getFlowTapHintDelayMs(lastLineDelayMs: number): number {
   return lastLineDelayMs + copyReveal.fadeMs + flowHintGapMs;
+}
+
+/** Trigger footer: paths link together with main copy. */
+export function getTriggerPathsLinkDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
+  return mainLineDelayMs;
+}
+
+/** Trigger: tap hint after main copy and paths link have appeared. */
+export function getTriggerTapHintDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
+  return getFlowTapHintDelayMs(mainLineDelayMs);
+}
+
+/** Return: tap hint after main line, follow-up, and keep-for-me footer. */
+export function getReturnTapHintDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
+  return getFlowTapHintDelayMs(getReturnKeepForMeDelayMs(mainLineDelayMs));
 }
 
 /** Hint after the last find-three bullet begins appearing. */
@@ -124,7 +180,9 @@ export function getFlowTapHintDelayAfterRevealMs(): number {
 /** Tap-hint delays — always after other copy on that screen. */
 export const tapHintTiming = {
   onboardingAfterMainMs: getOnboardingCirclesHintDelayMs(0),
-  triggerAfterPromptMs: getFlowTapHintDelayMs(copyReveal.delayMs),
+  triggerPathsLinkMs: getTriggerPathsLinkDelayMs(copyReveal.delayMs),
+  triggerTapHintMs: getTriggerTapHintDelayMs(copyReveal.delayMs),
+  returnTapHintMs: getReturnTapHintDelayMs(copyReveal.delayMs),
   returnAfterFollowUpMs: getFlowTapHintDelayMs(getAuxiliaryCopyDelayMs(copyReveal.delayMs)),
   returnAfterBodyMs: getFlowTapHintDelayMs(copyReveal.delayMs),
   actionAfterFeetInstructionMs: getFlowTapHintDelayMs(copyReveal.delayMs),
