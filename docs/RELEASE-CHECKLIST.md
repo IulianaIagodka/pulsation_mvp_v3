@@ -235,7 +235,7 @@ npm audit --omit=dev
 **Якщо Reject** → build **31** з репо:
 
 - [ ] Виправити за коментарем Apple
-- [ ] `npm run build:ios:testflight` + `submit` (build **31**) — in progress
+- [x] `npm run build:ios:testflight` + `submit` (build **31**)
 - [x] Review Notes (build **31**) у `docs/app-store-metadata.md`
 
 **Якщо Approve build 28** — build **31** можна випустити як наступне оновлення **1.0.1** (layout polish) або **1.0.2**.
