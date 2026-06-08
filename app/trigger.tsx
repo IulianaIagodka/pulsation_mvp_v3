@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
 import { AnchoredCirclesScreen } from "../src/design/components/AnchoredCirclesScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
-import { clearInstantTriggerReturn, markFlowCopyRevealed } from "../src/design/flow-copy-reveal";
+import { markFlowCopyRevealed } from "../src/design/flow-copy-reveal";
 import { flowRevealIds } from "../src/design/flow-reveal-ids";
 import { uiCopy } from "../src/modules/delivery-layer";
 import { useFlowMainCopyRevealKey } from "../src/hooks/use-flow-main-copy-reveal-key";
@@ -36,7 +36,6 @@ export default function TriggerScreen() {
       }
 
       return () => {
-        clearInstantTriggerReturn();
         if (!wentToActionRef.current) {
           registerPulsationDismissed();
         }

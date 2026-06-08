@@ -37,7 +37,6 @@ const COPY = {
   ],
   onboardingCirclesHint: "Tap circles to continue — it is a button here",
   triggerPrompt: "One action for you",
-  tapContinueHint: "tap to continue",
   actionText:
     "Place your feet on the ground, notice the pressure under them, take one slow breath",
   returnBody: "You are here",
@@ -157,24 +156,19 @@ const SCREENS = {
   },
   "02-trigger": () => {
     const body = [
-      mutedText(COPY.tapContinueHint, 500, 22, 0.58),
       mainText(COPY.triggerPrompt, 720, 34),
       footerLink(COPY.pathsLink, H - 120),
     ].join("");
     return screenSvg(body);
   },
   "03-action": () => {
-    const body = [
-      mainText(COPY.actionText, 680, 32),
-      mutedText(COPY.tapContinueHint, 520, 22, 0.58),
-    ].join("");
+    const body = [mainText(COPY.actionText, 680, 32)].join("");
     return screenSvg(body);
   },
   "04-return": () => {
     const body = [
       mainText(COPY.returnBody, 720, 34),
       mutedText(COPY.returnExplanation, 820, 28, 0.58),
-      mutedText(COPY.tapContinueHint, 520, 22, 0.58),
       footerLink(COPY.keepForMe, H - 120),
     ].join("");
     return screenSvg(body);

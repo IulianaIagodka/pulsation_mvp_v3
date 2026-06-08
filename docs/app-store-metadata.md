@@ -4,31 +4,33 @@
 
 **Скріншоти:** завантажені ✅  
 **build 31:** In Review (не чіпати в Connect).  
-**build 33:** submitted 2026-06-08 (EAS auto-increment з 32). Тексти нижче — секція **build 32** (той самий зміст).
+**build 33:** submitted 2026-06-08 (EAS auto-increment з 32). Тексти нижче — **vs build 31** (що відчує юзер).
 
-### What's New → EN (build 32) — вставити в Connect при submit
-
-```
-- Extended onboarding — Tap circles — it's the button here appears right after Pulsation exists…; How it works steps follow.
-- Flow polish — One action for you no longer flashes on return; Show my paths with main copy; tap to continue always last under circles.
-- Tap hint grace — once shown, stays visible across trigger / action / return for 2 completed cycles, then fades out on return.
-- Copy cleanup — all in-app strings in one place; updated paths empty states.
-```
-
-### What's New → UK (build 32) — вставити в Connect при submit
+### What's New → EN (build 33) — вставити в Connect при submit
 
 ```
-- Розширений онбординг — Торкнись кіл — це кнопка тут одразу після Pulsation допомагає…; далі кроки Як це працює:.
-- Поліш флоу — Одна дія для тебе без різкого спалаху при поверненні; Мої шляхи з main copy; торкни, щоб продовжити — останнім під колами.
-- Tap hint grace — після першого показу лишається на trigger / action / return протягом 2 завершених циклів, потім зникає на return.
-- Копі — всі тексти в одному файлі; оновлені порожні стани на Мої шляхи.
+- Circles, not spiral — the calm center element is now circles (same gentle tap button throughout the flow).
+- Clearer first launch — Tap circles — it's the button here appears right after Pulsation exists…, then How it works steps; tap circles when you're ready to continue.
+- Calmer flow — after onboarding, trigger, action, and return stay quieter with no repeating hint under the circles.
+- Smoother return — One action for you no longer flashes when you come back to the main screen.
+- Show my paths appears together with the main line when you have today's actions or saved preferences.
 ```
 
-### Review Notes (build 32)
+### What's New → UK (build 33) — вставити в Connect при submit
 
-Скопіювати з секцій **App Review Notes (version 1.0.1 — build 32)** (EN) та UK-аналог нижче (якщо потрібен) при submit.
+```
+- Кола, не спіраль — спокійний центр екрана тепер кола (та сама м’яка кнопка на всьому флоу).
+- Зрозуміліший перший запуск — Торкнись кіл — це кнопка тут одразу після Pulsation допомагає…, далі кроки Як це працює:; торкни кола, коли готовий продовжити.
+- Спокійніший флоу — після онбордингу trigger, action і return без повторюваної підказки під колами.
+- М’якше повернення — Одна дія для тебе без різкого спалаху на головному екрані.
+- Мої шляхи з’являються разом із головним рядком, якщо є сьогоднішні дії або збережені вподобання.
+```
 
-### Після Approve build 32
+### Review Notes (build 33)
+
+Скопіювати з секцій **App Review Notes (version 1.0.1 — build 33)** (EN) та UK-аналог нижче (якщо потрібен) при submit.
+
+### Після Approve build 33
 
 1. Connect → **1.0.1** → **Release** (manual або auto).
 2. Перевірити оновлення з App Store на iPhone.
@@ -128,28 +130,31 @@ Feet on ground, Find 3 things, Triangle breath, Relax your jaw, Drop your should
 - **Better small-text readability** — footer links and secondary copy stay legible; app text no longer shrinks below default when iOS text size is set to minimum.
 - **Tap to continue** — always appears last under the circles on every flow screen.
 
-### What's New (1.0.1 — build 32)
+### What's New (1.0.1 — build 33)
 
-- **Extended onboarding** — **Tap circles — it's the button here** appears right after **Pulsation exists…**; **How it works** steps follow.
-- **Flow polish** — **One action for you** no longer flashes on return; **Show my paths** with main copy; **tap to continue** always last under circles.
-- **Tap hint grace** — once shown, stays visible across trigger / action / return for 2 completed cycles, then fades out on return.
+- **Circles, not spiral** — the calm center element is now **circles** (same gentle tap button throughout the flow).
+- **Clearer first launch** — **Tap circles — it's the button here** appears right after **Pulsation exists…**, then **How it works** steps; tap circles when ready.
+- **Calmer flow** — after onboarding, no repeating hint under circles on trigger, action, or return.
+- **Smoother return** — **One action for you** no longer flashes when returning to the main screen.
+- **Show my paths** appears together with the main line when you have today's actions or saved preferences.
 
-### App Review Notes (version 1.0.1 — build 32)
+### App Review Notes (version 1.0.1 — build 33)
 
 Hello App Review Team,
 
-This build (1.0.1, build 32) polishes onboarding and flow copy timing on top of build 31. Core path is unchanged:
+This build (1.0.1, build 33) polishes onboarding and calms the main flow on top of build 31. Core path is unchanged:
 onboarding → **One action for you** → one micro-action → return (**You are here** + short explanation).
 
 What changed since build 31:
-- Extended onboarding: **Tap circles — it's the button here** appears right after **Pulsation exists…** fades in; **How it works** steps follow.
+- The calm center element is now **circles** (renamed from spiral); same tap button throughout the flow.
+- Extended onboarding: **Tap circles — it's the button here** appears right after **Pulsation exists…** fades in; **How it works** steps follow; circles remain tappable throughout.
+- After onboarding, flow screens no longer repeat the tap hint under circles — calmer, less visual noise.
 - **One action for you** no longer flashes sharply when returning to trigger.
-- **Show my paths** fades in with main copy; **tap to continue** always last under circles.
-- Tap hint stays visible across flow screens for 2 completed cycles after first show, then fades out on return.
+- **Show my paths** fades in with main copy when paths or saved items exist.
 
 How to test:
 1. Fresh install — read **Pulsation exists…**, note **Tap circles** under circles, then **How it works** steps; tap circles to continue when ready.
-2. Trigger → action (try **Find 3 things** and a simple action) → return; repeat once to see tap hint persist, then fade on return.
+2. Trigger → action (try **Find 3 things** and a simple action) → return; confirm no tap hint under circles on flow screens.
 3. Optional: **Show my paths**, **Save this for me** on return (local only).
 
 No login required. All data on device. Pulsation does not read other apps.
@@ -265,11 +270,36 @@ Pulsation створено для спокою, а не тиску.
 - Плавніша анімація кіл та спокійніший layout у флоу.
 - Краща читабельність при великому тексті (Dynamic Type).
 
-### What's New (1.0.1 — build 32)
+### What's New (1.0.1 — build 33)
 
-- **Розширений онбординг** — **Торкнись кіл — це кнопка тут** одразу після **Pulsation допомагає…**; далі кроки **Як це працює:**.
-- **Поліш флоу** — **Одна дія для тебе** без різкого спалаху при поверненні; **Мої шляхи** з main copy; **торкни, щоб продовжити** — останнім під колами.
-- **Tap hint grace** — після першого показу лишається на trigger / action / return протягом 2 завершених циклів, потім зникає на return.
+- **Кола, не спіраль** — спокійний центр екрана тепер **кола** (та сама м’яка кнопка на всьому флоу).
+- **Зрозуміліший перший запуск** — **Торкнись кіл — це кнопка тут** одразу після **Pulsation допомагає…**, далі **Як це працює:**; торкни кола, коли готовий.
+- **Спокійніший флоу** — після онбордингу без повторюваної підказки під колами на trigger, action і return.
+- **М’якше повернення** — **Одна дія для тебе** без різкого спалаху на головному екрані.
+- **Мої шляхи** з’являються разом із головним рядком, якщо є сьогоднішні дії або збережені вподобання.
+
+### App Review Notes (версія 1.0.1 — build 33)
+
+Вітаємо, команда App Review,
+
+Цей build (1.0.1, build 33) полішує онбординг і заспокоює основний флоу поверх build 31. Шлях без змін:
+онбординг → **Одна дія для тебе** → одна м’яка дія → повернення (**Ти тут** + коротке пояснення).
+
+Що змінилось від build 31:
+- Спокійний центр екрана тепер **кола** (замість spiral); та сама кнопка на всьому флоу.
+- Розширений онбординг: **Торкнись кіл — це кнопка тут** одразу після **Pulsation допомагає…**; далі кроки **Як це працює:**; кола залишаються кнопкою.
+- Після онбордингу на trigger / action / return немає повторюваної підказки під колами — менше візуального шуму.
+- **Одна дія для тебе** без різкого спалаху при поверненні на головний екран.
+- **Мої шляхи** з’являються разом із головним рядком, якщо є історія або збережені дії.
+
+Як перевірити:
+1. Fresh install — **Pulsation допомагає…**, **Торкнись кіл** під колами, потім **Як це працює:**; торкни кола, коли готовий.
+2. Trigger → action (**Знайди 3 речі**, проста дія) → return; переконатися, що підказки під колами на флоу немає.
+3. Опційно: **Мої шляхи**, **Збережи це для мене** (лише локально).
+
+Логін не потрібен. Дані на пристрої. Інші додатки не читаються.
+
+Дякуємо.
 
 ### What's New (1.0.1 — build 31)
 

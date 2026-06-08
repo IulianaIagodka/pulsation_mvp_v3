@@ -44,8 +44,6 @@ export type SchedulingProfile = {
   completionsByType: Partial<Record<InterventionType, number>>;
   completionsByHour: Partial<Record<number, number>>;
   lastScheduledIntervalMinutes?: number;
-  /** `totalCompleted` when tap hint first faded in; drives 2-cycle grace. */
-  tapHintRevealedAtCycle?: number;
 };
 
 export type InterventionDecision = {

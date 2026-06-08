@@ -234,7 +234,6 @@ const uiCopyByLocale: Record<
     keepForMe: string;
     keepForMeSaved: string;
     returnBody: string;
-    tapContinueHint: string;
     inactivityNotificationTitle: string;
     inactivityNotificationBody: string;
     aboutLink: string;
@@ -264,7 +263,6 @@ const uiCopyByLocale: Record<
     keepForMe: "Save this for me",
     keepForMeSaved: "Saved",
     returnBody: "You are here",
-    tapContinueHint: "tap to continue",
     inactivityNotificationTitle: "Pulsation",
     inactivityNotificationBody: "One action for you now?",
     aboutLink: "About",
@@ -299,7 +297,6 @@ const uiCopyByLocale: Record<
     keepForMe: "Збережи це для мене",
     keepForMeSaved: "збережено",
     returnBody: "Ти тут",
-    tapContinueHint: "торкни, щоб продовжити",
     inactivityNotificationTitle: "Pulsation",
     inactivityNotificationBody: "Одна дія для тебе зараз?",
     aboutLink: "Про застосунок",

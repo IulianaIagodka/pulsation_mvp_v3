@@ -82,21 +82,6 @@ export function getReturnKeepForMeAfterExplanationMs(): number {
   return getReturnKeepForMeDelayMs(0) - getReturnExplanationDelayMs(0);
 }
 
-/** Return (tap-revealed explanation): tap hint when Save for me is hidden. */
-export function getReturnTapHintAfterExplanationMs(): number {
-  return getFlowTapHintDelayMs(getReturnExplanationDelayMs(0));
-}
-
-/** Return (tap-revealed explanation): last-grace tap hint fade-out anchor. */
-export function getReturnHintFadeOutAfterExplanationMs(
-  showKeepForMeFooter: boolean = true,
-): number {
-  const lastCopyStartMs = showKeepForMeFooter
-    ? getReturnKeepForMeAfterExplanationMs()
-    : getReturnExplanationDelayMs(0);
-  return lastCopyStartMs + copyReveal.fadeMs + flowHintGapMs;
-}
-
 /** @deprecated Use {@link getMainCopyFadeMs}. */
 export const onboardingRhythm = {
   fadeMs: copyReveal.fadeMs,
@@ -159,77 +144,10 @@ export function getOnboardingCirclesHintDelayMs(_stepCount: number = 0): number 
   return copyReveal.delayMs + copyReveal.fadeMs;
 }
 
-const flowHintGapMs = copyReveal.lineGapMs;
-
-/** Flow screens: hint after the last line finishes fading. */
-export function getFlowTapHintDelayMs(lastLineDelayMs: number): number {
-  return lastLineDelayMs + copyReveal.fadeMs + flowHintGapMs;
-}
-
 /** Trigger footer: Show my paths together with the main line. */
 export function getTriggerPathsLinkDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
   return mainLineDelayMs;
 }
-
-/** Trigger: tap hint last — after main copy has faded in. */
-export function getTriggerTapHintDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
-  return getFlowTapHintDelayMs(mainLineDelayMs);
-}
-
-/** Return: tap hint last — with Save for me when shown; after explanation otherwise. */
-export function getReturnTapHintDelayMs(
-  mainLineDelayMs: number = getMainCopyDelayMs(),
-  showKeepForMeFooter: boolean = true,
-): number {
-  return showKeepForMeFooter
-    ? getReturnKeepForMeDelayMs(mainLineDelayMs)
-    : getFlowTapHintDelayMs(getReturnExplanationDelayMs(mainLineDelayMs));
-}
-
-/** Return (last grace cycle): fade tap hint out after the last line has fully appeared. */
-export function getReturnHintFadeOutDelayMs(
-  mainLineDelayMs: number = getMainCopyDelayMs(),
-  showKeepForMeFooter: boolean = true,
-): number {
-  const lastCopyDelay = showKeepForMeFooter
-    ? getReturnKeepForMeDelayMs(mainLineDelayMs)
-    : getReturnExplanationDelayMs(mainLineDelayMs);
-  return lastCopyDelay + copyReveal.fadeMs + flowHintGapMs;
-}
-
-/** Action (simple): tap hint last — after the main instruction has faded in. */
-export function getActionSimpleTapHintDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
-  return getFlowTapHintDelayMs(mainLineDelayMs);
-}
-
-/** Hint after the last find-three bullet begins appearing. */
-export function getFindThreeTapHintDelayMs(
-  bulletCount: number,
-  mainLineDelayMs: number = getMainCopyDelayMs(),
-): number {
-  const intervals = Math.max(0, bulletCount - 1);
-  const lastBulletStartMs =
-    getFindThreeBulletsStartDelayMs(mainLineDelayMs) +
-    breathingRhythm.findThreeThings.autoRevealIntervalMs * intervals;
-  return lastBulletStartMs + copyReveal.fadeMs + flowHintGapMs;
-}
-
-/** Delay from mount when gated content (e.g. all bullets) just became visible. */
-export function getFlowTapHintDelayAfterRevealMs(): number {
-  return copyReveal.fadeMs + flowHintGapMs;
-}
-
-/** Tap-hint delays — last on every screen; with paths / save-for-me on trigger / return when shown. */
-export const tapHintTiming = {
-  onboardingAfterMainMs: getOnboardingCirclesHintDelayMs(0),
-  triggerPathsLinkMs: getTriggerPathsLinkDelayMs(copyReveal.delayMs),
-  triggerTapHintMs: getTriggerTapHintDelayMs(copyReveal.delayMs),
-  returnTapHintMs: getReturnTapHintDelayMs(copyReveal.delayMs),
-  returnAfterFollowUpMs: getFlowTapHintDelayMs(getAuxiliaryCopyDelayMs(copyReveal.delayMs)),
-  returnAfterBodyMs: getFlowTapHintDelayMs(copyReveal.delayMs),
-  actionAfterFeetInstructionMs: getActionSimpleTapHintDelayMs(copyReveal.delayMs),
-  actionAfterFindThreeMs: getFindThreeTapHintDelayMs(3),
-} as const;
 
 /** Return screen: "Save this for me" when the follow-up explanation begins. */
 export function getReturnKeepForMeDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {

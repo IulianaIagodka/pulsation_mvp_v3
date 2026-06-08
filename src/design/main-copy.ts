@@ -36,7 +36,7 @@ export const mainCopyTextStyle: TextStyle = {
   flexShrink: 1,
 };
 
-/** Footer links — Save / Return / Paths / About / tap hint. */
+/** Footer links — Save / Return / Paths / About / onboarding hint. */
 export const footerLinkTextStyle: TextStyle = {
   ...sharedFont,
   color: colors.textSecondary,

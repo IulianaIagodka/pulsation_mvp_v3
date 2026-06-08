@@ -139,6 +139,7 @@ export function getFollowUpContentLayout(
   const metrics = getCirclesAnchorMetrics(windowHeight, insets);
   const gap = scaleByWidth(followUpGapScale, windowWidth);
   const singleLineHeight = getMainCopySingleLineHeight(windowWidth, fontScale);
+  const mainSlotHeight = getMainCopySlotHeight(windowWidth, fontScale);
   const mainTop = centerMainInFlowBand
     ? getCenteredMainCopyTop(
         windowHeight,
@@ -148,7 +149,7 @@ export function getFollowUpContentLayout(
         getFlowMainZoneBottom(windowWidth, fontScale, footerBottomInset),
       )
     : getTriggerMainCopyTop(metrics, windowWidth);
-  const mainClampHeight = singleLineHeight;
+  const mainClampHeight = mainSlotHeight;
 
   return {
     mainTop,

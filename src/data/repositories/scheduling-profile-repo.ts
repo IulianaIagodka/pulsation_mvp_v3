@@ -40,8 +40,6 @@ export function getSchedulingProfile(): SchedulingProfile {
       completionsByType: safeParseJson(row.completions_by_type, {}),
       completionsByHour: safeParseJson(row.completions_by_hour, {}),
       lastScheduledIntervalMinutes: row.last_scheduled_interval_minutes ?? undefined,
-      tapHintRevealedAtCycle:
-        row.tap_hint_revealed_at_cycle != null ? Number(row.tap_hint_revealed_at_cycle) : undefined,
     };
   } catch (error) {
     console.warn("[scheduling-profile-repo] Failed to read scheduling profile:", error);
@@ -54,9 +52,9 @@ export function saveSchedulingProfile(profile: SchedulingProfile) {
     getDb().runSync(
       `INSERT OR REPLACE INTO scheduling_profile (
         id, last_app_open_at, last_background_at, last_completed_at, consecutive_ignored, total_completed,
-        completions_by_type, completions_by_hour, last_scheduled_interval_minutes, tap_hint_revealed_at_cycle,
+        completions_by_type, completions_by_hour, last_scheduled_interval_minutes,
         updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         primaryId,
         profile.lastAppOpenAt ?? null,
@@ -67,7 +65,6 @@ export function saveSchedulingProfile(profile: SchedulingProfile) {
         JSON.stringify(profile.completionsByType),
         JSON.stringify(profile.completionsByHour),
         profile.lastScheduledIntervalMinutes ?? null,
-        profile.tapHintRevealedAtCycle ?? null,
         Date.now(),
       ],
     );
@@ -125,12 +122,3 @@ export function recordScheduledInterval(minutes: number) {
   saveSchedulingProfile({ ...profile, lastScheduledIntervalMinutes: minutes });
 }
 
-/** First time tap hint finishes fading in — anchor the 2-cycle grace window. */
-export function recordTapHintRevealedAtCycle(anchorCycle?: number) {
-  const profile = getSchedulingProfile();
-  if (profile.tapHintRevealedAtCycle != null) return;
-  saveSchedulingProfile({
-    ...profile,
-    tapHintRevealedAtCycle: anchorCycle ?? profile.totalCompleted,
-  });
-}

@@ -114,9 +114,9 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 
 ### C1. Тексти (build 33)
 
-- [x] **What's New** EN + UK — `docs/app-store-metadata.md` → **Connect — активний submit** (текст build 32 = 33)
+- [x] **What's New** EN + UK — `docs/app-store-metadata.md` → **Connect — активний submit** (build 33 vs 31)
 - [ ] **Promotional Text** (опційно)
-- [x] **Review Notes** — у `docs/app-store-metadata.md` (секція build 32)
+- [x] **Review Notes** — у `docs/app-store-metadata.md` (секція build 33)
 
 ### C2. URLs (GitHub Pages)
 
@@ -166,16 +166,17 @@ npm audit --omit=dev
 - **In Review:** 1.0.1 **build 31**
 - Копі — `src/modules/delivery-layer.ts` (en + uk)
 
-Зміни в build **32**:
-- **Extended onboarding** — Tap circles одразу після headline
-- **Flow polish** — без flash на return; tap hint grace 2 цикли
-- **Copy cleanup** — один файл текстів, прибрано мертвий uiCopy
-- **Fix** — `useRef` crash у `InactivityTriggerListener`
+Зміни в build **33** (vs 31 — що відчує юзер):
+- **Spiral → circles** — центральний елемент тепер кола (та сама tap-кнопка)
+- **Extended onboarding** — Tap circles одразу після headline; How it works далі
+- **Calmer flow** — підказка під колами лише на онбордингу, не на trigger/action/return
+- **Flow polish** — без flash «One action for you» при поверненні; Мої шляхи з main copy
+- **Fix** — стабільніший resume / notification open
 
 ### D2. UX/UI перевірка для adaptive circles hint
 
-- [ ] Перші **3 завершені цикли**: **tap to continue** fixed **under circles** на кожному екрані флоу
-- [ ] **Return**: порядок — **You are here** → пояснення → tap hint under circles
+- [ ] **Onboarding only**: **Tap circles** fixed **under circles** (не на trigger/action/return)
+- [ ] **Return**: порядок — **You are here** → пояснення (без tap hint під колами)
 - [ ] **Return**: **You are here** не стрибає по Y при появі пояснення / hint
 - [ ] **Accessibility XXL**: main line лишається на місці
 - [ ] **Мої шляхи**: лише на trigger, якщо є дії сьогодні або збережені

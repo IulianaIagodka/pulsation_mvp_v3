@@ -8,7 +8,6 @@ import {
   breathingRhythm,
   copyReveal,
   getFindThreeIntroDelayMs,
-  getFlowTapHintDelayMs,
   getMainCopyFadeMs,
   getOnboardingCirclesHintDelayMs,
   getOnboardingExplanationDelayMs,
@@ -18,16 +17,12 @@ import {
   onboardingCopy,
   getTriangleBreathLabelCycleMs,
   getTriangleBreathTotalMs,
-  getActionSimpleTapHintDelayMs,
   getAuxiliaryCopyDelayMs,
   getReturnExplanationDelayMs,
   getReturnKeepForMeAfterExplanationMs,
   getReturnKeepForMeDelayMs,
-  getReturnTapHintAfterExplanationMs,
   returnCopy,
   getTriggerPathsLinkDelayMs,
-  getTriggerTapHintDelayMs,
-  tapHintTiming,
   circlesLayout,
 } from "../design/animation-rhythm";
 
@@ -87,22 +82,17 @@ describe("circles layout regression checks", () => {
     expect(breathingRhythm.findThreeThings.revealDurationMs).toBeGreaterThan(0);
   });
 
-  it("reveals tap hint last — paths with main on trigger, after main copy on action", () => {
+  it("reveals paths link with main copy on trigger", () => {
     expect(getTriggerPathsLinkDelayMs()).toBe(copyReveal.delayMs);
-    expect(getTriggerTapHintDelayMs()).toBeGreaterThan(getTriggerPathsLinkDelayMs());
-    expect(tapHintTiming.triggerPathsLinkMs).toBe(getTriggerPathsLinkDelayMs());
-    expect(tapHintTiming.triggerTapHintMs).toBe(getTriggerTapHintDelayMs());
-    expect(tapHintTiming.actionAfterFeetInstructionMs).toBe(getActionSimpleTapHintDelayMs());
-    expect(tapHintTiming.actionAfterFeetInstructionMs).toBeGreaterThan(copyReveal.delayMs);
-    expect(tapHintTiming.returnTapHintMs).toBe(getReturnKeepForMeDelayMs());
+  });
+
+  it("reveals onboarding circles hint after main line fades in", () => {
+    expect(getOnboardingCirclesHintDelayMs()).toBe(copyReveal.delayMs + copyReveal.fadeMs);
   });
 
   it("keeps return tap-revealed explanation timing after You are here", () => {
     expect(getReturnKeepForMeAfterExplanationMs()).toBe(
       copyReveal.lineGapMs - returnCopy.explanationGapMs,
-    );
-    expect(getReturnTapHintAfterExplanationMs()).toBe(
-      getFlowTapHintDelayMs(getReturnExplanationDelayMs(0)),
     );
   });
 
