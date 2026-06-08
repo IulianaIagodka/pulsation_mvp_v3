@@ -10,26 +10,31 @@ import { DEFAULT_INTERVENTION } from "../src/interventions/registry";
 import { useAppStore } from "../src/state/app-store";
 import {
   copyReveal,
-  getAuxiliaryCopyDelayMs,
-  getMainCopyDelayMs,
+  getReturnExplanationDelayMs,
+  getReturnHintFadeOutDelayMs,
   getReturnKeepForMeDelayMs,
   getReturnTapHintDelayMs,
 } from "../src/design/animation-rhythm";
+import { armFlowScreenEntryDelay, getFlowMainCopyDelayMs } from "../src/design/flow-screen-transition";
 import { legibleOpacity } from "../src/design/accessibility";
 import { useHighContrast } from "../src/hooks/use-high-contrast";
 import { useFlowMainCopyRevealKey } from "../src/hooks/use-flow-main-copy-reveal-key";
 import { useRegisterCirclesHint } from "../src/hooks/use-register-circles-hint";
 import { useRegisterCirclesPress } from "../src/hooks/use-register-circles-press";
 import { useCirclesHintPresentation } from "../src/hooks/use-circles-hint-presentation";
+import { useFlowTapHintRegistration } from "../src/hooks/use-flow-tap-hint-registration";
 import {
   hasKeptIntervention,
   markInterventionKept,
   registerExplanationEngagement,
 } from "../src/services/adaptive-preferences";
 import { playKeepForMeHaptic } from "../src/services/haptic-regulation";
-import { footerLinkTextStyle } from "../src/design/main-copy";
+import { footerFaintLinkOpacity, footerLinkTextStyle } from "../src/design/main-copy";
 import { colors, spacing } from "../src/design/tokens";
-import { armInstantTriggerReturn } from "../src/design/flow-copy-reveal";
+import { armInstantTriggerReturn, hasFlowCopyRevealed } from "../src/design/flow-copy-reveal";
+import { flowRevealIds } from "../src/design/flow-reveal-ids";
+import { getSchedulingProfile } from "../src/data/repositories/scheduling-profile-repo";
+import { isLastGraceReturnCycle } from "../src/modules/circles-hint-presentation";
 import { goToTrigger } from "../src/navigation/go-to-trigger";
 
 export default function ReturnScreen() {
@@ -50,19 +55,27 @@ export default function ReturnScreen() {
   const keepForMeOpacity = useRef(new Animated.Value(0)).current;
 
   const copyRevealKey = useFlowMainCopyRevealKey();
-  const mainCopyDelayMs = getMainCopyDelayMs();
-  const returnCopyEndDelayMs = getAuxiliaryCopyDelayMs(mainCopyDelayMs);
+  const mainCopyDelayMs = useMemo(() => getFlowMainCopyDelayMs(), [copyRevealKey]);
+  const returnExplanationDelayMs = getReturnExplanationDelayMs(mainCopyDelayMs);
   const keepForMeDelayMs = getReturnKeepForMeDelayMs(mainCopyDelayMs);
-  const hintDelayMs = getReturnTapHintDelayMs(mainCopyDelayMs);
+  const hintDelayMs = getReturnTapHintDelayMs(mainCopyDelayMs, !isInterventionKept);
   const circlesHintPresentation = useCirclesHintPresentation(hintDelayMs);
-  const hintRegistration = useMemo(
-    () => ({
-      presentation: circlesHintPresentation,
-      delayMs: hintDelayMs,
-      label: uiCopy.tapContinueHint,
-      holdAfterReveal: true,
-    }),
-    [hintDelayMs, circlesHintPresentation],
+  const hintFadeOutDelayMs = useMemo(() => {
+    const profile = getSchedulingProfile();
+    const isLastGrace = isLastGraceReturnCycle(
+      profile.totalCompleted,
+      profile.tapHintRevealedAtCycle ?? null,
+    );
+    if (!isLastGrace || !hasFlowCopyRevealed(flowRevealIds.flowCirclesHint)) {
+      return undefined;
+    }
+    return getReturnHintFadeOutDelayMs(mainCopyDelayMs, !isInterventionKept);
+  }, [isInterventionKept, mainCopyDelayMs, copyRevealKey]);
+  const hintRegistration = useFlowTapHintRegistration(
+    circlesHintPresentation,
+    hintDelayMs,
+    true,
+    hintFadeOutDelayMs,
   );
   useRegisterCirclesHint(hintRegistration);
 
@@ -89,6 +102,7 @@ export default function ReturnScreen() {
     persistEngagement();
     clear();
     armInstantTriggerReturn();
+    armFlowScreenEntryDelay();
     goToTrigger(router, pathname);
   }, [clear, pathname, persistEngagement, router]);
   useRegisterCirclesPress(onCirclesPress);
@@ -139,7 +153,7 @@ export default function ReturnScreen() {
     [persistEngagement],
   );
 
-  const savedLabelOpacity = legibleOpacity(0.48, highContrast, "faint");
+  const savedLabelOpacity = legibleOpacity(footerFaintLinkOpacity, highContrast, "faint");
 
   const keepForMeFooter =
     !isInterventionKept ? (
@@ -171,7 +185,7 @@ export default function ReturnScreen() {
       <ExplanationText
         variant="explanation"
         holdAfterReveal
-        delayMs={returnCopyEndDelayMs}
+        delayMs={returnExplanationDelayMs}
         style={styles.explanationLine}
       >
         {returnExplanation}

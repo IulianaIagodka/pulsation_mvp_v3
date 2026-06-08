@@ -23,26 +23,49 @@ export function OnboardingHeadline() {
 type IntroBelowProps = {
   /** Delays from “How it works” phase mount (extended onboarding). */
   phaseRelative?: boolean;
+  /** Tap on circles reveals each line; auto timing when false. */
+  tapReveal?: boolean;
+  revealedLineCount?: number;
 };
 
-function useOnboardingLineTiming(phaseRelative: boolean) {
+function useOnboardingLineTiming(phaseRelative: boolean, tapReveal: boolean) {
   const delayFor = (lineIndex: number) =>
-    phaseRelative ? getOnboardingStepRevealDelayMs(lineIndex) : getOnboardingExplanationDelayMs(lineIndex);
+    tapReveal
+      ? 0
+      : phaseRelative
+        ? getOnboardingStepRevealDelayMs(lineIndex)
+        : getOnboardingExplanationDelayMs(lineIndex);
   const stepFadeMs = phaseRelative ? onboardingCopy.stepFadeMs : undefined;
   return { delayFor, stepFadeMs };
 }
 
+function isLineVisible(lineIndex: number, tapReveal: boolean, revealedLineCount: number): boolean {
+  if (screenshotMode || !tapReveal) {
+    return true;
+  }
+  return revealedLineCount > lineIndex;
+}
+
 /** Pinned “How it works:” — does not scroll with steps. */
-export function OnboardingHowItWorksSubtitle({ phaseRelative = false }: IntroBelowProps) {
-  const { delayFor, stepFadeMs } = useOnboardingLineTiming(phaseRelative);
+export function OnboardingHowItWorksSubtitle({
+  phaseRelative = false,
+  tapReveal = false,
+  revealedLineCount = 0,
+}: IntroBelowProps) {
+  const { delayFor, stepFadeMs } = useOnboardingLineTiming(phaseRelative, tapReveal);
+
+  if (!isLineVisible(0, tapReveal, revealedLineCount)) {
+    return null;
+  }
 
   return (
     <ExplanationText
-      variant="main"
+      variant="heading"
       delayMs={delayFor(0)}
       fadeMs={stepFadeMs}
       style={styles.subtitle}
       forceVisible={screenshotMode}
+      holdAfterReveal
     >
       {uiCopy.onboardingSubtitle}
     </ExplanationText>
@@ -50,33 +73,56 @@ export function OnboardingHowItWorksSubtitle({ phaseRelative = false }: IntroBel
 }
 
 /** Steps only — scrolls when they do not fit. */
-export function OnboardingHowItWorksSteps({ phaseRelative = false }: IntroBelowProps) {
-  const { delayFor, stepFadeMs } = useOnboardingLineTiming(phaseRelative);
+export function OnboardingHowItWorksSteps({
+  phaseRelative = false,
+  tapReveal = false,
+  revealedLineCount = 0,
+}: IntroBelowProps) {
+  const { delayFor, stepFadeMs } = useOnboardingLineTiming(phaseRelative, tapReveal);
 
   return (
     <View style={styles.steps}>
-      {uiCopy.onboardingSteps.map((step, index) => (
-        <ExplanationText
-          key={step}
-          variant="main"
-          delayMs={delayFor(index + 1)}
-          fadeMs={stepFadeMs}
-          style={index === 0 ? styles.stepLineFirst : styles.stepLine}
-          forceVisible={screenshotMode}
-        >
-          {step}
-        </ExplanationText>
-      ))}
+      {uiCopy.onboardingSteps.map((step, index) => {
+        const lineIndex = index + 1;
+        if (!isLineVisible(lineIndex, tapReveal, revealedLineCount)) {
+          return null;
+        }
+        return (
+          <ExplanationText
+            key={step}
+            variant="main"
+            delayMs={delayFor(lineIndex)}
+            fadeMs={stepFadeMs}
+            style={index === 0 ? styles.stepLineFirst : styles.stepLine}
+            forceVisible={screenshotMode}
+            holdAfterReveal
+          >
+            {step}
+          </ExplanationText>
+        );
+      })}
     </View>
   );
 }
 
 /** Subtitle and steps — tap hint under circles always comes last. */
-export function OnboardingIntroBelow({ phaseRelative = false }: IntroBelowProps) {
+export function OnboardingIntroBelow({
+  phaseRelative = false,
+  tapReveal = false,
+  revealedLineCount = 0,
+}: IntroBelowProps) {
   return (
     <View style={styles.below}>
-      <OnboardingHowItWorksSubtitle phaseRelative={phaseRelative} />
-      <OnboardingHowItWorksSteps phaseRelative={phaseRelative} />
+      <OnboardingHowItWorksSubtitle
+        phaseRelative={phaseRelative}
+        tapReveal={tapReveal}
+        revealedLineCount={revealedLineCount}
+      />
+      <OnboardingHowItWorksSteps
+        phaseRelative={phaseRelative}
+        tapReveal={tapReveal}
+        revealedLineCount={revealedLineCount}
+      />
     </View>
   );
 }

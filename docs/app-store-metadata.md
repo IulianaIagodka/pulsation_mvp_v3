@@ -83,15 +83,43 @@ Feet on ground, Find 3 things, Triangle breath, Relax your jaw, Drop your should
 - Smoother circles animation and calmer layout across the flow.
 - Better readability with larger text sizes (Dynamic Type).
 
+### What's New (1.0.1 — build 32)
+
+- **Extended onboarding** — **Tap circles — it's the button here** appears right after **Pulsation exists…**; **How it works** steps follow.
+- **Flow polish** — **One action for you** no longer flashes on return; **Show my paths** with main copy; **tap to continue** always last under circles.
+- **Tap hint grace** — once shown, stays visible across trigger / action / return for 2 completed cycles, then fades out on return.
+
 ### What's New (1.0.1 — build 31)
 
-- **Clearer onboarding** — **How it works:** and all four steps use the same readable size as the opening line; **Tap circles** appears last.
+- **Clearer onboarding** — **How it works:** and all four steps use the same readable size as the opening line.
 - **Aligned flow** — **One action for you**, action text, and **You are here** share one calm line across screens.
 - **Find 3 things:** — bullets sit closer to the title; section headers use colons (**How it works:**, **Saved for you:**).
-- **Show my paths** — appears with **One action for you**; saved list scrolls when you have many items.
+- **Show my paths** — appears after **One action for you** (with tap hint); saved list scrolls when you have many items.
 - **Scroll only when needed** — About, paths, and long explanations scroll with a native indicator when text does not fit.
 - **Better small-text readability** — footer links and secondary copy stay legible; app text no longer shrinks below default when iOS text size is set to minimum.
 - **Tap to continue** — always appears last under the circles on every flow screen.
+
+### App Review Notes (version 1.0.1 — build 32)
+
+Hello App Review Team,
+
+This build (1.0.1, build 32) polishes onboarding and flow copy timing on top of build 31. Core path is unchanged:
+onboarding → **One action for you** → one micro-action → return (**You are here** + short explanation).
+
+What changed since build 31:
+- Extended onboarding: **Tap circles — it's the button here** appears right after **Pulsation exists…** fades in; **How it works** steps follow.
+- **One action for you** no longer flashes sharply when returning to trigger.
+- **Show my paths** fades in with main copy; **tap to continue** always last under circles.
+- Tap hint stays visible across flow screens for 2 completed cycles after first show, then fades out on return.
+
+How to test:
+1. Fresh install — read **Pulsation exists…**, note **Tap circles** under circles, then **How it works** steps; tap circles to continue when ready.
+2. Trigger → action (try **Find 3 things** and a simple action) → return; repeat once to see tap hint persist, then fade on return.
+3. Optional: **Show my paths**, **Save this for me** on return (local only).
+
+No login required. All data on device. Pulsation does not read other apps.
+
+Thank you.
 
 ### App Review Notes (version 1.0.1 — build 31)
 

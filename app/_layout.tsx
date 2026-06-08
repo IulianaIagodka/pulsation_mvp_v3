@@ -1,3 +1,4 @@
+import { RobotoSerif_400Regular, useFonts } from "@expo-google-fonts/roboto-serif";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { bootstrapPulsation } from "../src/services/pulsation-flow";
@@ -12,11 +13,17 @@ import { StyleSheet, View } from "react-native";
 import { SafeAreaProvider, initialWindowMetrics } from "react-native-safe-area-context";
 
 export default function Layout() {
+  const [fontsLoaded] = useFonts({ RobotoSerif_400Regular });
+
   useEffect(() => {
     bootstrapPulsation();
     configureInactivityNotifications();
     ensureCirclesBreathEngineStarted();
   }, []);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>

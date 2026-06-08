@@ -8,6 +8,7 @@ import {
   breathingRhythm,
   copyReveal,
   getFindThreeIntroDelayMs,
+  getFlowTapHintDelayMs,
   getMainCopyFadeMs,
   getOnboardingCirclesHintDelayMs,
   getOnboardingExplanationDelayMs,
@@ -17,6 +18,8 @@ import {
   onboardingCopy,
   getTriangleBreathLabelCycleMs,
   getTriangleBreathTotalMs,
+  getActionSimpleTapHintDelayMs,
+  getAuxiliaryCopyDelayMs,
   getReturnKeepForMeDelayMs,
   getTriggerPathsLinkDelayMs,
   getTriggerTapHintDelayMs,
@@ -80,12 +83,14 @@ describe("circles layout regression checks", () => {
     expect(breathingRhythm.findThreeThings.revealDurationMs).toBeGreaterThan(0);
   });
 
-  it("reveals paths with main copy and tap hint last on trigger", () => {
+  it("reveals tap hint last — paths with main on trigger, after main copy on action", () => {
     expect(getTriggerPathsLinkDelayMs()).toBe(copyReveal.delayMs);
+    expect(getTriggerTapHintDelayMs()).toBeGreaterThan(getTriggerPathsLinkDelayMs());
     expect(tapHintTiming.triggerPathsLinkMs).toBe(getTriggerPathsLinkDelayMs());
     expect(tapHintTiming.triggerTapHintMs).toBe(getTriggerTapHintDelayMs());
-    expect(tapHintTiming.triggerTapHintMs).toBeGreaterThan(tapHintTiming.triggerPathsLinkMs);
-    expect(tapHintTiming.returnTapHintMs).toBeGreaterThan(getReturnKeepForMeDelayMs());
+    expect(tapHintTiming.actionAfterFeetInstructionMs).toBe(getActionSimpleTapHintDelayMs());
+    expect(tapHintTiming.actionAfterFeetInstructionMs).toBeGreaterThan(copyReveal.delayMs);
+    expect(tapHintTiming.returnTapHintMs).toBe(getReturnKeepForMeDelayMs());
   });
 
   it("keeps one shared copy reveal rhythm (fast, smooth)", () => {
@@ -94,7 +99,8 @@ describe("circles layout regression checks", () => {
     expect(copyReveal.fadeMs).toBeLessThanOrEqual(2200);
     expect(breathingRhythm.explanationText.fadeMs).toBe(copyReveal.fadeMs);
     expect(getMainCopyFadeMs()).toBe(copyReveal.fadeMs);
-    expect(breathingRhythm.explanationText.textOpacity).toBeLessThanOrEqual(0.6);
+    expect(breathingRhythm.explanationText.textOpacity).toBeLessThan(1);
+    expect(breathingRhythm.explanationText.textOpacity).toBeGreaterThanOrEqual(0.72);
     expect(getFindThreeIntroDelayMs()).toBeGreaterThan(copyReveal.delayMs + copyReveal.fadeMs);
   });
 
@@ -110,18 +116,23 @@ describe("circles layout regression checks", () => {
     expect(getTriangleBreathTotalMs()).toBe(33000);
   });
 
-  it("keeps extended onboarding copy phases ordered (headline → how it works → hint)", () => {
+  it("keeps extended onboarding copy phases ordered (headline → hint, then how it works)", () => {
     const howItWorksMount = getOnboardingHowItWorksMountDelayMs();
     const subtitle = getOnboardingExplanationDelayMs(0);
     const lastStep = getOnboardingExplanationDelayMs(getOnboardingLastLineIndex(4));
-    const hint = getOnboardingCirclesHintDelayMs(4);
+    const hint = getOnboardingCirclesHintDelayMs();
 
     expect(onboardingCopy.headlineHoldMs).toBeGreaterThanOrEqual(1200);
     expect(getOnboardingStepLineCycleMs()).toBeGreaterThan(onboardingCopy.stepFadeMs);
+    expect(howItWorksMount).toBe(
+      copyReveal.delayMs +
+        copyReveal.fadeMs +
+        onboardingCopy.headlineHoldMs +
+        onboardingCopy.headlineFadeOutMs,
+    );
     expect(subtitle).toBe(howItWorksMount);
     expect(lastStep).toBe(howItWorksMount + getOnboardingStepLineCycleMs() * 4);
-    expect(hint).toBe(
-      lastStep + onboardingCopy.stepFadeMs + onboardingCopy.stepReadMs + onboardingCopy.hintGapMs,
-    );
+    expect(hint).toBe(getFlowTapHintDelayMs(copyReveal.delayMs));
+    expect(hint).toBeLessThan(howItWorksMount);
   });
 });

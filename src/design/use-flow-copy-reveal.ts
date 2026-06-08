@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { Animated, type EasingFunction } from "react-native";
 import { Easing } from "react-native";
-import { hasFlowCopyRevealed, markFlowCopyRevealed } from "./flow-copy-reveal";
+import { hasFlowCopyRevealed, markFlowCopyRevealed, markFlowCopyShown, shouldInstantFlowReveal } from "./flow-copy-reveal";
 
 type Options = {
   opacity: Animated.Value;
@@ -30,9 +30,13 @@ export function useFlowCopyReveal({
   fadeEasingRef.current = fadeEasing;
 
   useLayoutEffect(() => {
-    if (forceVisible || (revealId && hasFlowCopyRevealed(revealId))) {
+    const instant = forceVisible || (revealId != null && shouldInstantFlowReveal(revealId, false));
+    if (instant) {
       opacity.setValue(1);
       hasRevealedRef.current = true;
+      if (forceVisible && revealId) {
+        markFlowCopyRevealed(revealId);
+      }
     }
   }, [forceVisible, opacity, revealId]);
 
@@ -40,6 +44,9 @@ export function useFlowCopyReveal({
     if (forceVisible) {
       opacity.setValue(1);
       hasRevealedRef.current = true;
+      if (revealId) {
+        markFlowCopyRevealed(revealId);
+      }
       return;
     }
 
@@ -48,7 +55,7 @@ export function useFlowCopyReveal({
       return;
     }
 
-    if (revealId && hasFlowCopyRevealed(revealId)) {
+    if (revealId && shouldInstantFlowReveal(revealId, false)) {
       opacity.setValue(1);
       hasRevealedRef.current = true;
       return;
@@ -59,6 +66,9 @@ export function useFlowCopyReveal({
 
     const timer = setTimeout(() => {
       if (cancelled) return;
+      if (revealId) {
+        markFlowCopyShown(revealId);
+      }
       Animated.timing(opacity, {
         toValue: 1,
         duration: fadeMs,

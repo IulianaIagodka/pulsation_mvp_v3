@@ -5,7 +5,6 @@ import {
   copyReveal,
   getOnboardingHeadlineFadeOutMs,
   getOnboardingHeadlineHoldMs,
-  getOnboardingHowItWorksMountDelayMs,
 } from "../animation-rhythm";
 import { mainCopyTextStyle } from "../main-copy";
 import { colors, spacing } from "../tokens";
@@ -17,28 +16,48 @@ import { uiCopy } from "../../modules/delivery-layer";
 const FADE_IN_EASING = Easing.out(Easing.quad);
 const FADE_OUT_EASING = Easing.in(Easing.quad);
 
-/** Extended onboarding: headline → crossfade → pinned “How it works” + scrollable steps. */
-export function OnboardingPhasedContent() {
+type Props = {
+  revealedLineCount: number;
+  tapReveal?: boolean;
+  /** Increment to skip the headline and open “How it works”. */
+  headlineSkipRequest?: number;
+  onHeadlinePhaseComplete?: (options?: { skipped?: boolean }) => void;
+};
+
+/** Extended onboarding: headline → after it fades out, tap-revealed “How it works” + steps. */
+function completeHeadlinePhase(
+  onHeadlinePhaseComplete: Props["onHeadlinePhaseComplete"],
+  skipped: boolean,
+  setHeadlineVisible: (visible: boolean) => void,
+  setHowItWorksMounted: (mounted: boolean) => void,
+) {
+  setHeadlineVisible(false);
+  setHowItWorksMounted(true);
+  onHeadlinePhaseComplete?.(skipped ? { skipped: true } : undefined);
+}
+
+export function OnboardingPhasedContent({
+  revealedLineCount,
+  tapReveal = true,
+  headlineSkipRequest = 0,
+  onHeadlinePhaseComplete,
+}: Props) {
   const highContrast = useHighContrast();
   const headlineOpacity = useRef(new Animated.Value(0)).current;
+  const headlineAnimationRef = useRef<Animated.CompositeAnimation | null>(null);
+  const headlineSkippedRef = useRef(false);
   const [howItWorksMounted, setHowItWorksMounted] = useState(false);
   const [headlineVisible, setHeadlineVisible] = useState(true);
   const headlineStyle = [styles.mainText, highContrast && styles.mainTextHighContrast];
 
   useEffect(() => {
     let cancelled = false;
-    const crossfadeStartMs = getOnboardingHowItWorksMountDelayMs();
     const fadeOutMs = getOnboardingHeadlineFadeOutMs();
 
+    headlineSkippedRef.current = false;
     headlineOpacity.setValue(0);
     setHowItWorksMounted(false);
     setHeadlineVisible(true);
-
-    const crossfadeTimer = setTimeout(() => {
-      if (!cancelled) {
-        setHowItWorksMounted(true);
-      }
-    }, crossfadeStartMs);
 
     const animation = Animated.sequence([
       Animated.delay(copyReveal.delayMs),
@@ -56,33 +75,63 @@ export function OnboardingPhasedContent() {
         useNativeDriver: true,
       }),
     ]);
+    headlineAnimationRef.current = animation;
 
     animation.start(({ finished }) => {
-      if (!cancelled && finished) {
-        setHeadlineVisible(false);
+      if (!cancelled && finished && !headlineSkippedRef.current) {
+        completeHeadlinePhase(onHeadlinePhaseComplete, false, setHeadlineVisible, setHowItWorksMounted);
       }
     });
 
     return () => {
       cancelled = true;
-      clearTimeout(crossfadeTimer);
-      headlineOpacity.stopAnimation();
+      headlineAnimationRef.current?.stop();
+      headlineAnimationRef.current = null;
     };
-  }, [headlineOpacity]);
+  }, [headlineOpacity, onHeadlinePhaseComplete]);
+
+  useEffect(() => {
+    if (headlineSkipRequest === 0 || headlineSkippedRef.current || howItWorksMounted) {
+      return;
+    }
+
+    headlineSkippedRef.current = true;
+    headlineAnimationRef.current?.stop();
+    headlineAnimationRef.current = null;
+
+    const fadeOutMs = getOnboardingHeadlineFadeOutMs();
+    Animated.timing(headlineOpacity, {
+      toValue: 0,
+      duration: fadeOutMs,
+      easing: FADE_OUT_EASING,
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      if (!finished) return;
+      completeHeadlinePhase(onHeadlinePhaseComplete, true, setHeadlineVisible, setHowItWorksMounted);
+    });
+  }, [headlineOpacity, headlineSkipRequest, howItWorksMounted, onHeadlinePhaseComplete]);
 
   return (
     <View style={styles.fill}>
       {howItWorksMounted ? (
         <View style={styles.howItWorksRoot}>
           <View style={styles.subtitleSlot}>
-            <OnboardingHowItWorksSubtitle phaseRelative />
+            <OnboardingHowItWorksSubtitle
+              phaseRelative
+              tapReveal={tapReveal}
+              revealedLineCount={revealedLineCount}
+            />
           </View>
           <OverflowScrollView
             style={styles.stepsScroll}
             contentContainerStyle={styles.stepsScrollContent}
             keyboardShouldPersistTaps="handled"
           >
-            <OnboardingHowItWorksSteps phaseRelative />
+            <OnboardingHowItWorksSteps
+              phaseRelative
+              tapReveal={tapReveal}
+              revealedLineCount={revealedLineCount}
+            />
           </OverflowScrollView>
         </View>
       ) : null}

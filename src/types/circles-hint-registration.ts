@@ -9,4 +9,8 @@ export type CirclesHintRegistration = {
   revealId?: string;
   forceVisible?: boolean;
   holdAfterReveal?: boolean;
+  /** Crossfade duration when the label changes while the hint is already visible. */
+  labelTransitionMs?: number;
+  /** Fade the hint out after this delay from mount (last grace return). */
+  fadeOutDelayMs?: number;
 };

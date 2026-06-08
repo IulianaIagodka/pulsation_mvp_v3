@@ -1,5 +1,5 @@
 import { usePathname } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useStableLayoutInsets } from "../../hooks/use-stable-layout-insets";
 import { useStableWindowDimensions } from "../../hooks/use-stable-window-dimensions";
@@ -12,6 +12,7 @@ import {
 import { setCirclesAnimationMode } from "../circles-breath-engine";
 import { PersistentCircles } from "./PersistentCircles";
 import { CirclesUnderHint } from "./CirclesUnderHint";
+import type { CirclesHintRegistration } from "../../types/circles-hint-registration";
 
 function isFlowPath(pathname: string): boolean {
   return (
@@ -30,6 +31,19 @@ export function PersistentCirclesLayer() {
   const selected = useAppStore((s) => s.selectedIntervention);
   const circlesPressHandler = useAppStore((s) => s.circlesPressHandler);
   const circlesHint = useAppStore((s) => s.circlesHint);
+  const [stickyHint, setStickyHint] = useState<CirclesHintRegistration | null>(null);
+
+  useEffect(() => {
+    if (circlesHint) {
+      setStickyHint(circlesHint);
+      return;
+    }
+    if (!isFlowPath(pathname)) {
+      setStickyHint(null);
+    }
+  }, [circlesHint, pathname]);
+
+  const renderedHint = circlesHint ?? stickyHint;
 
   const mode =
     pathname === "/action" && selected === "triangle_breath" ? "triangle" : "calm";
@@ -55,16 +69,18 @@ export function PersistentCirclesLayer() {
       <View style={styles.circlesBlock}>
         <PersistentCircles onPress={flowVisible ? (circlesPressHandler ?? undefined) : undefined} />
         {flowVisible ? (
-          circlesHint ? (
+          renderedHint ? (
             <CirclesUnderHint
-              presentation={circlesHint.presentation}
-              visible={circlesHint.visible ?? true}
-              delayMs={circlesHint.delayMs}
-              fadeMs={circlesHint.fadeMs}
-              label={circlesHint.label}
-              revealId={circlesHint.revealId}
-              forceVisible={circlesHint.forceVisible}
-              holdAfterReveal={circlesHint.holdAfterReveal}
+              presentation={renderedHint.presentation}
+              visible={renderedHint.visible ?? true}
+              delayMs={renderedHint.delayMs}
+              fadeMs={renderedHint.fadeMs}
+              label={renderedHint.label}
+              revealId={renderedHint.revealId}
+              forceVisible={renderedHint.forceVisible}
+              holdAfterReveal={renderedHint.holdAfterReveal}
+              labelTransitionMs={renderedHint.labelTransitionMs}
+              fadeOutDelayMs={renderedHint.fadeOutDelayMs}
               reserveSlot
             />
           ) : (

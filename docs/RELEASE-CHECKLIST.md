@@ -4,9 +4,10 @@
 |--------|-------|--------|
 | **1.0.0** | 26 | **LIVE** в App Store ✅ |
 | **1.0.1** | 28 | **In Review** ⏳ |
-| **1.0.1** | 31 | у репо → **наступний EAS build + submit** |
+| **1.0.1** | 31 | TestFlight / polish |
+| **1.0.1** | 32 | у репо → **наступний EAS build + submit** |
 
-**Зараз:** build **31** — layout/copy polish після review feedback; **28** ще In Review (Connect не чіпати для 28).
+**Зараз:** build **32** — onboarding tap hint + flow copy timing; **28** ще In Review (Connect не чіпати для 28).
 
 Android: `docs/ANDROID-RELEASE-CHECKLIST.md`
 
@@ -198,8 +199,8 @@ npm audit --omit=dev
 - **OverflowScrollView** — скрол і індикатор лише коли текст не вміщується (about, paths, пояснення)
 - **Paths:** скрол списку збережених; **Saved for you:** не більший за «actions for yourself today»; повні назви дій
 - **Dynamic Type floor 1.0×** — текст не стискається нижче дефолту на мінімальному системному розмірі
-- **Онбординг:** **Pulsation exists** на правильній висоті; **How it works:** + кроки — той самий розмір (17pt)
-- **Tap hint** — останнім на всіх екранах; **Show my paths** — разом з **One action for you**
+- **Онбординг:** **Pulsation exists** → **Tap circles** одразу після headline; **How it works:** + кроки далі
+- **Tap hint** — останнім на всіх екранах; разом з **Show my paths** / **Save for me**; після першого показу не зникає **2 цикли** на всіх екранах флоу
 
 ### D2. UX/UI перевірка для adaptive circles hint
 
@@ -207,7 +208,7 @@ npm audit --omit=dev
 - [ ] **Return**: порядок — **You are here** → пояснення → tap hint under circles (fade-in)
 - [ ] **Return**: **You are here** не стрибає по Y при появі пояснення / hint (pinned `mainLine`)
 - [ ] **Accessibility XXL**: main line лишається на місці; довгий текст переноситься без зсуву якоря
-- [ ] **Мої шляхи** / paths: лише на trigger; разом з «One action for you»; **tap hint** — останнім на всіх екранах
+- [ ] **Мої шляхи** / paths: лише на trigger і лише якщо є дії сьогодні або збережені; після «One action for you», разом з **tap hint**; на return **tap hint** — разом з **Save for me**
 - [ ] **Збережи це для мене** у footer на return → **Збережено** після натискання
 - [ ] 1–3 взаємодії (після 3 циклів — по tap count): хінт видимий одразу, стандартна виразність
 - [ ] 4–7 взаємодій: хінт приходить пізніше (прибл. +2.2…2.8с), менш контрастний
@@ -216,7 +217,7 @@ npm audit --omit=dev
 - [ ] `triangle_breath`: хінт не з’являється раніше завершення 3 циклів дихання
 - [ ] `find_three`: кола не завершують дію, поки не показані всі 3 буліти
 - [ ] `return`: **Збережи це для мене** не показується повторно для вже збереженої дії
-- [ ] Онбординг: **How it works** + **Tap circles — it's the button here** under circles
+- [ ] Онбординг: **Pulsation exists** → **Tap circles** під колами; потім **How it works** + кроки
 - [ ] Контраст і читабельність у темній темі залишаються комфортними
 
 ---

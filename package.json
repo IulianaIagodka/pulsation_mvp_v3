@@ -25,8 +25,10 @@
     "generate:screenshots:marketing:uk": "node scripts/generate-app-store-screenshots.mjs --marketing --locale=uk"
   },
   "dependencies": {
+    "@expo-google-fonts/roboto-serif": "^0.4.3",
     "expo": "~54.0.35",
     "expo-constants": "~18.0.13",
+    "expo-font": "^56.0.5",
     "expo-haptics": "~15.0.8",
     "expo-linear-gradient": "~15.0.8",
     "expo-linking": "~8.0.12",

@@ -1,6 +1,7 @@
 import { PropsWithChildren } from "react";
 import { StyleProp, StyleSheet, Text, TextProps, TextStyle } from "react-native";
 import { applyCappedFontScale } from "../accessibility";
+import { appFontFamily } from "../app-font";
 import { colors, typography } from "../tokens";
 import { useHighContrast } from "../../hooks/use-high-contrast";
 
@@ -23,6 +24,7 @@ export function CalmText({ children, style, ...rest }: Props) {
 
 const styles = StyleSheet.create({
   text: {
+    fontFamily: appFontFamily,
     color: colors.textPrimary,
     fontSize: typography.body,
     fontWeight: "400",

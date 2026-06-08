@@ -14,9 +14,9 @@ import { interventionCopy, uiCopy } from "../src/modules/delivery-layer";
 import { removeKeptIntervention } from "../src/services/adaptive-preferences";
 import { getPathsSnapshot } from "../src/services/paths-stats";
 import type { InterventionType } from "../src/types/domain";
-import { explanationTextStyle } from "../src/design/main-copy";
+import { mainCopyTextStyle } from "../src/design/main-copy";
 import { getContentMaxWidth } from "../src/design/responsive";
-import { colors, spacing, typography } from "../src/design/tokens";
+import { colors, spacing } from "../src/design/tokens";
 
 type RemoveIconProps = {
   color: string;
@@ -66,8 +66,6 @@ export default function PathsScreen() {
     [footerRowHeight, width],
   );
 
-  const countOpacity = legibleOpacity(0.72, highContrast, "muted");
-  const labelOpacity = legibleOpacity(0.52, highContrast, "faint");
   const faintOpacity = legibleOpacity(0.48, highContrast, "faint");
   const bodyOpacity = legibleOpacity(0.58, highContrast, "muted");
   const removeIconColor = colors.textSecondary;
@@ -87,11 +85,7 @@ export default function PathsScreen() {
             {actionsToday > 0 ? (
               <>
                 <CalmText
-                  style={[
-                    styles.todayCount,
-                    { opacity: countOpacity },
-                    highContrast && styles.todayCountHighContrast,
-                  ]}
+                  style={[styles.todayCount, highContrast && styles.todayCountHighContrast]}
                 >
                   {actionsToday}
                 </CalmText>
@@ -99,8 +93,7 @@ export default function PathsScreen() {
                   style={[
                     styles.pathsMetaLabel,
                     styles.todayLabel,
-                    { opacity: labelOpacity },
-                    highContrast && styles.bodyHighContrast,
+                    highContrast && styles.pathsMetaLabelHighContrast,
                   ]}
                 >
                   {uiCopy.pathsTodayCountLabel(actionsToday)}
@@ -122,10 +115,9 @@ export default function PathsScreen() {
           >
             <CalmText
               style={[
-                styles.pathsMetaLabel,
+                styles.savedSectionHeading,
                 styles.savedSectionLabel,
-                { opacity: labelOpacity },
-                highContrast && styles.bodyHighContrast,
+                highContrast && styles.savedSectionHeadingHighContrast,
               ]}
             >
               {uiCopy.pathsSavedLabel}
@@ -206,31 +198,25 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   todayCount: {
-    color: colors.textSecondary,
-    fontSize: 48,
-    lineHeight: 54,
+    ...mainCopyTextStyle,
     textAlign: "center",
   },
   todayCountHighContrast: {
     color: colors.textPrimary,
-    opacity: 0.82,
   },
   pathsMetaLabel: {
-    color: colors.textSecondary,
-    fontSize: typography.body,
-    lineHeight: 22,
+    ...mainCopyTextStyle,
     textAlign: "center",
-    width: "100%",
   },
   todayLabel: {
     marginTop: spacing.xs,
   },
+  pathsMetaLabelHighContrast: {
+    color: colors.textPrimary,
+  },
   todayEmpty: {
-    color: colors.textSecondary,
-    fontSize: typography.body,
-    lineHeight: 22,
+    ...mainCopyTextStyle,
     textAlign: "center",
-    width: "100%",
   },
   savedScroll: {
     flex: 1,
@@ -246,12 +232,19 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     paddingBottom: spacing.md,
   },
+  savedSectionHeading: {
+    ...mainCopyTextStyle,
+    textAlign: "left",
+  },
+  savedSectionHeadingHighContrast: {
+    color: colors.textPrimary,
+  },
   savedSectionLabel: {
     marginTop: 0,
     marginBottom: spacing.sm,
   },
   sectionBody: {
-    ...explanationTextStyle,
+    ...mainCopyTextStyle,
     textAlign: "left",
     color: colors.textSecondary,
   },

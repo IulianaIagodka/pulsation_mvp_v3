@@ -3,7 +3,7 @@ import { legibleOpacity } from "../accessibility";
 import { resolvePressableTextOpacity } from "../pressable-highlight";
 import { CalmPressable } from "./CalmPressable";
 import { CalmText } from "./CalmText";
-import { footerLinkTextStyle } from "../main-copy";
+import { footerFaintLinkOpacity, footerLinkTextStyle } from "../main-copy";
 import { colors, spacing } from "../tokens";
 import { useHighContrast } from "../../hooks/use-high-contrast";
 
@@ -14,7 +14,7 @@ type Props = {
 
 export function CalmActionButton({ label, onPress }: Props) {
   const highContrast = useHighContrast();
-  const linkOpacity = legibleOpacity(0.48, highContrast, "faint");
+  const linkOpacity = legibleOpacity(footerFaintLinkOpacity, highContrast, "faint");
   const linkOpacityActive = legibleOpacity(0.65, highContrast, "faint");
 
   return (

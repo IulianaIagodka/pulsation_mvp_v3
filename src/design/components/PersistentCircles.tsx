@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
-import { isPressableHighlighted } from "../pressable-highlight";
 import { getCirclesBreathValues, resumeCalmLoopAfterViewMount } from "../circles-breath-engine";
 import { CalmPressable } from "./CalmPressable";
 import { CirclesRings } from "./CirclesRings";
@@ -33,13 +32,7 @@ export function PersistentCircles({ onPress }: Props) {
       hitSlop={12}
       accessibilityRole="button"
     >
-      {(state) => (
-        <CirclesRings
-          opacity={opacity}
-          scale={scale}
-          highlighted={isPressableHighlighted(state)}
-        />
-      )}
+      <CirclesRings opacity={opacity} scale={scale} />
     </CalmPressable>
   );
 }

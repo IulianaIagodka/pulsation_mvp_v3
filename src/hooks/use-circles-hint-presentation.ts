@@ -2,6 +2,12 @@ import { useFocusEffect, usePathname } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { getSchedulingProfile } from "../data/repositories/scheduling-profile-repo";
 import { CirclesHintPresentation, getCirclesHintPresentation, getCirclesTapCount } from "../services/circles-hint";
+import {
+  isLastGraceReturnCycle,
+  shouldShowTapHint,
+  withLastGraceReturnTapHint,
+} from "../modules/circles-hint-presentation";
+import { dismissFlowCirclesHint } from "../design/flow-copy-reveal";
 
 function getPathSalt(pathname: string): number {
   let hash = 0;
@@ -17,16 +23,42 @@ export function useCirclesHintPresentation(baseDelayMs: number): CirclesHintPres
   const [completedCycles, setCompletedCycles] = useState(
     () => getSchedulingProfile().totalCompleted,
   );
+  const [hintRevealedAtCycle, setHintRevealedAtCycle] = useState(
+    () => getSchedulingProfile().tapHintRevealedAtCycle ?? null,
+  );
 
   useFocusEffect(
     useCallback(() => {
+      const profile = getSchedulingProfile();
+      const hintAtCycle = profile.tapHintRevealedAtCycle ?? null;
       setCirclesTapCount(getCirclesTapCount());
-      setCompletedCycles(getSchedulingProfile().totalCompleted);
-    }, []),
+      setCompletedCycles(profile.totalCompleted);
+      setHintRevealedAtCycle(hintAtCycle);
+
+      const onLastGraceReturn =
+        pathname === "/return" &&
+        isLastGraceReturnCycle(profile.totalCompleted, hintAtCycle);
+      if (
+        hintAtCycle != null &&
+        !shouldShowTapHint(profile.totalCompleted, hintAtCycle) &&
+        !onLastGraceReturn
+      ) {
+        dismissFlowCirclesHint();
+      }
+    }, [pathname]),
   );
 
-  return useMemo(
-    () => getCirclesHintPresentation(circlesTapCount, baseDelayMs, getPathSalt(pathname), completedCycles),
-    [baseDelayMs, completedCycles, pathname, circlesTapCount],
-  );
+  return useMemo(() => {
+    const presentation = getCirclesHintPresentation(
+      circlesTapCount,
+      baseDelayMs,
+      getPathSalt(pathname),
+      completedCycles,
+      hintRevealedAtCycle,
+    );
+    if (pathname === "/return") {
+      return withLastGraceReturnTapHint(presentation, completedCycles, hintRevealedAtCycle);
+    }
+    return presentation;
+  }, [baseDelayMs, completedCycles, hintRevealedAtCycle, pathname, circlesTapCount]);
 }

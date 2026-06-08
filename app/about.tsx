@@ -10,7 +10,7 @@ import { getCappedFontScale, legibleOpacity } from "../src/design/accessibility"
 import { getContentMaxWidth } from "../src/design/responsive";
 import { useHighContrast } from "../src/hooks/use-high-contrast";
 import { uiCopy } from "../src/modules/delivery-layer";
-import { colors, spacing, typography } from "../src/design/tokens";
+import { colors, spacing } from "../src/design/tokens";
 
 export default function AboutScreen() {
   const router = useRouter();
@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   title: {
-    fontSize: typography.gentle,
+    fontSize: 20,
+    lineHeight: 24,
     color: colors.textPrimary,
     marginBottom: spacing.lg,
     textAlign: "left",
@@ -83,8 +84,8 @@ const styles = StyleSheet.create({
   paragraph: {
     textAlign: "left",
     color: colors.textSecondary,
-    fontSize: 16,
-    lineHeight: 26,
+    fontSize: 17,
+    lineHeight: 24,
     marginBottom: spacing.md,
     width: "100%",
   },
@@ -95,7 +96,8 @@ const styles = StyleSheet.create({
   version: {
     marginTop: spacing.sm,
     color: colors.textSecondary,
-    fontSize: 13,
+    fontSize: 11,
+    lineHeight: 15,
     textAlign: "left",
     width: "100%",
   },

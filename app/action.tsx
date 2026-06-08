@@ -24,7 +24,8 @@ import {
 } from "../src/modules/delivery-layer";
 import { getFindThreeIntro, getFindThreeVariant } from "../src/modules/find-three-variants";
 import { assignNextFindThreeVariant } from "../src/services/find-three-flow";
-import { armInstantTriggerReturn } from "../src/design/flow-copy-reveal";
+import { armInstantTriggerReturn, hasFlowCopyRevealed } from "../src/design/flow-copy-reveal";
+import { flowRevealIds } from "../src/design/flow-reveal-ids";
 import { registerInterventionOutcome } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
 import {
@@ -37,16 +38,18 @@ import { colors, spacing } from "../src/design/tokens";
 import {
   breathingRhythm,
   getFindThreeIntroDelayMs,
+  getActionSimpleTapHintDelayMs,
   getFindThreeTapHintDelayMs,
   getFlowTapHintDelayAfterRevealMs,
-  getFlowTapHintDelayMs,
-  getMainCopyDelayMs,
   getTriangleBreathIntroDelayMs,
 } from "../src/design/animation-rhythm";
+import { armFlowScreenEntryDelay, getFlowMainCopyDelayMs } from "../src/design/flow-screen-transition";
 import { useCirclesHintPresentation } from "../src/hooks/use-circles-hint-presentation";
+import { useFlowTapHintRegistration } from "../src/hooks/use-flow-tap-hint-registration";
 import { legibleOpacity } from "../src/design/accessibility";
 import { CalmPressable } from "../src/design/components/CalmPressable";
 import { useHighContrast } from "../src/hooks/use-high-contrast";
+import { explanationTextStyle } from "../src/design/main-copy";
 import { scaleByWidth } from "../src/design/responsive";
 import { startTriangleBreathHapticLoop } from "../src/services/haptic-regulation";
 
@@ -56,11 +59,11 @@ export default function ActionScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const fontScale = getCappedFontScale();
-  const phaseSlotHeight = Math.round(scaleByWidth(15, width) * fontScale) + scaleByWidth(spacing.sm, width);
-  const findThreeLineMinHeight = Math.round(scaleByWidth(15, width) * fontScale);
+  const phaseSlotHeight = Math.round(scaleByWidth(24, width) * fontScale) + scaleByWidth(spacing.sm, width);
+  const findThreeLineMinHeight = Math.round(scaleByWidth(24, width) * fontScale);
   const highContrast = useHighContrast();
   const copyRevealKey = useFlowMainCopyRevealKey();
-  const mainLineDelayMs = getMainCopyDelayMs();
+  const mainLineDelayMs = useMemo(() => getFlowMainCopyDelayMs(), [copyRevealKey]);
   const phaseLabelOpacity = legibleOpacity(
     breathingRhythm.explanationText.textOpacity,
     highContrast,
@@ -89,13 +92,16 @@ export default function ActionScreen() {
   const findThreeSessionRef = useRef(0);
   const findThreeAllRevealed =
     presentation === "find_three" && findThreeRevealedCount >= findThreeQueue.length;
+  const flowHintPersisted = hasFlowCopyRevealed(flowRevealIds.flowCirclesHint);
+
   const hintAfterRevealMs = getFlowTapHintDelayAfterRevealMs();
-  const simpleHintDelayMs = getFlowTapHintDelayMs(mainLineDelayMs);
+  const simpleHintDelayMs = getActionSimpleTapHintDelayMs(mainLineDelayMs);
   const findThreeHintDelayMs = getFindThreeTapHintDelayMs(findThreeQueue.length, mainLineDelayMs);
   const nonTriangleHint = useCirclesHintPresentation(
     presentation === "find_three" ? findThreeHintDelayMs : simpleHintDelayMs,
   );
   const triangleHint = useCirclesHintPresentation(hintAfterRevealMs);
+  const graceTapHintActive = nonTriangleHint.shouldShow;
 
   const completeAction = useCallback(() => {
     if (completionRef.current) return;
@@ -103,6 +109,7 @@ export default function ActionScreen() {
     isTransitioningRef.current = true;
     registerInterventionOutcome(selected, true);
     armInstantTriggerReturn();
+    armFlowScreenEntryDelay();
     router.replace("/return");
   }, [router, selected]);
 
@@ -269,32 +276,18 @@ export default function ActionScreen() {
     };
   }, [presentation]);
 
-  const hintRegistration = useMemo(() => {
-    if (presentation === "triangle_breath") {
-      return {
-        presentation: triangleHint,
-        delayMs: hintAfterRevealMs,
-        visible: showTriangleTapHint,
-        label: uiCopy.tapContinueHint,
-        holdAfterReveal: true,
-      };
-    }
-    return {
-      presentation: nonTriangleHint,
-      delayMs: presentation === "find_three" ? hintAfterRevealMs : simpleHintDelayMs,
-      visible: presentation === "find_three" ? findThreeAllRevealed : true,
-      label: uiCopy.tapContinueHint,
-      holdAfterReveal: true,
-    };
-  }, [
-    findThreeAllRevealed,
-    hintAfterRevealMs,
-    nonTriangleHint,
-    presentation,
-    showTriangleTapHint,
-    simpleHintDelayMs,
-    triangleHint,
-  ]);
+  const hintPresentation = presentation === "triangle_breath" ? triangleHint : nonTriangleHint;
+  const hintDelayMs =
+    presentation === "triangle_breath" || presentation === "find_three"
+      ? hintAfterRevealMs
+      : simpleHintDelayMs;
+  const hintVisible =
+    presentation === "triangle_breath"
+      ? triangleHint.shouldShow && (showTriangleTapHint || flowHintPersisted)
+      : presentation === "find_three"
+        ? graceTapHintActive && (flowHintPersisted || findThreeAllRevealed)
+        : true;
+  const hintRegistration = useFlowTapHintRegistration(hintPresentation, hintDelayMs, hintVisible);
   useRegisterCirclesHint(hintRegistration);
 
   const mainLineOnly =
@@ -426,11 +419,8 @@ const styles = StyleSheet.create({
   findThreeLine: {},
   findThreeFirstLine: {},
   phaseLabel: {
-    color: colors.textSecondary,
+    ...explanationTextStyle,
     textAlign: "center",
-    fontSize: 12,
-    lineHeight: 16,
-    letterSpacing: 0.15,
     width: "100%",
   },
   phaseLabelHighContrast: {
@@ -451,5 +441,5 @@ const styles = StyleSheet.create({
   },
   debugRow: { marginTop: spacing.md, flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: spacing.md },
   debugItem: { paddingVertical: spacing.xs },
-  debugText: { color: colors.textSecondary, fontSize: 13 },
+  debugText: { color: colors.textSecondary, fontSize: 11, lineHeight: 15 },
 });

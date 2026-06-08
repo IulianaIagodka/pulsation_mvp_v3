@@ -1,4 +1,4 @@
-import { getPathsSnapshot } from "./paths-stats";
+import { getPathsSnapshot, hasPathsContent } from "./paths-stats";
 
 jest.mock("../data/repositories/outcomes-repo", () => ({
   getOutcomesProfile: () => ({
@@ -18,5 +18,16 @@ describe("getPathsSnapshot", () => {
       keptInterventions: ["relax_jaw", "feet_on_ground"],
       actionsToday: 2,
     });
+  });
+});
+
+describe("hasPathsContent", () => {
+  it("is true when there are actions today or saved items", () => {
+    expect(hasPathsContent({ keptInterventions: ["relax_jaw"], actionsToday: 0 })).toBe(true);
+    expect(hasPathsContent({ keptInterventions: [], actionsToday: 1 })).toBe(true);
+  });
+
+  it("is false when there is no stats or saved content", () => {
+    expect(hasPathsContent({ keptInterventions: [], actionsToday: 0 })).toBe(false);
   });
 });

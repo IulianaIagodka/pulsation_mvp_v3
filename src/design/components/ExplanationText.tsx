@@ -4,7 +4,12 @@ import { applyCappedFontScale, legibleOpacity } from "../accessibility";
 import { breathingRhythm, copyReveal } from "../animation-rhythm";
 import { shouldInstantFlowReveal } from "../flow-copy-reveal";
 import { useFlowCopyReveal } from "../use-flow-copy-reveal";
-import { explanationTextStyle, mainCopyTextStyle, tapHintTextStyle } from "../main-copy";
+import {
+  explanationTextStyle,
+  getFooterFaintLinkStyle,
+  mainCopyTextStyle,
+  sectionHeadingTextStyle,
+} from "../main-copy";
 import { colors, spacing } from "../tokens";
 import { useHighContrast } from "../../hooks/use-high-contrast";
 
@@ -15,7 +20,7 @@ type Props = PropsWithChildren<{
   fadeMs?: number;
   fadeEasing?: EasingFunction;
   style?: StyleProp<ViewStyle>;
-  variant?: "main" | "explanation" | "hint";
+  variant?: "main" | "heading" | "explanation" | "hint";
   textOpacity?: number;
   holdAfterReveal?: boolean;
   revealId?: string;
@@ -51,23 +56,23 @@ export function ExplanationText({
     forceVisible: instant,
   });
 
-  const resolvedTextOpacity =
-    variant === "hint"
-      ? (textOpacity ?? 0.48)
-      : (textOpacity ?? breathingRhythm.explanationText.textOpacity);
+  const resolvedTextOpacity = textOpacity ?? breathingRhythm.explanationText.textOpacity;
   const tone = variant === "hint" ? "faint" : "muted";
   const effectiveOpacity = legibleOpacity(resolvedTextOpacity, highContrast, tone);
+  const faintLinkStyle = getFooterFaintLinkStyle(highContrast);
   const textStyle =
     variant === "main"
       ? [styles.mainText, highContrast && styles.mainTextHighContrast]
-      : variant === "hint"
-        ? [styles.hintText, highContrast && styles.hintTextHighContrast, { opacity: effectiveOpacity }]
-        : [styles.text, highContrast && styles.textHighContrast, { opacity: effectiveOpacity }];
+      : variant === "heading"
+        ? [styles.headingText, highContrast && styles.headingTextHighContrast]
+        : variant === "hint"
+          ? [faintLinkStyle]
+          : [styles.text, highContrast && styles.textHighContrast, { opacity: effectiveOpacity }];
 
   const wrapStyle =
     variant === "hint"
       ? [styles.wrapHint, style]
-      : variant === "main"
+      : variant === "main" || variant === "heading"
         ? [styles.wrap, styles.wrapMain, style]
         : [styles.wrap, styles.wrapExplanation, style];
 
@@ -76,10 +81,6 @@ export function ExplanationText({
       {children}
     </Text>
   );
-
-  if (instant) {
-    return <View style={wrapStyle}>{copy}</View>;
-  }
 
   return (
     <View style={wrapStyle}>
@@ -127,12 +128,12 @@ const styles = StyleSheet.create({
   mainTextHighContrast: {
     color: colors.textPrimary,
   },
-  text: explanationTextStyle,
-  textHighContrast: {
+  headingText: sectionHeadingTextStyle,
+  headingTextHighContrast: {
     color: colors.textPrimary,
   },
-  hintText: tapHintTextStyle,
-  hintTextHighContrast: {
+  text: explanationTextStyle,
+  textHighContrast: {
     color: colors.textPrimary,
   },
 });

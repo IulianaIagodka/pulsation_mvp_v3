@@ -55,3 +55,6 @@ export const typography = {
   small: 14,
   gentle: 20,
 } as const;
+
+/** Faint footer links — About / Paths / Save / tap hint. */
+export const footerFaintLinkOpacity = 0.48;

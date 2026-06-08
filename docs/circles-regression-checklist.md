@@ -14,15 +14,18 @@ Use this checklist before release whenever animation/layout is changed.
 
 - [ ] Tap circles on **each** flow screen and verify navigation / completion (circles are wrapped in `Pressable`; layer has `zIndex` + `elevation`).
 - [ ] If tap feels dead, check Android: circles layer should stay **above** the `ScrollView` hit target (`PersistentCirclesLayer` elevation). Layer is **circles-sized only** (no full-screen overlay) so footer links stay visible and tappable.
-- [ ] **About** on onboarding footer only; **Show my paths** / **Мої шляхи** only on **trigger** — fades in **with** “One action for you”; **tap to continue** / **торкни, щоб продовжити** fades in **last** on every flow screen.
+- [ ] **About** on onboarding footer only; **Show my paths** / **Мої шляхи** only on **trigger** when there is today’s count or saved items — after “One action for you”, together with tap hint (tap last).
 - [ ] **Save this for me** / **Збережи це для мене** pinned in the **footer** on return (not in scroll body); tap → **Saved** / **Збережено** (not clickable).
 
 ## Copy order (tap hint under circles)
 
-- [ ] On **onboarding**: “How it works:” + four steps; **Tap circles — it's the button here** / **Торкнись кіл — це кнопка тут** fixed **under circles** (`getOnboardingCirclesHintDelayMs`).
+- [ ] On **extended onboarding**: **Tap circles — it's the button here** / **Торкнись кіл — це кнопка тут** fixed **under circles** right after **Pulsation exists…** fades in (`getOnboardingCirclesHintDelayMs`); **How it works:** + four steps continue after the headline fades out.
 - [ ] On **trigger**, **action**, **return**: **tap to continue** / **торкни, щоб продовжити** fixed **under circles** (same Y on every screen; slot always reserved, `opacity: 0` when hidden).
-- [ ] On **return**: order is **You are here** → explanation (fade after main) → tap hint under circles (fade after explanation).
-- [ ] For the **first 3 completed cycles**, the hint is visible on **every** flow screen (no random hide per screen).
+- [ ] On **trigger**: **One action for you** first; then tap hint last (with **Show my paths** when `hasPathsContent()`).
+- [ ] On **action** (feet / jaw / shoulders / sounds / palms): tap hint fades in **last**, after the main instruction.
+- [ ] On **return**: tap hint last — with **Save for me** when shown, after explanation when already saved.
+- [ ] On **return**: order is **You are here** → explanation (fade after main); **Save this for me** and tap hint under circles fade in together.
+- [ ] For the **first 2 completed cycles after tap hint first appears**, the hint stays visible on **every** flow screen (no re-fade between trigger / action / return).
 - [ ] On **triangle breath**, the under circles hint appears only **after 3 complete breath cycles**; circles animate during intro + triangle rhythm.
 - [ ] On return, **Save this for me** sits in the bottom footer (same zone as paths on trigger).
 
@@ -42,7 +45,7 @@ Use this checklist before release whenever animation/layout is changed.
 - [ ] On return, **Save this for me** becomes **Saved** on tap (stays visible, not clickable); later visits with the same saved intervention do **not** show the control.
 - [ ] With **Accessibility XXL** text size (Settings → Display → Larger Text): main line stays pinned; onboarding scrolls (pinned **How it works:**); About / paths scroll when overflow (`OverflowScrollView`); return explanation + hint flow below main without shifting **You are here**.
 - [ ] **Paths**: **Saved for you:** styled like «actions for yourself today»; saved list scrolls when many items.
-- [ ] Onboarding shows **How it works** steps + **tap circles** last; not “one action for you now?” on first screen.
+- [ ] Onboarding shows **Pulsation exists…** → **tap circles** under circles, then **How it works** steps; not “one action for you now?” on first screen.
 
 ## Automated safety net
 

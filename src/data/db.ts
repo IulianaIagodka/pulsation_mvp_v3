@@ -31,6 +31,10 @@ const SCHEDULING_OPTIONAL_COLUMNS: Array<{ column: string; sql: string }> = [
     column: "last_background_at",
     sql: "ALTER TABLE scheduling_profile ADD COLUMN last_background_at INTEGER",
   },
+  {
+    column: "tap_hint_revealed_at_cycle",
+    sql: "ALTER TABLE scheduling_profile ADD COLUMN tap_hint_revealed_at_cycle INTEGER",
+  },
 ];
 
 function ensureSchedulingProfileColumns() {

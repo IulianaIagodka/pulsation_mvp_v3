@@ -47,7 +47,7 @@ type Props = PropsWithChildren<{
   pinMainLikeTrigger?: boolean;
   /** Show “Show my paths” in the footer (trigger / “one action” screen only). */
   showPathsLink?: boolean;
-  /** Fade in paths link after main copy + tap hint (trigger). */
+  /** Fade in paths link together with main copy (trigger). */
   pathsLinkRevealDelayMs?: number;
   /** Remount paths link on trigger refocus so it replays after main copy. */
   pathsLinkRevealKey?: number | string;
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(35,58,84,0.72)",
   },
   devToggleText: {
-    fontSize: 12,
+    fontSize: 11,
     opacity: 0.95,
     letterSpacing: 0.2,
   },

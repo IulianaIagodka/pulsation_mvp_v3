@@ -12,6 +12,16 @@ let backgroundStartedAt: number | null = null;
 let hasBeenBackgrounded = false;
 let pendingInactiveMinutes = 0;
 
+export function hadBackgroundSession(): boolean {
+  const now = Date.now();
+  return (
+    hasBeenBackgrounded ||
+    backgroundStartedAt != null ||
+    getSchedulingProfile().lastBackgroundAt != null ||
+    getPersistedBackgroundMinutes(now) > 0
+  );
+}
+
 function getPersistedBackgroundMinutes(now: number): number {
   const lastBackgroundAt = getSchedulingProfile().lastBackgroundAt;
   if (!lastBackgroundAt) return 0;

@@ -35,7 +35,7 @@ export const breathingRhythm = {
   },
   explanationText: {
     fadeMs: copyReveal.fadeMs,
-    textOpacity: 0.58,
+    textOpacity: 0.75,
     primaryDelayMs: copyReveal.delayMs,
     secondaryDelayMs: copyReveal.lineGapMs,
   },
@@ -67,6 +67,16 @@ export function getAuxiliaryCopyDelayMs(mainLineDelayMs: number = getMainCopyDel
   return mainLineDelayMs + copyReveal.fadeMs + copyReveal.lineGapMs;
 }
 
+/** Return follow-up — explanation fades in a bit sooner than generic auxiliary copy. */
+export const returnCopy = {
+  explanationGapMs: 200,
+} as const;
+
+/** Return: soft explanation after **You are here** has faded in. */
+export function getReturnExplanationDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
+  return mainLineDelayMs + copyReveal.fadeMs + returnCopy.explanationGapMs;
+}
+
 /** @deprecated Use {@link getMainCopyFadeMs}. */
 export const onboardingRhythm = {
   fadeMs: copyReveal.fadeMs,
@@ -74,14 +84,14 @@ export const onboardingRhythm = {
   stepGapMs: copyReveal.lineGapMs,
 } as const;
 
-/** Extended onboarding — fade + read beat per line; tap hint after the last line is readable. */
+/** Extended onboarding — fade + read beat per line; tap hint after “Pulsation exists…” fades in. */
 export const onboardingCopy = {
   /** Brief beat to read the headline after it has fully faded in. */
   headlineHoldMs: 1800,
   headlineFadeOutMs: 800,
-  stepFadeMs: 1800,
+  stepFadeMs: 1600,
   /** Pause to read each how-it-works line after it has fully faded in. */
-  stepReadMs: 1400,
+  stepReadMs: 1000,
   hintGapMs: copyReveal.lineGapMs,
 } as const;
 
@@ -99,14 +109,14 @@ export function getOnboardingStepLineCycleMs(): number {
   return onboardingCopy.stepFadeMs + onboardingCopy.stepReadMs;
 }
 
-/** When “How it works” block mounts (headline crossfade — matches `OnboardingPhasedContent`). */
+/** When “How it works” mounts — after “Pulsation exists…” has fully faded out. */
 export function getOnboardingHowItWorksMountDelayMs(): number {
-  return copyReveal.delayMs + copyReveal.fadeMs + getOnboardingHeadlineHoldMs();
-}
-
-/** @deprecated Use {@link getOnboardingHowItWorksMountDelayMs} + headline fade-out. */
-export function getOnboardingHowItWorksStartDelayMs(): number {
-  return getOnboardingHowItWorksMountDelayMs() + getOnboardingHeadlineFadeOutMs();
+  return (
+    copyReveal.delayMs +
+    copyReveal.fadeMs +
+    getOnboardingHeadlineHoldMs() +
+    getOnboardingHeadlineFadeOutMs()
+  );
 }
 
 /** Last line index: subtitle (0) + `stepCount` steps → index `stepCount`. */
@@ -124,18 +134,9 @@ export function getOnboardingExplanationDelayMs(lineIndex: number): number {
   return getOnboardingHowItWorksMountDelayMs() + getOnboardingStepRevealDelayMs(lineIndex);
 }
 
-/** Tap circles — after the last line (subtitle + all steps) has faded in and been readable. */
-export function getOnboardingCirclesHintDelayMs(stepCount: number): number {
-  if (stepCount === 0) {
-    return getFlowTapHintDelayMs(copyReveal.delayMs);
-  }
-  const lastLineStart = getOnboardingExplanationDelayMs(getOnboardingLastLineIndex(stepCount));
-  return (
-    lastLineStart +
-    onboardingCopy.stepFadeMs +
-    onboardingCopy.stepReadMs +
-    onboardingCopy.hintGapMs
-  );
+/** Tap circles — right after “Pulsation exists…” has fully faded in (before How it works). */
+export function getOnboardingCirclesHintDelayMs(_stepCount: number = 0): number {
+  return getFlowTapHintDelayMs(copyReveal.delayMs);
 }
 
 const flowHintGapMs = copyReveal.lineGapMs;
@@ -145,19 +146,40 @@ export function getFlowTapHintDelayMs(lastLineDelayMs: number): number {
   return lastLineDelayMs + copyReveal.fadeMs + flowHintGapMs;
 }
 
-/** Trigger footer: paths link together with main copy. */
+/** Trigger footer: Show my paths together with the main line. */
 export function getTriggerPathsLinkDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
   return mainLineDelayMs;
 }
 
-/** Trigger: tap hint after main copy and paths link have appeared. */
+/** Trigger: tap hint last — after main copy has faded in. */
 export function getTriggerTapHintDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
   return getFlowTapHintDelayMs(mainLineDelayMs);
 }
 
-/** Return: tap hint after main line, follow-up, and keep-for-me footer. */
-export function getReturnTapHintDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
-  return getFlowTapHintDelayMs(getReturnKeepForMeDelayMs(mainLineDelayMs));
+/** Return: tap hint last — with Save for me when shown; after explanation otherwise. */
+export function getReturnTapHintDelayMs(
+  mainLineDelayMs: number = getMainCopyDelayMs(),
+  showKeepForMeFooter: boolean = true,
+): number {
+  return showKeepForMeFooter
+    ? getReturnKeepForMeDelayMs(mainLineDelayMs)
+    : getFlowTapHintDelayMs(getReturnExplanationDelayMs(mainLineDelayMs));
+}
+
+/** Return (last grace cycle): fade tap hint out after the last line has fully appeared. */
+export function getReturnHintFadeOutDelayMs(
+  mainLineDelayMs: number = getMainCopyDelayMs(),
+  showKeepForMeFooter: boolean = true,
+): number {
+  const lastCopyDelay = showKeepForMeFooter
+    ? getReturnKeepForMeDelayMs(mainLineDelayMs)
+    : getReturnExplanationDelayMs(mainLineDelayMs);
+  return lastCopyDelay + copyReveal.fadeMs + flowHintGapMs;
+}
+
+/** Action (simple): tap hint last — after the main instruction has faded in. */
+export function getActionSimpleTapHintDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
+  return getFlowTapHintDelayMs(mainLineDelayMs);
 }
 
 /** Hint after the last find-three bullet begins appearing. */
@@ -177,7 +199,7 @@ export function getFlowTapHintDelayAfterRevealMs(): number {
   return copyReveal.fadeMs + flowHintGapMs;
 }
 
-/** Tap-hint delays — always after other copy on that screen. */
+/** Tap-hint delays — last on every screen; with paths / save-for-me on trigger / return when shown. */
 export const tapHintTiming = {
   onboardingAfterMainMs: getOnboardingCirclesHintDelayMs(0),
   triggerPathsLinkMs: getTriggerPathsLinkDelayMs(copyReveal.delayMs),
@@ -185,7 +207,7 @@ export const tapHintTiming = {
   returnTapHintMs: getReturnTapHintDelayMs(copyReveal.delayMs),
   returnAfterFollowUpMs: getFlowTapHintDelayMs(getAuxiliaryCopyDelayMs(copyReveal.delayMs)),
   returnAfterBodyMs: getFlowTapHintDelayMs(copyReveal.delayMs),
-  actionAfterFeetInstructionMs: getFlowTapHintDelayMs(copyReveal.delayMs),
+  actionAfterFeetInstructionMs: getActionSimpleTapHintDelayMs(copyReveal.delayMs),
   actionAfterFindThreeMs: getFindThreeTapHintDelayMs(3),
 } as const;
 

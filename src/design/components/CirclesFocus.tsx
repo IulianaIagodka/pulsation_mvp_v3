@@ -1,7 +1,6 @@
 import { Animated, Easing, StyleSheet } from "react-native";
 import { useEffect, useRef } from "react";
 import { breathingRhythm } from "../animation-rhythm";
-import { isPressableHighlighted } from "../pressable-highlight";
 import { CalmPressable } from "./CalmPressable";
 import { CirclesRings } from "./CirclesRings";
 
@@ -116,13 +115,7 @@ export function CirclesFocus({ onPress, startDelayMs = 0 }: Props) {
       hitSlop={12}
       accessibilityRole="button"
     >
-      {(state) => (
-        <CirclesRings
-          opacity={opacity}
-          scale={scale}
-          highlighted={isPressableHighlighted(state)}
-        />
-      )}
+      <CirclesRings opacity={opacity} scale={scale} />
     </CalmPressable>
   );
 }
