@@ -1,39 +1,37 @@
 # App Store Metadata (EN + UK) for Pulsation
 
-## Connect — активний submit (1.0.2, build 35+)
+## Connect — активний submit (1.0.2, build 34+)
 
-**Скріншоти:** завантажені ✅  
-**build 31:** In Review (не чіпати в Connect).  
-**build 33:** submitted 2026-06-08 (EAS auto-increment з 32). Тексти нижче — **vs build 31** (що відчує юзер).
+**Скріншоти:** завантажені ✅ (онбординг може потребувати оновлення після typography polish).  
+**build 33:** submitted 2026-06-08 (superseded).  
+**build 34+:** 1.0.2 train — тексти нижче **vs build 33**.
 
-### What's New → EN (build 33) — вставити в Connect при submit
-
-```
-- Circles, not spiral — the calm center element is now circles (same gentle tap button throughout the flow).
-- Clearer first launch — Tap circles — it's the button here appears right after Pulsation exists…, then How it works steps; tap circles when you're ready to continue.
-- Calmer flow — after onboarding, trigger, action, and return stay quieter with no repeating hint under the circles.
-- Smoother return — One action for you no longer flashes when you come back to the main screen.
-- Show my paths appears together with the main line when you have today's actions or saved preferences.
-```
-
-### What's New → UK (build 33) — вставити в Connect при submit
+### What's New → EN (1.0.2) — вставити в Connect при submit
 
 ```
-- Кола, не спіраль — спокійний центр екрана тепер кола (та сама м’яка кнопка на всьому флоу).
-- Зрозуміліший перший запуск — Торкнись кіл — це кнопка тут одразу після Pulsation допомагає…, далі кроки Як це працює:; торкни кола, коли готовий продовжити.
-- Спокійніший флоу — після онбордингу trigger, action і return без повторюваної підказки під колами.
-- М’якше повернення — Одна дія для тебе без різкого спалаху на головному екрані.
-- Мої шляхи з’являються разом із головним рядком, якщо є сьогоднішні дії або збережені вподобання.
+- Clearer onboarding — Pulsation exists… stays on screen; How it works and steps appear below; first tap shows all steps, second tap continues (or steps auto-reveal if you wait).
+- Calmer typography — Source Serif 4 throughout; main lines 20 pt; explanations 17 pt; footer links and tap hint 12 pt.
+- Paths polish — today's count at 20 pt; Saved for you: at 20 pt; saved items at 17 pt.
+- Calmer flow — tap hint under circles only on onboarding; no repeating hint on trigger, action, or return.
 ```
 
-### Review Notes (build 33)
+### What's New → UK (1.0.2) — вставити в Connect при submit
 
-Скопіювати з секцій **App Review Notes (version 1.0.1 — build 33)** (EN) та UK-аналог нижче (якщо потрібен) при submit.
+```
+- Зрозуміліший онбординг — Pulsation допомагає… лишається на екрані; Як це працює: і кроки з’являються нижче; перший тап — усі кроки одразу, другий — продовжити (або кроки з’являються самі, якщо почекати).
+- Спокійніша типографіка — Source Serif 4; головні рядки 20 pt; пояснення 17 pt; footer і tap hint 12 pt.
+- Мої шляхи — лічильник 20 pt; Збережені для тебе: 20 pt; збережені дії 17 pt.
+- Спокійніший флоу — підказка під колами лише на онбордингу.
+```
 
-### Після Approve build 33
+### Review Notes (1.0.2)
 
-1. Connect → **1.0.1** → **Release** (manual або auto).
-2. Перевірити оновлення з App Store на iPhone.
+Скопіювати з секцій **App Review Notes (version 1.0.2 — build 34+)** (EN) та UK-аналог нижче при submit.
+
+### Після submit 1.0.2
+
+1. Connect → **1.0.2** → **Submit for Review** (після обробки Apple).
+2. TestFlight на iPhone → regression checklist.
 
 ---
 
@@ -129,6 +127,33 @@ Feet on ground, Find 3 things, Triangle breath, Relax your jaw, Drop your should
 - **Scroll only when needed** — About, paths, and long explanations scroll with a native indicator when text does not fit.
 - **Better small-text readability** — footer links and secondary copy stay legible; app text no longer shrinks below default when iOS text size is set to minimum.
 - **Tap to continue** — always appears last under the circles on every flow screen.
+
+### What's New (1.0.2 — build 34+)
+
+- **Clearer onboarding** — **Pulsation exists…** stays visible; **How it works:** + steps appear below; first tap reveals all steps, second tap continues (auto-reveal if you wait).
+- **Source Serif 4** typography — main lines **20 pt**; explanations **17 pt**; footer links and tap hint **12 pt**.
+- **Paths** — today's count **20 pt**; **Saved for you:** **20 pt**; saved items **17 pt**.
+
+### App Review Notes (version 1.0.2 — build 34+)
+
+Hello App Review Team,
+
+This build (1.0.2) polishes onboarding copy flow and typography on top of build 33. Core path is unchanged:
+onboarding → **One action for you** → one micro-action → return (**You are here** + short explanation).
+
+What changed since build 33:
+- Extended onboarding: **Pulsation exists…** stays on screen; **How it works:** + four steps appear below (slightly darker, same size). First tap shows all steps; second tap continues. Steps auto-reveal if the user waits.
+- **Source Serif 4** font throughout; clearer type hierarchy (main 20 pt, explanations 17 pt, footer/tap 12 pt).
+- **Paths**: count and **Saved for you:** at 20 pt; saved intervention names at 17 pt.
+
+How to test:
+1. Fresh install — read **Pulsation exists…** (stays visible); **Tap circles** under circles; **How it works** steps appear below; tap once for all steps or wait for auto-reveal; tap again to continue.
+2. Trigger → action (try **Find 3 things**) → return; no tap hint under circles on flow screens.
+3. Optional: **Show my paths**, **Save this for me** on return (local only).
+
+No login required. All data on device. Pulsation does not read other apps.
+
+Thank you.
 
 ### What's New (1.0.1 — build 33)
 
@@ -269,6 +294,33 @@ Pulsation створено для спокою, а не тиску.
 - **Збережи це для мене** на return стає **Збережено** після натискання; для збережених дій більше не питає.
 - Плавніша анімація кіл та спокійніший layout у флоу.
 - Краща читабельність при великому тексті (Dynamic Type).
+
+### What's New (1.0.2 — build 34+)
+
+- **Зрозуміліший онбординг** — **Pulsation допомагає…** лишається на екрані; **Як це працює:** + кроки нижче; перший тап — усі кроки, другий — продовжити (або авто, якщо почекати).
+- **Source Serif 4** — головні рядки **20 pt**; пояснення **17 pt**; footer і tap hint **12 pt**.
+- **Мої шляхи** — лічильник **20 pt**; **Збережені для тебе:** **20 pt**; збережені дії **17 pt**.
+
+### App Review Notes (версія 1.0.2 — build 34+)
+
+Вітаємо, команда App Review,
+
+Цей build (1.0.2) полішує онбординг і типографіку поверх build 33. Шлях без змін:
+онбординг → **Одна дія для тебе** → одна м’яка дія → повернення (**Ти тут** + коротке пояснення).
+
+Що змінилось від build 33:
+- **Pulsation допомагає…** лишається на екрані; **Як це працює:** + кроки нижче (трохи темніше). Перший тап — усі кроки; другий — продовжити. Без тапу — кроки з’являються самі.
+- Шрифт **Source Serif 4**; ієрархія: main 20 pt, пояснення 17 pt, footer/tap 12 pt.
+- **Мої шляхи**: лічильник і **Збережені для тебе:** — 20 pt; назви збережених дій — 17 pt.
+
+Як перевірити:
+1. Fresh install — **Pulsation допомагає…** (не зникає); **Торкнись кіл** під колами; **Як це працює:** нижче; один тап — усі кроки або почекати; другий тап — далі.
+2. Trigger → action → return; без підказки під колами на флоу.
+3. Опційно: **Мої шляхи**, **Збережи це для мене**.
+
+Логін не потрібен. Дані на пристрої.
+
+Дякуємо.
 
 ### What's New (1.0.1 — build 33)
 

@@ -89,24 +89,19 @@ export const onboardingRhythm = {
   stepGapMs: copyReveal.lineGapMs,
 } as const;
 
-/** Extended onboarding — fade + read beat per line; tap hint after “Pulsation exists…” fades in. */
+/** Extended onboarding — headline stays visible; auto or tap reveals “How it works” + steps. */
 export const onboardingCopy = {
   /** Brief beat to read the headline after it has fully faded in. */
   headlineHoldMs: 1800,
-  headlineFadeOutMs: 800,
   stepFadeMs: 1600,
   /** Pause to read each how-it-works line after it has fully faded in. */
   stepReadMs: 1000,
   hintGapMs: copyReveal.lineGapMs,
 } as const;
 
-/** Beat to read the headline after it finishes fading in, before it fades out. */
+/** Beat to read the headline after it finishes fading in, before auto-reveal begins. */
 export function getOnboardingHeadlineHoldMs(): number {
   return onboardingCopy.headlineHoldMs;
-}
-
-export function getOnboardingHeadlineFadeOutMs(): number {
-  return onboardingCopy.headlineFadeOutMs;
 }
 
 /** Fade-in + read time — next line starts only after the previous is readable. */
@@ -114,14 +109,9 @@ export function getOnboardingStepLineCycleMs(): number {
   return onboardingCopy.stepFadeMs + onboardingCopy.stepReadMs;
 }
 
-/** When “How it works” mounts — after “Pulsation exists…” has fully faded out. */
+/** When “How it works” auto-mounts — after headline fade-in + read beat. */
 export function getOnboardingHowItWorksMountDelayMs(): number {
-  return (
-    copyReveal.delayMs +
-    copyReveal.fadeMs +
-    getOnboardingHeadlineHoldMs() +
-    getOnboardingHeadlineFadeOutMs()
-  );
+  return copyReveal.delayMs + copyReveal.fadeMs + getOnboardingHeadlineHoldMs();
 }
 
 /** Last line index: subtitle (0) + `stepCount` steps → index `stepCount`. */
@@ -139,7 +129,7 @@ export function getOnboardingExplanationDelayMs(lineIndex: number): number {
   return getOnboardingHowItWorksMountDelayMs() + getOnboardingStepRevealDelayMs(lineIndex);
 }
 
-/** Tap circles — after “Pulsation exists…” has fully faded in; same fade rhythm as main copy. */
+/** Tap circles — after “Pulsation exists…” has fully faded in. */
 export function getOnboardingCirclesHintDelayMs(_stepCount: number = 0): number {
   return copyReveal.delayMs + copyReveal.fadeMs;
 }

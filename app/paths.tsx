@@ -14,7 +14,7 @@ import { interventionCopy, uiCopy } from "../src/modules/delivery-layer";
 import { removeKeptIntervention } from "../src/services/adaptive-preferences";
 import { getPathsSnapshot } from "../src/services/paths-stats";
 import type { InterventionType } from "../src/types/domain";
-import { mainCopyTextStyle } from "../src/design/main-copy";
+import { explanationTextStyle, mainCopyTextStyle } from "../src/design/main-copy";
 import { getContentMaxWidth } from "../src/design/responsive";
 import { colors, spacing } from "../src/design/tokens";
 
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   pathsMetaLabel: {
-    ...mainCopyTextStyle,
+    ...explanationTextStyle,
     textAlign: "center",
   },
   todayLabel: {
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   todayEmpty: {
-    ...mainCopyTextStyle,
+    ...explanationTextStyle,
     textAlign: "center",
   },
   savedScroll: {
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   sectionBody: {
-    ...mainCopyTextStyle,
+    ...explanationTextStyle,
     textAlign: "left",
     color: colors.textSecondary,
   },

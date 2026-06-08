@@ -8,6 +8,7 @@ import {
   explanationTextStyle,
   getFooterFaintLinkStyle,
   mainCopyTextStyle,
+  onboardingDetailTextStyle,
   sectionHeadingTextStyle,
 } from "../main-copy";
 import { colors, spacing } from "../tokens";
@@ -20,7 +21,7 @@ type Props = PropsWithChildren<{
   fadeMs?: number;
   fadeEasing?: EasingFunction;
   style?: StyleProp<ViewStyle>;
-  variant?: "main" | "heading" | "explanation" | "hint";
+  variant?: "main" | "heading" | "explanation" | "hint" | "onboardingDetail";
   textOpacity?: number;
   holdAfterReveal?: boolean;
   revealId?: string;
@@ -63,16 +64,18 @@ export function ExplanationText({
   const textStyle =
     variant === "main"
       ? [styles.mainText, highContrast && styles.mainTextHighContrast]
-      : variant === "heading"
-        ? [styles.headingText, highContrast && styles.headingTextHighContrast]
-        : variant === "hint"
-          ? [faintLinkStyle]
-          : [styles.text, highContrast && styles.textHighContrast, { opacity: effectiveOpacity }];
+      : variant === "onboardingDetail"
+        ? [styles.onboardingDetailText, highContrast && styles.onboardingDetailTextHighContrast]
+        : variant === "heading"
+          ? [styles.headingText, highContrast && styles.headingTextHighContrast]
+          : variant === "hint"
+            ? [faintLinkStyle]
+            : [styles.text, highContrast && styles.textHighContrast, { opacity: effectiveOpacity }];
 
   const wrapStyle =
     variant === "hint"
       ? [styles.wrapHint, style]
-      : variant === "main" || variant === "heading"
+      : variant === "main" || variant === "heading" || variant === "onboardingDetail"
         ? [styles.wrap, styles.wrapMain, style]
         : [styles.wrap, styles.wrapExplanation, style];
 
@@ -126,6 +129,10 @@ const styles = StyleSheet.create({
   },
   mainText: mainCopyTextStyle,
   mainTextHighContrast: {
+    color: colors.textPrimary,
+  },
+  onboardingDetailText: onboardingDetailTextStyle,
+  onboardingDetailTextHighContrast: {
     color: colors.textPrimary,
   },
   headingText: sectionHeadingTextStyle,

@@ -9,7 +9,7 @@ import {
   breathingRhythm,
   copyReveal,
   getOnboardingCirclesHintDelayMs,
-  getOnboardingStepRevealDelayMs,
+  getOnboardingExplanationDelayMs,
 } from "../animation-rhythm";
 import { armFlowScreenEntryDelay } from "../flow-screen-transition";
 import { uiCopy } from "../../modules/delivery-layer";
@@ -27,8 +27,6 @@ export function ExtendedOnboardingFlow() {
   const router = useRouter();
   const captureMode = isAppStoreScreenshotMode();
   const lineCount = 1 + uiCopy.onboardingSteps.length;
-  const [headlinePhaseComplete, setHeadlinePhaseComplete] = useState(captureMode);
-  const [headlineSkipRequest, setHeadlineSkipRequest] = useState(0);
   const [revealedLineCount, setRevealedLineCount] = useState(captureMode ? lineCount : 0);
   const [hintUnlocked, setHintUnlocked] = useState(captureMode);
   const [hintFadingOut, setHintFadingOut] = useState(false);
@@ -43,7 +41,7 @@ export function ExtendedOnboardingFlow() {
   }, []);
 
   useEffect(() => {
-    if (captureMode || !headlinePhaseComplete) {
+    if (captureMode) {
       return;
     }
 
@@ -51,12 +49,12 @@ export function ExtendedOnboardingFlow() {
     const timers = Array.from({ length: lineCount }, (_, lineIndex) =>
       setTimeout(() => {
         setRevealedLineCount((count) => Math.max(count, lineIndex + 1));
-      }, getOnboardingStepRevealDelayMs(lineIndex)),
+      }, getOnboardingExplanationDelayMs(lineIndex)),
     );
     stepRevealTimersRef.current = timers;
 
     return cancelStepRevealTimers;
-  }, [cancelStepRevealTimers, captureMode, headlinePhaseComplete, lineCount]);
+  }, [cancelStepRevealTimers, captureMode, lineCount]);
 
   useEffect(() => {
     if (captureMode) {
@@ -109,14 +107,9 @@ export function ExtendedOnboardingFlow() {
       navigateToTrigger();
       return;
     }
-    if (!headlinePhaseComplete) {
-      setHeadlineSkipRequest((request) => request + 1);
-      return;
-    }
     if (!allLinesRevealed) {
       cancelStepRevealTimers();
       setRevealedLineCount(lineCount);
-      setHintFadingOut(true);
       return;
     }
     if (!hintUnlocked) {
@@ -127,20 +120,12 @@ export function ExtendedOnboardingFlow() {
     allLinesRevealed,
     cancelStepRevealTimers,
     captureMode,
-    headlinePhaseComplete,
     hintUnlocked,
     isExiting,
     lineCount,
     navigateToTrigger,
   ]);
   useRegisterCirclesPress(onCirclesPress);
-
-  const onHeadlinePhaseComplete = useCallback((options?: { skipped?: boolean }) => {
-    setHeadlinePhaseComplete(true);
-    if (options?.skipped) {
-      setRevealedLineCount((count) => Math.max(count, 1));
-    }
-  }, []);
 
   return (
     <Animated.View style={[styles.root, { opacity: contentOpacity }]}>
@@ -152,11 +137,7 @@ export function ExtendedOnboardingFlow() {
         compactCapture={captureMode}
         mainLine={
           captureMode ? undefined : (
-            <OnboardingPhasedContent
-              revealedLineCount={revealedLineCount}
-              headlineSkipRequest={headlineSkipRequest}
-              onHeadlinePhaseComplete={onHeadlinePhaseComplete}
-            />
+            <OnboardingPhasedContent revealedLineCount={revealedLineCount} />
           )
         }
       >

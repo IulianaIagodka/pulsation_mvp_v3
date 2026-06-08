@@ -6,9 +6,10 @@
 | **1.0.1** | 28 | superseded |
 | **1.0.1** | 31 | **In Review** ⏳ |
 | **1.0.1** | 32 | у репо (superseded EAS auto-increment) |
-| **1.0.1** | 33 | **Submitted** ✅ (EAS auto-increment) |
+| **1.0.1** | 33 | submitted ✅ (superseded) |
+| **1.0.2** | 34+ | **building** ⏳ |
 
-**Зараз:** build **31** In Review. Build **33** завантажено в Connect (обробка Apple ~5–10 хв). Скріншоти завантажені ✅.
+**Зараз:** train **1.0.2** — onboarding + typography polish → EAS build + submit.
 
 Android: `docs/ANDROID-RELEASE-CHECKLIST.md`
 
@@ -112,11 +113,11 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 
 Тексти готові в репо — див. **`docs/app-store-metadata.md`** → секція **Connect — активний реліз**.
 
-### C1. Тексти (build 33)
+### C1. Тексти (1.0.2 build 34+)
 
-- [x] **What's New** EN + UK — `docs/app-store-metadata.md` → **Connect — активний submit** (build 33 vs 31)
+- [x] **What's New** EN + UK — `docs/app-store-metadata.md` → **Connect — активний submit** (1.0.2 vs 33)
 - [ ] **Promotional Text** (опційно)
-- [x] **Review Notes** — у `docs/app-store-metadata.md` (секція build 33)
+- [x] **Review Notes** — у `docs/app-store-metadata.md` (секція 1.0.2 build 34+)
 
 ### C2. URLs (GitHub Pages)
 
@@ -156,22 +157,21 @@ npx expo-doctor
 npm audit --omit=dev
 ```
 
-- [x] **Regression:** `npm test` зелений (22 suites, 120 tests)
+- [x] **Regression:** `npm test` зелений (22 suites, 108 tests)
 - [x] **Type compatibility:** `npx tsc --noEmit` без помилок
-- [ ] **Expo compatibility:** `npx expo-doctor` — перевірити перед EAS (expo-font duplicate)
+- [ ] **Expo compatibility:** `npx expo-doctor` — перевірити перед EAS
 - [ ] **Security:** `npm audit --omit=dev` переглянуто; high/critical відсутні або задокументовані
 
-Поточний стан репо (build **32**):
-- iOS **version** `1.0.1`, **buildNumber** **32** у `app.json`
-- **In Review:** 1.0.1 **build 31**
+Поточний стан репо (1.0.2 build **34+**):
+- iOS **version** `1.0.2`, **buildNumber** EAS auto-increment (remote)
+- Шрифт: **Source Serif 4 Regular**
 - Копі — `src/modules/delivery-layer.ts` (en + uk)
 
-Зміни в build **33** (vs 31 — що відчує юзер):
-- **Spiral → circles** — центральний елемент тепер кола (та сама tap-кнопка)
-- **Extended onboarding** — Tap circles одразу після headline; How it works далі
-- **Calmer flow** — підказка під колами лише на онбордингу, не на trigger/action/return
-- **Flow polish** — без flash «One action for you» при поверненні; Мої шляхи з main copy
-- **Fix** — стабільніший resume / notification open
+Зміни в 1.0.2 (vs 33 — що відчує юзер):
+- **Onboarding** — **Pulsation exists…** лишається; **How it works** + кроки нижче; 1-й тап — усі кроки, 2-й — далі; авто без тапу
+- **Typography** — main **20**, пояснення **17**, footer/tap **12**
+- **Paths** — лічильник і **Saved for you:** **20**; збережені айтеми **17**
+- Усе з build 33: кола, tap hint лише на онбордингу, без flash на return, paths з main copy
 
 ### D2. UX/UI перевірка для adaptive circles hint
 
@@ -184,7 +184,7 @@ npm audit --omit=dev
 - [ ] `triangle_breath`: хінт після 3 циклів дихання
 - [ ] `find_three`: кола не завершують дію, поки не показані всі 3 буліти
 - [ ] `return`: **Збережи це для мене** не показується для вже збереженої дії
-- [ ] Онбординг: **Pulsation exists** → **Tap circles** під колами; потім **How it works** + кроки
+- [ ] Онбординг: **Pulsation exists** лишається → **Tap circles** під колами → **How it works** + кроки нижче; 1-й тап — усі кроки, 2-й — trigger
 
 ---
 
@@ -199,9 +199,9 @@ npm audit --omit=dev
 - [x] Connect → **1.0.1** → build **31** → **Submit for Review**
 - [ ] **Approve** → **Release** або чекати build **32**
 
-### 1.0.2 (build 35+) — in progress ⏳
+### 1.0.2 (build 34+) — in progress ⏳
 
-- [x] Bump **version** `1.0.2` (train 1.0.1 closed після approve)
+- [x] Bump **version** `1.0.2`
 - [ ] `npm run build:ios:testflight` → submit
 - [ ] Connect → **1.0.2** → **Submit for Review** (What's New + Review Notes з `docs/app-store-metadata.md`)
 

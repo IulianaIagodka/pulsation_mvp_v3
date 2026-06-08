@@ -60,7 +60,7 @@ export function OnboardingHowItWorksSubtitle({
 
   return (
     <ExplanationText
-      variant="heading"
+      variant="onboardingDetail"
       delayMs={delayFor(0)}
       fadeMs={stepFadeMs}
       style={styles.subtitle}
@@ -90,7 +90,7 @@ export function OnboardingHowItWorksSteps({
         return (
           <ExplanationText
             key={step}
-            variant="main"
+            variant="onboardingDetail"
             delayMs={delayFor(lineIndex)}
             fadeMs={stepFadeMs}
             style={index === 0 ? styles.stepLineFirst : styles.stepLine}
@@ -144,9 +144,9 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   stepLine: {
-    marginTop: screenshotMode ? spacing.sm : spacing.md,
+    marginTop: spacing.sm,
   },
   stepLineFirst: {
-    marginTop: screenshotMode ? spacing.sm : spacing.md,
+    marginTop: spacing.sm,
   },
 });

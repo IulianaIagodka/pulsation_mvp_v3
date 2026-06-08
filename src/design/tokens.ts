@@ -39,6 +39,8 @@ export const colors = {
   surfaceSecondary: base.surfaceSecondary,
   textPrimary: lighten(base.textPrimary, textPrimaryLift),
   textSecondary: lighten(base.textSecondary, textSecondaryLift),
+  /** Darker companion to {@link textSecondary} — onboarding how-it-works block. */
+  textSecondaryDeep: base.textSecondary,
   borderSoft: base.borderSoft,
 } as const;
 
@@ -51,7 +53,7 @@ export const spacing = {
 } as const;
 
 export const typography = {
-  body: 17,
+  body: 20,
   small: 14,
   gentle: 20,
 } as const;

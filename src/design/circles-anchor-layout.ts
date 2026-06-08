@@ -57,7 +57,7 @@ export function getUnderCirclesHintBlockHeight(windowWidth: number): number {
 /** One main line — used for text min-height and tight follow-up spacing. */
 export function getMainCopySingleLineHeight(windowWidth: number, fontScale = getCappedFontScale()): number {
   const capped = getCappedFontScale(fontScale);
-  return Math.round(scaleByWidth(24, windowWidth) * capped);
+  return Math.round(scaleByWidth(28, windowWidth) * capped);
 }
 
 /** Reserved height for the primary main line — scales with Dynamic Type (up to ~2 lines). */

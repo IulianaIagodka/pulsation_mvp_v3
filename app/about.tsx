@@ -96,8 +96,8 @@ const styles = StyleSheet.create({
   version: {
     marginTop: spacing.sm,
     color: colors.textSecondary,
-    fontSize: 11,
-    lineHeight: 15,
+    fontSize: 12,
+    lineHeight: 16,
     textAlign: "left",
     width: "100%",
   },

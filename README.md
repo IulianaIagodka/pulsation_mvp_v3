@@ -47,7 +47,7 @@ Schema is defined in `src/data/schema.ts`. See `docs/adaptive-scheduling.md` for
 
 ## UX Flow
 
-1. **Onboarding** (`app/index.tsx`): **first install** — full flow (`ExtendedOnboardingFlow`): **Pulsation exists…** → **Tap circles — it's the button here** under circles (right after the headline fades in); then **How it works:** + four steps; footer **About** only; once per install (`extended_onboarding_completed`). **Later cold starts** — short headline (**Pulsation exists…**) + **About**; tap circles → trigger. **Resume from background** — skip onboarding, open **One action for you** directly.
+1. **Onboarding** (`app/index.tsx`): **first install** — full flow (`ExtendedOnboardingFlow`): **Pulsation exists…** stays visible; **Tap circles — it's the button here** under circles; **How it works:** + four steps appear below (auto or first tap shows all); second tap → trigger; footer **About** only; once per install (`extended_onboarding_completed`). **Later cold starts** — short headline + **About**; tap circles → trigger. **Resume from background** — skip onboarding, open **One action for you** directly.
 2. **Trigger** (`app/trigger.tsx`): same circles slot; **One action for you** and **Show my paths** / **Мої шляхи** fade in together when you already have today’s actions or saved items; **tap to continue** last under circles. Paths → `app/paths.tsx`.
 3. **Action** (`app/action.tsx`): one micro-intervention (feet / find 3 / triangle breath / relax jaw / drop shoulders / notice 3 sounds / press palms together). Main line starts at the **same Y** as trigger **One action for you** and return **You are here**; bullets / phases / hint flow **below** main. **Simple actions:** **tap to continue** fades in **with** the main instruction. **Find 3 things:** shows three cues from **7 rotating sets** (`delivery-layer.ts`); same set never repeats back-to-back. Until all three bullets are visible, **circles tap reveals the next bullet** instead of completing the action; hint appears after all bullets. **Triangle breath**: soft haptic at inhale start and light haptic at exhale start (`startTriangleBreathHapticLoop`); hint after 3 breath cycles. **Circles are the same visual everywhere** (`circles-visual.ts` + `CirclesRings`). Action → return uses **`router.replace`** (no stack fade — `animation: "none"` on flow screens).
 4. **Return** (`app/return.tsx`): **You are here** (pinned main, fade-in) → explanation (fade after main); **Save this for me** in the **footer** and **tap to continue** under circles fade in **together** (tap last); if already saved, tap appears after the explanation. Tap circles → trigger.
@@ -56,7 +56,7 @@ Stack navigation uses a calm **fade** between routes (`app/_layout.tsx`, `breath
 
 Standalone **About** screen: `app/about.tsx` (reachable from onboarding footer only).
 
-**Paths** (`app/paths.tsx`): today's completed actions + interventions saved with **Save this for me** (local SQLite only). Scrollable saved list; **Saved for you:** matches today-count label style.
+**Paths** (`app/paths.tsx`): today's count (**20 pt**) + label (**17 pt**); **Saved for you:** (**20 pt**); saved intervention names (**17 pt**). Local SQLite only.
 
 **Overflow scroll** (`OverflowScrollView`): native scroll indicator only when content exceeds the viewport (About, paths, explanations, onboarding steps).
 
@@ -72,11 +72,11 @@ Dark minimal palette from technical requirements is implemented in `src/design/t
 
 | Piece | Where |
 | ----- | ----- |
-| Main line typography | `src/design/main-copy.ts` (matches onboarding tone where used) |
+| Main line typography | `src/design/main-copy.ts` — **Source Serif 4**; main **20 pt**, explanations **17 pt**, footer/tap **12 pt** |
 | Soft explanation-style fades | `ExplanationText` + `breathingRhythm.explanationText` |
 | Onboarding step rhythm | `onboardingRhythm` + `getOnboardingExplanationDelayMs` |
 | Gentle screen text entrance | `GentleTextTransition` (opacity only) |
-| Tap hint | **Extended onboarding**: **Tap circles — it's the button here** under circles right after **Pulsation exists…** fades in; steps continue below. **Short onboarding / flow**: **tap to continue** under circles; once shown on flow screens, stays visible for **2 completed cycles**, then hidden. **Triangle breath**: hint after **3 breath cycles**. |
+| Tap hint | **Extended onboarding only**: **Tap circles — it's the button here** under circles after **Pulsation exists…**; steps below (auto or first tap). **Triangle breath**: hint after **3 breath cycles**. |
 | Find 3 sequential bullets | `findThreeThings.autoRevealIntervalMs` |
 | Action → return (“You are here”) | Circles tap on action (`app/action.tsx`); find 3 requires all bullets first |
 | Save for me | `app/return.tsx` + `src/services/adaptive-preferences.ts` (`keptInterventions`) |

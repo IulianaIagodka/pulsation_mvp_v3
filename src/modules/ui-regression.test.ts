@@ -119,7 +119,7 @@ describe("circles layout regression checks", () => {
     expect(getTriangleBreathTotalMs()).toBe(33000);
   });
 
-  it("keeps extended onboarding copy phases ordered (headline → hint, then how it works)", () => {
+  it("keeps extended onboarding copy phases ordered (headline + hint, auto or tap how it works)", () => {
     const howItWorksMount = getOnboardingHowItWorksMountDelayMs();
     const subtitle = getOnboardingExplanationDelayMs(0);
     const lastStep = getOnboardingExplanationDelayMs(getOnboardingLastLineIndex(4));
@@ -128,10 +128,7 @@ describe("circles layout regression checks", () => {
     expect(onboardingCopy.headlineHoldMs).toBeGreaterThanOrEqual(1200);
     expect(getOnboardingStepLineCycleMs()).toBeGreaterThan(onboardingCopy.stepFadeMs);
     expect(howItWorksMount).toBe(
-      copyReveal.delayMs +
-        copyReveal.fadeMs +
-        onboardingCopy.headlineHoldMs +
-        onboardingCopy.headlineFadeOutMs,
+      copyReveal.delayMs + copyReveal.fadeMs + onboardingCopy.headlineHoldMs,
     );
     expect(subtitle).toBe(howItWorksMount);
     expect(lastStep).toBe(howItWorksMount + getOnboardingStepLineCycleMs() * 4);

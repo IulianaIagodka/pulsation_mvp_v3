@@ -26,8 +26,8 @@ export const sectionHeadingTextStyle: TextStyle = {
 export const mainCopyTextStyle: TextStyle = {
   ...sharedFont,
   color: colors.textSecondary,
-  fontSize: 17,
-  lineHeight: 24,
+  fontSize: 20,
+  lineHeight: 28,
   textAlign: "center",
   letterSpacing: 0.15,
   width: "100%",
@@ -36,12 +36,24 @@ export const mainCopyTextStyle: TextStyle = {
   flexShrink: 1,
 };
 
+/** Extended onboarding headline — same size, lighter than the block below. */
+export const onboardingHeadlineTextStyle: TextStyle = {
+  ...mainCopyTextStyle,
+  color: colors.textSecondary,
+};
+
+/** How it works + steps — same size as headline, slightly darker. */
+export const onboardingDetailTextStyle: TextStyle = {
+  ...mainCopyTextStyle,
+  color: colors.textSecondaryDeep,
+};
+
 /** Footer links — Save / Return / Paths / About / onboarding hint. */
 export const footerLinkTextStyle: TextStyle = {
   ...sharedFont,
   color: colors.textSecondary,
-  fontSize: 11,
-  lineHeight: 15,
+  fontSize: 12,
+  lineHeight: 16,
   textAlign: "center",
   letterSpacing: 0.16,
 };
@@ -57,7 +69,7 @@ export function getFooterFaintLinkStyle(highContrast: boolean): TextStyle {
   };
 }
 
-/** Return follow-up and find-3 bullets — same size as main, slightly dimmer. */
+/** Return follow-up and find-3 bullets — quieter than main. */
 export const explanationTextStyle: TextStyle = {
   ...sharedFont,
   color: colors.textSecondary,

@@ -19,7 +19,7 @@ Use this checklist before release whenever animation/layout is changed.
 
 ## Copy order (onboarding hint under circles)
 
-- [ ] On **extended onboarding**: **Tap circles** fades in after **Pulsation exists…** has fully appeared (`getOnboardingCirclesHintDelayMs`); **How it works:** + four steps continue after the headline fades out.
+- [ ] On **extended onboarding**: **Tap circles** fades in after **Pulsation exists…** has fully appeared; **Pulsation exists…** **stays visible**; **How it works:** + steps appear **below** (auto one-by-one, or all on first tap); second tap continues to trigger.
 - [ ] On **short onboarding**: same **Tap circles** hint under circles with the headline.
 - [ ] On **trigger**, **action**, **return**: **no** tap hint under circles — slot reserved, visually quiet (`PersistentCirclesLayer`).
 - [ ] On **trigger**: **One action for you** first; **Show my paths** with main copy when `hasPathsContent()`.
@@ -41,8 +41,8 @@ Use this checklist before release whenever animation/layout is changed.
 - [ ] On `triangle_breath`, feel haptic at **inhale start** and **exhale start** (device build, not Expo Go only).
 - [ ] On return, **Save this for me** becomes **Saved** on tap (stays visible, not clickable); later visits with the same saved intervention do **not** show the control.
 - [ ] With **Accessibility XXL** text size (Settings → Display → Larger Text): main line stays pinned; onboarding scrolls (pinned **How it works:**); About / paths scroll when overflow (`OverflowScrollView`); return explanation flows below main without shifting **You are here**.
-- [ ] **Paths**: **Saved for you:** styled like «actions for yourself today»; saved list scrolls when many items.
-- [ ] Onboarding shows **Pulsation exists…** → **tap circles** under circles, then **How it works** steps; not “one action for you now?” on first screen.
+- [ ] **Paths**: today's count **20 pt**; **Saved for you:** **20 pt**; saved items **17 pt**; list scrolls when many items.
+- [ ] Onboarding shows **Pulsation exists…** (stays visible) → **tap circles** under circles → **How it works** steps below; not “one action for you now?” on first screen.
 
 ## Automated safety net
 
