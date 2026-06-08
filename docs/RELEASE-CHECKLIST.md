@@ -5,9 +5,10 @@
 | **1.0.0** | 26 | **LIVE** в App Store ✅ |
 | **1.0.1** | 28 | superseded |
 | **1.0.1** | 31 | **In Review** ⏳ |
-| **1.0.1** | 32 | **EAS build + submit** 🚀 |
+| **1.0.1** | 32 | у репо (superseded EAS auto-increment) |
+| **1.0.1** | 33 | **Submitted** ✅ (EAS auto-increment) |
 
-**Зараз:** build **31** на review (Connect не чіпати). Build **32** — коміт → EAS build + submit. Скріншоти завантажені ✅.
+**Зараз:** build **31** In Review. Build **33** завантажено в Connect (обробка Apple ~5–10 хв). Скріншоти завантажені ✅.
 
 Android: `docs/ANDROID-RELEASE-CHECKLIST.md`
 
@@ -111,11 +112,11 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 
 Тексти готові в репо — див. **`docs/app-store-metadata.md`** → секція **Connect — активний реліз**.
 
-### C1. Тексти (build 32)
+### C1. Тексти (build 33)
 
-- [x] **What's New** EN + UK — `docs/app-store-metadata.md` → **Connect — активний submit**
+- [x] **What's New** EN + UK — `docs/app-store-metadata.md` → **Connect — активний submit** (текст build 32 = 33)
 - [ ] **Promotional Text** (опційно)
-- [x] **Review Notes** для build **32** — у `docs/app-store-metadata.md`
+- [x] **Review Notes** — у `docs/app-store-metadata.md` (секція build 32)
 
 ### C2. URLs (GitHub Pages)
 
@@ -132,7 +133,8 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 
 - [x] 1.0.0 пройшов review
 - [x] Review Notes для build **31** відправлені з submit
-- [ ] Review Notes для build **32** — при submit
+- [x] Build **33** submitted via EAS (2026-06-08)
+- [ ] Connect → **Submit for Review** build **33** (після обробки Apple)
 
 ---
 
@@ -196,18 +198,18 @@ npm audit --omit=dev
 - [x] Connect → **1.0.1** → build **31** → **Submit for Review**
 - [ ] **Approve** → **Release** або чекати build **32**
 
-### 1.0.1 (build 32) — submit 🚀
+### 1.0.1 (build 33) — submitted ✅
 
-- [ ] `npm run build:ios:testflight`
-- [ ] `npm run submit:ios:testflight`
-- [ ] Connect → **1.0.1** → build **32** → **Submit for Review** (What's New + Review Notes з `docs/app-store-metadata.md`)
+- [x] `npm run build:ios:testflight` — build `017b9aed`
+- [x] `npm run submit:ios:testflight` — submission `9e4d7b3e`
+- [ ] Connect → **1.0.1** → build **33** → **Submit for Review** (What's New + Review Notes з `docs/app-store-metadata.md`)
 
 ---
 
 ## Поки чекаєш review
 
 1. [ ] **Нічого не міняти** в Connect для build **31**
-2. [ ] TestFlight build **32** → D2 на iPhone
+2. [ ] TestFlight build **33** → D2 на iPhone
 3. [ ] Android: Play Console (`docs/ANDROID-RELEASE-CHECKLIST.md`)
 
 ---

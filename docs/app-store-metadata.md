@@ -1,10 +1,10 @@
 # App Store Metadata (EN + UK) for Pulsation
 
-## Connect — активний submit (1.0.1, build 32)
+## Connect — активний submit (1.0.1, build 33)
 
 **Скріншоти:** завантажені ✅  
 **build 31:** In Review (не чіпати в Connect).  
-**build 32:** EAS build + submit з master.
+**build 33:** submitted 2026-06-08 (EAS auto-increment з 32). Тексти нижче — секція **build 32** (той самий зміст).
 
 ### What's New → EN (build 32) — вставити в Connect при submit
 
