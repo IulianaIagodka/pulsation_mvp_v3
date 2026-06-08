@@ -199,11 +199,17 @@ npm audit --omit=dev
 - [x] Connect → **1.0.1** → build **31** → **Submit for Review**
 - [ ] **Approve** → **Release** або чекати build **32**
 
+### 1.0.2 (build 35+) — in progress ⏳
+
+- [x] Bump **version** `1.0.2` (train 1.0.1 closed після approve)
+- [ ] `npm run build:ios:testflight` → submit
+- [ ] Connect → **1.0.2** → **Submit for Review** (What's New + Review Notes з `docs/app-store-metadata.md`)
+
 ### 1.0.1 (build 33) — submitted ✅
 
 - [x] `npm run build:ios:testflight` — build `017b9aed`
 - [x] `npm run submit:ios:testflight` — submission `9e4d7b3e`
-- [ ] Connect → **1.0.1** → build **33** → **Submit for Review** (What's New + Review Notes з `docs/app-store-metadata.md`)
+- [x] Train **1.0.1** closed — нові білди лише на **1.0.2+**
 
 ---
 

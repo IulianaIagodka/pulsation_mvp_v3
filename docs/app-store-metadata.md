@@ -1,6 +1,6 @@
 # App Store Metadata (EN + UK) for Pulsation
 
-## Connect — активний submit (1.0.1, build 33)
+## Connect — активний submit (1.0.2, build 35+)
 
 **Скріншоти:** завантажені ✅  
 **build 31:** In Review (не чіпати в Connect).  
