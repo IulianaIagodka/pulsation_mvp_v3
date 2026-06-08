@@ -35,7 +35,7 @@ const COPY = {
     "One small action for you",
     "A quiet return — «you are here»",
   ],
-  onboardingCirclesHint: "Tap circles — it's the button here",
+  onboardingCirclesHint: "Tap circles to continue — it is a button here",
   triggerPrompt: "One action for you",
   tapContinueHint: "tap to continue",
   actionText:

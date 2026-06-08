@@ -1,5 +1,40 @@
 # App Store Metadata (EN + UK) for Pulsation
 
+## Connect — активний submit (1.0.1, build 32)
+
+**Скріншоти:** завантажені ✅  
+**build 31:** In Review (не чіпати в Connect).  
+**build 32:** EAS build + submit з master.
+
+### What's New → EN (build 32) — вставити в Connect при submit
+
+```
+- Extended onboarding — Tap circles — it's the button here appears right after Pulsation exists…; How it works steps follow.
+- Flow polish — One action for you no longer flashes on return; Show my paths with main copy; tap to continue always last under circles.
+- Tap hint grace — once shown, stays visible across trigger / action / return for 2 completed cycles, then fades out on return.
+- Copy cleanup — all in-app strings in one place; updated paths empty states.
+```
+
+### What's New → UK (build 32) — вставити в Connect при submit
+
+```
+- Розширений онбординг — Торкнись кіл — це кнопка тут одразу після Pulsation допомагає…; далі кроки Як це працює:.
+- Поліш флоу — Одна дія для тебе без різкого спалаху при поверненні; Мої шляхи з main copy; торкни, щоб продовжити — останнім під колами.
+- Tap hint grace — після першого показу лишається на trigger / action / return протягом 2 завершених циклів, потім зникає на return.
+- Копі — всі тексти в одному файлі; оновлені порожні стани на Мої шляхи.
+```
+
+### Review Notes (build 32)
+
+Скопіювати з секцій **App Review Notes (version 1.0.1 — build 32)** (EN) та UK-аналог нижче (якщо потрібен) при submit.
+
+### Після Approve build 32
+
+1. Connect → **1.0.1** → **Release** (manual або auto).
+2. Перевірити оновлення з App Store на iPhone.
+
+---
+
 ## English (EN)
 
 ### App Name
@@ -83,12 +118,6 @@ Feet on ground, Find 3 things, Triangle breath, Relax your jaw, Drop your should
 - Smoother circles animation and calmer layout across the flow.
 - Better readability with larger text sizes (Dynamic Type).
 
-### What's New (1.0.1 — build 32)
-
-- **Extended onboarding** — **Tap circles — it's the button here** appears right after **Pulsation exists…**; **How it works** steps follow.
-- **Flow polish** — **One action for you** no longer flashes on return; **Show my paths** with main copy; **tap to continue** always last under circles.
-- **Tap hint grace** — once shown, stays visible across trigger / action / return for 2 completed cycles, then fades out on return.
-
 ### What's New (1.0.1 — build 31)
 
 - **Clearer onboarding** — **How it works:** and all four steps use the same readable size as the opening line.
@@ -98,6 +127,12 @@ Feet on ground, Find 3 things, Triangle breath, Relax your jaw, Drop your should
 - **Scroll only when needed** — About, paths, and long explanations scroll with a native indicator when text does not fit.
 - **Better small-text readability** — footer links and secondary copy stay legible; app text no longer shrinks below default when iOS text size is set to minimum.
 - **Tap to continue** — always appears last under the circles on every flow screen.
+
+### What's New (1.0.1 — build 32)
+
+- **Extended onboarding** — **Tap circles — it's the button here** appears right after **Pulsation exists…**; **How it works** steps follow.
+- **Flow polish** — **One action for you** no longer flashes on return; **Show my paths** with main copy; **tap to continue** always last under circles.
+- **Tap hint grace** — once shown, stays visible across trigger / action / return for 2 completed cycles, then fades out on return.
 
 ### App Review Notes (version 1.0.1 — build 32)
 
@@ -229,6 +264,12 @@ Pulsation створено для спокою, а не тиску.
 - **Збережи це для мене** на return стає **Збережено** після натискання; для збережених дій більше не питає.
 - Плавніша анімація кіл та спокійніший layout у флоу.
 - Краща читабельність при великому тексті (Dynamic Type).
+
+### What's New (1.0.1 — build 32)
+
+- **Розширений онбординг** — **Торкнись кіл — це кнопка тут** одразу після **Pulsation допомагає…**; далі кроки **Як це працює:**.
+- **Поліш флоу** — **Одна дія для тебе** без різкого спалаху при поверненні; **Мої шляхи** з main copy; **торкни, щоб продовжити** — останнім під колами.
+- **Tap hint grace** — після першого показу лишається на trigger / action / return протягом 2 завершених циклів, потім зникає на return.
 
 ### What's New (1.0.1 — build 31)
 

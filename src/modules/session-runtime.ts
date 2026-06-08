@@ -12,11 +12,15 @@ let backgroundStartedAt: number | null = null;
 let hasBeenBackgrounded = false;
 let pendingInactiveMinutes = 0;
 
+/** Same JS process resumed from background — not a cold start after kill. */
+export function isWarmProcessResume(): boolean {
+  return hasBeenBackgrounded || backgroundStartedAt != null;
+}
+
 export function hadBackgroundSession(): boolean {
   const now = Date.now();
   return (
-    hasBeenBackgrounded ||
-    backgroundStartedAt != null ||
+    isWarmProcessResume() ||
     getSchedulingProfile().lastBackgroundAt != null ||
     getPersistedBackgroundMinutes(now) > 0
   );

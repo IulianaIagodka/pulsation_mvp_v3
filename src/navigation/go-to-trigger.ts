@@ -1,23 +1,16 @@
 import type { Router } from "expo-router";
-
-function isOnTrigger(pathname: string): boolean {
-  return pathname === "/trigger" || pathname === "trigger";
-}
-
-function isReturnPath(pathname: string): boolean {
-  return pathname === "/return" || pathname === "return";
-}
+import { matchesAppRoute } from "./route-path";
 
 /**
  * Land on a single trigger screen — avoids stacking duplicate `/trigger` routes
  * and avoids stopping on `/action` when popping from `/return`.
  */
 export function goToTrigger(router: Router, pathname: string): void {
-  if (isOnTrigger(pathname)) {
+  if (matchesAppRoute(pathname, "/trigger")) {
     return;
   }
 
-  if (isReturnPath(pathname)) {
+  if (matchesAppRoute(pathname, "/return")) {
     try {
       if (router.canGoBack?.()) {
         router.back();

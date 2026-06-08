@@ -1,13 +1,15 @@
 import { useFocusEffect, usePathname } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
-import { getSchedulingProfile } from "../data/repositories/scheduling-profile-repo";
+import { getSchedulingProfile, recordTapHintRevealedAtCycle } from "../data/repositories/scheduling-profile-repo";
 import { CirclesHintPresentation, getCirclesHintPresentation, getCirclesTapCount } from "../services/circles-hint";
 import {
+  getRetroactiveTapHintAnchorCycle,
   isLastGraceReturnCycle,
   shouldShowTapHint,
   withLastGraceReturnTapHint,
 } from "../modules/circles-hint-presentation";
-import { dismissFlowCirclesHint } from "../design/flow-copy-reveal";
+import { dismissFlowCirclesHint, hasFlowCopyRevealed } from "../design/flow-copy-reveal";
+import { flowRevealIds } from "../design/flow-reveal-ids";
 
 function getPathSalt(pathname: string): number {
   let hash = 0;
@@ -30,7 +32,13 @@ export function useCirclesHintPresentation(baseDelayMs: number): CirclesHintPres
   useFocusEffect(
     useCallback(() => {
       const profile = getSchedulingProfile();
-      const hintAtCycle = profile.tapHintRevealedAtCycle ?? null;
+      let hintAtCycle = profile.tapHintRevealedAtCycle ?? null;
+
+      if (hasFlowCopyRevealed(flowRevealIds.flowCirclesHint) && hintAtCycle == null) {
+        recordTapHintRevealedAtCycle(getRetroactiveTapHintAnchorCycle(profile.totalCompleted));
+        hintAtCycle = getSchedulingProfile().tapHintRevealedAtCycle ?? null;
+      }
+
       setCirclesTapCount(getCirclesTapCount());
       setCompletedCycles(profile.totalCompleted);
       setHintRevealedAtCycle(hintAtCycle);
@@ -38,11 +46,9 @@ export function useCirclesHintPresentation(baseDelayMs: number): CirclesHintPres
       const onLastGraceReturn =
         pathname === "/return" &&
         isLastGraceReturnCycle(profile.totalCompleted, hintAtCycle);
-      if (
-        hintAtCycle != null &&
-        !shouldShowTapHint(profile.totalCompleted, hintAtCycle) &&
-        !onLastGraceReturn
-      ) {
+      const graceEnded =
+        hintAtCycle != null && !shouldShowTapHint(profile.totalCompleted, hintAtCycle);
+      if (hasFlowCopyRevealed(flowRevealIds.flowCirclesHint) && graceEnded && !onLastGraceReturn) {
         dismissFlowCirclesHint();
       }
     }, [pathname]),

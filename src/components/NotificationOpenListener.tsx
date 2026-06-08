@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import * as Notifications from "expo-notifications";
 import { usePathname, useRouter } from "expo-router";
+import { goToAction } from "../navigation/go-to-action";
 import { goToTrigger } from "../navigation/go-to-trigger";
 
 const STALE_NOTIFICATION_MS = 30_000;
@@ -20,6 +21,16 @@ function isFreshNotificationResponse(response: Notifications.NotificationRespons
   return Date.now() - date <= STALE_NOTIFICATION_MS;
 }
 
+function openFromNotificationRoute(router: ReturnType<typeof useRouter>, pathname: string, route?: string) {
+  if (route === "/action") {
+    goToAction(router, pathname);
+    return;
+  }
+  if (route === "/trigger") {
+    goToTrigger(router, pathname);
+  }
+}
+
 export function NotificationOpenListener() {
   const router = useRouter();
   const pathname = usePathname();
@@ -31,15 +42,9 @@ export function NotificationOpenListener() {
   }, [pathname]);
 
   useEffect(() => {
-    const openTrigger = () => {
-      goToTrigger(router, pathnameRef.current);
-    };
-
     const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
       const route = routeFromNotification(response);
-      if (route === "/trigger") {
-        openTrigger();
-      }
+      openFromNotificationRoute(router, pathnameRef.current, route);
     });
 
     // Only replay when the app was opened from a notification moments ago.
@@ -51,9 +56,7 @@ export function NotificationOpenListener() {
           return;
         }
         const route = routeFromNotification(response);
-        if (route === "/trigger") {
-          openTrigger();
-        }
+        openFromNotificationRoute(router, pathnameRef.current, route);
       });
     }
 

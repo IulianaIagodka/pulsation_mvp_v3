@@ -15,7 +15,9 @@ import type { CirclesHintPresentation } from "../../modules/circles-hint-present
 import { CalmText } from "./CalmText";
 import { copyReveal } from "../animation-rhythm";
 import { getCirclesToHintGap, getUnderCirclesHintSlotHeight } from "../circles-anchor-layout";
-import { hasFlowCopyRevealed, shouldInstantFlowReveal, dismissFlowCirclesHint } from "../flow-copy-reveal";
+import { shouldPersistFlowTapHint } from "../../modules/circles-hint-presentation";
+import { useHintSessionEpoch } from "../../hooks/use-hint-session-epoch";
+import { dismissFlowCirclesHint, hasFlowCopyRevealed, shouldInstantFlowReveal } from "../flow-copy-reveal";
 import { flowRevealIds } from "../flow-reveal-ids";
 import { footerLinkTextStyle, getFooterFaintLinkStyle } from "../main-copy";
 import { spacing } from "../tokens";
@@ -63,13 +65,20 @@ export function CirclesUnderHint({
   const hintGap = getCirclesToHintGap(width);
   const slotHeight = getUnderCirclesHintSlotHeight(width);
   const resolvedLabel = label ?? uiCopy.tapContinueHint;
-  const active = visible && presentation.shouldShow;
-  const instant = shouldInstantFlowReveal(revealId, forceVisible);
+  useHintSessionEpoch();
+  const persistGrace =
+    revealId === flowRevealIds.flowCirclesHint && shouldPersistFlowTapHint(fadeOutDelayMs);
+  const flowHintSessionLive =
+    revealId !== flowRevealIds.flowCirclesHint || hasFlowCopyRevealed(flowRevealIds.flowCirclesHint);
+  const instant = shouldInstantFlowReveal(revealId, forceVisible || persistGrace);
+  const fadingOut = fadeOutDelayMs != null;
+  const active =
+    fadingOut || (flowHintSessionLive && (persistGrace || (visible && presentation.shouldShow)));
   const keepHintMounted =
     holdAfterReveal &&
     revealId != null &&
     hasFlowCopyRevealed(revealId) &&
-    presentation.shouldShow;
+    (presentation.shouldShow || persistGrace);
   const showHintContent = active || keepHintMounted;
   const transitionMs = labelTransitionMs ?? fadeMs;
 
@@ -153,6 +162,13 @@ export function CirclesUnderHint({
 
   useEffect(() => {
     if (fadeOutDelayMs == null) {
+      if (
+        revealId === flowRevealIds.flowCirclesHint &&
+        !hasFlowCopyRevealed(flowRevealIds.flowCirclesHint)
+      ) {
+        fadeOutOpacity.setValue(0);
+        return;
+      }
       if (revealId == null || !hasFlowCopyRevealed(revealId)) {
         fadeOutOpacity.setValue(1);
       }

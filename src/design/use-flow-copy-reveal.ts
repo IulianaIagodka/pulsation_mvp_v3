@@ -2,6 +2,9 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 import { Animated, type EasingFunction } from "react-native";
 import { Easing } from "react-native";
 import { hasFlowCopyRevealed, markFlowCopyRevealed, markFlowCopyShown, shouldInstantFlowReveal } from "./flow-copy-reveal";
+import { flowRevealIds } from "./flow-reveal-ids";
+import { useHintSessionEpoch } from "../hooks/use-hint-session-epoch";
+import { shouldPersistFlowTapHint } from "../modules/circles-hint-presentation";
 
 type Options = {
   opacity: Animated.Value;
@@ -28,6 +31,7 @@ export function useFlowCopyReveal({
   const hasRevealedRef = useRef(false);
   const fadeEasingRef = useRef(fadeEasing);
   fadeEasingRef.current = fadeEasing;
+  const hintSessionEpoch = useHintSessionEpoch();
 
   useLayoutEffect(() => {
     const instant = forceVisible || (revealId != null && shouldInstantFlowReveal(revealId, false));
@@ -52,6 +56,17 @@ export function useFlowCopyReveal({
 
     if (holdAfterReveal && hasRevealedRef.current) {
       opacity.setValue(1);
+      return;
+    }
+
+    if (
+      holdAfterReveal &&
+      revealId != null &&
+      hasFlowCopyRevealed(revealId) &&
+      (revealId !== flowRevealIds.flowCirclesHint || shouldPersistFlowTapHint())
+    ) {
+      opacity.setValue(1);
+      hasRevealedRef.current = true;
       return;
     }
 
@@ -90,5 +105,5 @@ export function useFlowCopyReveal({
         opacity.stopAnimation();
       }
     };
-  }, [delayMs, fadeMs, forceVisible, holdAfterReveal, opacity, revealId]);
+  }, [delayMs, fadeMs, forceVisible, hintSessionEpoch, holdAfterReveal, opacity, revealId]);
 }

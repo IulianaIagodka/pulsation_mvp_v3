@@ -12,7 +12,6 @@ import {
   getOnboardingStepRevealDelayMs,
 } from "../animation-rhythm";
 import { armFlowScreenEntryDelay } from "../flow-screen-transition";
-import { flowRevealIds } from "../flow-reveal-ids";
 import { uiCopy } from "../../modules/delivery-layer";
 import { useRegisterCirclesHint } from "../../hooks/use-register-circles-hint";
 import { useRegisterCirclesPress } from "../../hooks/use-register-circles-press";
@@ -22,6 +21,7 @@ import { isAppStoreScreenshotMode } from "../../modules/app-store-screenshot-mod
 
 const EXIT_FADE_MS = breathingRhythm.motion.screenFadeMs;
 const ONBOARDING_HINT_DELAY_MS = getOnboardingCirclesHintDelayMs(0);
+const ONBOARDING_HINT_READY_MS = ONBOARDING_HINT_DELAY_MS + copyReveal.fadeMs;
 
 export function ExtendedOnboardingFlow() {
   const router = useRouter();
@@ -31,66 +31,77 @@ export function ExtendedOnboardingFlow() {
   const [headlineSkipRequest, setHeadlineSkipRequest] = useState(0);
   const [revealedLineCount, setRevealedLineCount] = useState(captureMode ? lineCount : 0);
   const [hintUnlocked, setHintUnlocked] = useState(captureMode);
+  const [hintFadingOut, setHintFadingOut] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const contentOpacity = useRef(new Animated.Value(1)).current;
+  const stepRevealTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const allLinesRevealed = revealedLineCount >= lineCount;
+
+  const cancelStepRevealTimers = useCallback(() => {
+    stepRevealTimersRef.current.forEach(clearTimeout);
+    stepRevealTimersRef.current = [];
+  }, []);
 
   useEffect(() => {
     if (captureMode || !headlinePhaseComplete) {
       return;
     }
 
+    cancelStepRevealTimers();
     const timers = Array.from({ length: lineCount }, (_, lineIndex) =>
       setTimeout(() => {
         setRevealedLineCount((count) => Math.max(count, lineIndex + 1));
       }, getOnboardingStepRevealDelayMs(lineIndex)),
     );
+    stepRevealTimersRef.current = timers;
 
-    return () => {
-      timers.forEach(clearTimeout);
-    };
-  }, [captureMode, headlinePhaseComplete, lineCount]);
+    return cancelStepRevealTimers;
+  }, [cancelStepRevealTimers, captureMode, headlinePhaseComplete, lineCount]);
 
   useEffect(() => {
     if (captureMode) {
       setHintUnlocked(true);
       return;
     }
-    const timer = setTimeout(() => setHintUnlocked(true), ONBOARDING_HINT_DELAY_MS);
+    const timer = setTimeout(() => setHintUnlocked(true), ONBOARDING_HINT_READY_MS);
     return () => clearTimeout(timer);
   }, [captureMode]);
 
-  const circlesHintPresentation = useCirclesHintPresentation(copyReveal.lineGapMs);
+  const circlesHintPresentation = useCirclesHintPresentation(ONBOARDING_HINT_DELAY_MS);
   const hintRegistration = useMemo(
     () => ({
-      presentation: circlesHintPresentation,
-      visible: captureMode || hintUnlocked,
-      delayMs: 0,
+      presentation: { ...circlesHintPresentation, shouldShow: true },
+      visible: true,
+      delayMs: ONBOARDING_HINT_DELAY_MS,
       fadeMs: copyReveal.fadeMs,
       label: uiCopy.onboardingCirclesHint,
-      revealId: flowRevealIds.flowCirclesHint,
       forceVisible: captureMode,
       holdAfterReveal: true,
+      fadeOutDelayMs: hintFadingOut && !captureMode ? 0 : undefined,
     }),
-    [captureMode, circlesHintPresentation, hintUnlocked],
+    [captureMode, circlesHintPresentation, hintFadingOut],
   );
   useRegisterCirclesHint(hintRegistration);
 
   const navigateToTrigger = useCallback(() => {
     if (isExiting) return;
     setIsExiting(true);
+    const waitMs = hintFadingOut ? 0 : copyReveal.fadeMs;
+    if (!hintFadingOut) {
+      setHintFadingOut(true);
+    }
     armFlowScreenEntryDelay(EXIT_FADE_MS);
     Animated.timing(contentOpacity, {
       toValue: 0,
       duration: EXIT_FADE_MS,
       easing: Easing.out(Easing.quad),
       useNativeDriver: true,
-    }).start(({ finished }) => {
-      if (!finished) return;
+    }).start();
+    setTimeout(() => {
       markExtendedOnboardingCompleted();
       router.replace("/trigger");
-    });
-  }, [contentOpacity, isExiting, router]);
+    }, waitMs);
+  }, [contentOpacity, hintFadingOut, isExiting, router]);
 
   const onCirclesPress = useCallback(() => {
     if (isExiting) return;
@@ -103,7 +114,9 @@ export function ExtendedOnboardingFlow() {
       return;
     }
     if (!allLinesRevealed) {
-      setRevealedLineCount((count) => Math.min(count + 1, lineCount));
+      cancelStepRevealTimers();
+      setRevealedLineCount(lineCount);
+      setHintFadingOut(true);
       return;
     }
     if (!hintUnlocked) {
@@ -112,6 +125,7 @@ export function ExtendedOnboardingFlow() {
     navigateToTrigger();
   }, [
     allLinesRevealed,
+    cancelStepRevealTimers,
     captureMode,
     headlinePhaseComplete,
     hintUnlocked,

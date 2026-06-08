@@ -4,13 +4,15 @@ import {
   __flowCopyRevealInternals,
   armInstantTriggerReturn,
   clearInstantTriggerReturn,
+  dismissFlowCirclesHint,
+  getHintSessionEpoch,
   hasFlowCopyRevealed,
   isInstantTriggerReturnActive,
-  dismissFlowCirclesHint,
   markFlowCopyRevealed,
   markFlowCopyShown,
   markTriggerFlowRevealed,
   shouldInstantFlowReveal,
+  subscribeHintSession,
 } from "./flow-copy-reveal";
 
 jest.mock("../data/repositories/scheduling-profile-repo", () => ({
@@ -48,8 +50,10 @@ describe("flow-copy-reveal", () => {
     expect(hasFlowCopyRevealed(flowRevealIds.flowCirclesHint)).toBe(false);
   });
 
-  it("instant trigger return skips tap hint until it has been revealed once", () => {
+  it("instant trigger return only snap-shows tap hint after it has been revealed once", () => {
     armInstantTriggerReturn();
+    expect(shouldInstantFlowReveal(flowRevealIds.triggerMain)).toBe(false);
+    expect(shouldInstantFlowReveal(flowRevealIds.triggerPaths)).toBe(false);
     expect(shouldInstantFlowReveal(flowRevealIds.flowCirclesHint)).toBe(false);
     markFlowCopyRevealed(flowRevealIds.flowCirclesHint);
     expect(shouldInstantFlowReveal(flowRevealIds.flowCirclesHint)).toBe(true);
@@ -70,10 +74,10 @@ describe("flow-copy-reveal", () => {
     expect(shouldInstantFlowReveal(flowRevealIds.triggerMain)).toBe(false);
   });
 
-  it("instant trigger return shows paths when already revealed", () => {
+  it("does not instant-show paths on trigger return even when already revealed", () => {
     markFlowCopyRevealed(flowRevealIds.triggerPaths);
     armInstantTriggerReturn();
-    expect(shouldInstantFlowReveal(flowRevealIds.triggerPaths)).toBe(true);
+    expect(shouldInstantFlowReveal(flowRevealIds.triggerPaths)).toBe(false);
   });
 
   it("clears tap hint session after grace dismiss", () => {
@@ -82,10 +86,23 @@ describe("flow-copy-reveal", () => {
     expect(hasFlowCopyRevealed(flowRevealIds.flowCirclesHint)).toBe(false);
   });
 
-  it("arms instant trigger return only for trigger reveal ids", () => {
+  it("notifies hint session subscribers when tap hint is shown or dismissed", () => {
+    const epochs: number[] = [];
+    const unsubscribe = subscribeHintSession(() => {
+      epochs.push(getHintSessionEpoch());
+    });
+
+    markFlowCopyShown(flowRevealIds.flowCirclesHint);
+    dismissFlowCirclesHint();
+    unsubscribe();
+
+    expect(epochs).toEqual([1, 2]);
+  });
+
+  it("arms instant trigger return for tap hint persistence only", () => {
     armInstantTriggerReturn();
     expect(isInstantTriggerReturnActive()).toBe(true);
-    expect(shouldInstantFlowReveal(flowRevealIds.triggerMain)).toBe(true);
+    expect(shouldInstantFlowReveal(flowRevealIds.triggerMain)).toBe(false);
     expect(shouldInstantFlowReveal("other-copy")).toBe(false);
     clearInstantTriggerReturn();
     expect(isInstantTriggerReturnActive()).toBe(false);

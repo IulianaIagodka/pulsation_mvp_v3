@@ -195,10 +195,33 @@ function capturePath(slide) {
   );
 }
 
+/** Covers __DEV__ HC + Reset pills in simulator captures (top-right). */
+async function stripDevControls(inputPath) {
+  const img = sharp(inputPath);
+  const meta = await img.metadata();
+  const w = meta.width;
+  const h = meta.height;
+  const left = Math.round(w * 0.72);
+  const top = Math.round(h * 0.022);
+  const patchW = w - left;
+  const patchH = Math.round(h * 0.045);
+
+  const sampleX = Math.round(w * 0.02);
+  const sampleW = Math.max(8, Math.round(w * 0.04));
+  const bgPatch = await sharp(inputPath)
+    .extract({ left: sampleX, top, width: sampleW, height: patchH })
+    .resize(patchW, patchH, { fit: "fill" })
+    .png()
+    .toBuffer();
+
+  return img.composite([{ input: bgPatch, left, top }]).png().toBuffer();
+}
+
 /** Exact Connect size — app UI unchanged, letterbox if aspect differs. */
 async function writeConnectPng(inputPath, outputPath) {
   const { w, h } = IPHONE;
-  await sharp(inputPath)
+  const stripped = await stripDevControls(inputPath);
+  await sharp(stripped)
     .resize(w, h, { fit: "contain", background: BG })
     .png({ compressionLevel: 9, force: true })
     .toColorspace("srgb")
@@ -218,7 +241,8 @@ async function writeMarketingPng(slide, inputPath, outputPath) {
   const innerY = PHONE.y + PHONE.pad;
 
   const isOnboarding = slide.capture.startsWith("01-onboarding");
-  const fitted = await sharp(inputPath)
+  const stripped = await stripDevControls(inputPath);
+  const fitted = await sharp(stripped)
     .resize(innerW, innerH, {
       fit: isOnboarding ? "contain" : "cover",
       position: isOnboarding ? "top" : "centre",

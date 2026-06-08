@@ -126,11 +126,11 @@ export function recordScheduledInterval(minutes: number) {
 }
 
 /** First time tap hint finishes fading in — anchor the 2-cycle grace window. */
-export function recordTapHintRevealedAtCycle() {
+export function recordTapHintRevealedAtCycle(anchorCycle?: number) {
   const profile = getSchedulingProfile();
   if (profile.tapHintRevealedAtCycle != null) return;
   saveSchedulingProfile({
     ...profile,
-    tapHintRevealedAtCycle: profile.totalCompleted,
+    tapHintRevealedAtCycle: anchorCycle ?? profile.totalCompleted,
   });
 }

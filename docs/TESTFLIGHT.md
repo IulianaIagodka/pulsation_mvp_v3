@@ -28,8 +28,8 @@ npm run build:ios:testflight
 
 - Профіль: **production** (`distribution: store`).
 - EAS запитає Apple credentials (можна довірити EAS).
-- **version** `1.0.1`, **buildNumber** `31` у `app.json`.
-- **App Store:** 1.0.0 build **26** LIVE; 1.0.1 build **28** In Review; build **31** — layout polish (2026-06).
+- **version** `1.0.1`, **buildNumber** `32` у `app.json`.
+- **App Store:** 1.0.0 build **26** LIVE; 1.0.1 build **31** In Review; build **32** — onboarding + flow polish (2026-06).
 - Тестовий режим ротації дій **вимкнено** у production-білді.
 
 Чекай статус на https://expo.dev → Builds (зазвичай 10–25 хв).

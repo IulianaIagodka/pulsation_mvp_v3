@@ -1,8 +1,23 @@
+/**
+ * In-app copy (en + uk). Edit user-facing strings here.
+ *
+ * - interventionLabelsByLocale — short intervention names (paths, lists)
+ * - guidanceByLocale — action-screen instructions (simple interventions only)
+ * - findThreeCopyByLocale — find-3 intro + bullet variant sets
+ * - explanationPoolByLocale — return-screen explanations (random pick per intervention)
+ * - triangleBreathCopyByLocale — triangle-breath intro + phase labels
+ * - uiCopyByLocale — onboarding, trigger, return, paths, about, notifications
+ */
+import { SimpleInterventionType } from "../interventions/registry";
 import { InterventionType } from "../types/domain";
 import { getLocales } from "expo-localization";
 
-type Locale = "en" | "uk";
+export type Locale = "en" | "uk";
 type Guidance = { actionText: string };
+
+export type FindThreeVariant = {
+  items: readonly [string, string, string];
+};
 
 function resolveActiveLocale(): Locale {
   const primaryLocale = getLocales()[0];
@@ -33,17 +48,11 @@ const interventionLabelsByLocale: Record<Locale, Record<InterventionType, string
   },
 };
 
-const guidanceByLocale: Record<Locale, Record<InterventionType, Guidance>> = {
+const guidanceByLocale: Record<Locale, Record<SimpleInterventionType, Guidance>> = {
   en: {
     feet_on_ground: {
       actionText:
         "Place your feet on the ground, notice the pressure under them, take one slow breath",
-    },
-    find_three_things: {
-      actionText: "Find 3 things",
-    },
-    triangle_breath: {
-      actionText: "Follow a calm triangle rhythm — inhale 4, hold 2, exhale 5 (×3, ~33s total)",
     },
     relax_jaw: {
       actionText: "Relax your jaw, let it soften, take one slow breath",
@@ -63,12 +72,6 @@ const guidanceByLocale: Record<Locale, Record<InterventionType, Guidance>> = {
       actionText:
         "Постав стопи на опору, відчуй тиск під ними, дихай",
     },
-    find_three_things: {
-      actionText: "Знайди 3 речі",
-    },
-    triangle_breath: {
-      actionText: "Дихай спокійним трикутником — вдих 4, затримка 2, видих 5 (×3, ~33 с)",
-    },
     relax_jaw: {
       actionText: "Розслаб щелепу, відпусти напругу, дихай",
     },
@@ -83,6 +86,35 @@ const guidanceByLocale: Record<Locale, Record<InterventionType, Guidance>> = {
     },
   },
 };
+
+/** Seven sets — shape · color · feel. */
+const findThreeCopyByLocale: Record<Locale, { intro: string; variants: readonly FindThreeVariant[] }> =
+  {
+    en: {
+      intro: "Find 3 things:",
+      variants: [
+        { items: ["something round", "something blue", "something soft"] },
+        { items: ["something straight", "something green", "something smooth"] },
+        { items: ["something still", "something dark", "something calm"] },
+        { items: ["something small", "something bright", "something gentle"] },
+        { items: ["something familiar", "something warm", "something comfortable"] },
+        { items: ["something solid", "something natural", "something steady"] },
+        { items: ["something tiny", "something cold", "something quiet"] },
+      ],
+    },
+    uk: {
+      intro: "Знайди 3 речі:",
+      variants: [
+        { items: ["щось кругле", "щось синє", "щось м’яке"] },
+        { items: ["щось пряме", "щось зелене", "щось гладке"] },
+        { items: ["щось нерухоме", "щось темне", "щось спокійне"] },
+        { items: ["щось маленьке", "щось яскраве", "щось ніжне"] },
+        { items: ["щось знайоме", "щось тепле", "щось зручне"] },
+        { items: ["щось тверде", "щось природне", "щось стійке"] },
+        { items: ["щось крихітне", "щось холодне", "щось тихе"] },
+      ],
+    },
+  };
 
 const explanationPoolByLocale: Record<Locale, Record<InterventionType, readonly string[]>> = {
   en: {
@@ -199,16 +231,9 @@ const uiCopyByLocale: Record<
     onboardingSteps: readonly [string, string, string, string];
     onboardingCirclesHint: string;
     triggerPrompt: string;
-    triggerPauseMessage: string;
-    triggerAccept: string;
-    triggerDecline: string;
-    actionDone: string;
-    actionSkip: string;
-    explanationContinue: string;
     keepForMe: string;
     keepForMeSaved: string;
     returnBody: string;
-    returnAction: string;
     tapContinueHint: string;
     inactivityNotificationTitle: string;
     inactivityNotificationBody: string;
@@ -218,7 +243,6 @@ const uiCopyByLocale: Record<
     aboutBack: string;
     aboutVersionPrefix: string;
     pathsLink: string;
-    pathsTitle: string;
     pathsTodayNone: string;
     pathsTodayCountLabel: (count: number) => string;
     pathsSavedLabel: string;
@@ -235,18 +259,11 @@ const uiCopyByLocale: Record<
       "One small action for you",
       "A quiet return — «you are here»",
     ] as const,
-    onboardingCirclesHint: "Tap circles — it's a button here",
+    onboardingCirclesHint: "Tap circles to continue — it is a button here",
     triggerPrompt: "One action for you",
-    triggerPauseMessage: "Not now, you can continue gently",
-    triggerAccept: "I can take this moment",
-    triggerDecline: "I will stay for now",
-    actionDone: "This feels complete",
-    actionSkip: "Not this time",
-    explanationContinue: "I will carry this with me",
     keepForMe: "Save this for me",
     keepForMeSaved: "Saved",
     returnBody: "You are here",
-    returnAction: "Return to stillness",
     tapContinueHint: "tap to continue",
     inactivityNotificationTitle: "Pulsation",
     inactivityNotificationBody: "One action for you now?",
@@ -261,7 +278,6 @@ const uiCopyByLocale: Record<
     aboutBack: "Return",
     aboutVersionPrefix: "Version",
     pathsLink: "Show my paths",
-    pathsTitle: "Your paths",
     pathsTodayNone: "No actions for yourself yet today",
     pathsTodayCountLabel: (count) =>
       count === 1 ? "action for yourself today" : "actions for yourself today",
@@ -278,18 +294,11 @@ const uiCopyByLocale: Record<
       "Одна маленька дія для тебе",
       "Коротке повернення — «ти тут»",
     ] as const,
-    onboardingCirclesHint: "Торкнись кіл — це кнопка тут",
+    onboardingCirclesHint: "Торкни кола, щоб продовжити — це кнопка тут",
     triggerPrompt: "Одна дія для тебе",
-    triggerPauseMessage: "Зараз не час. Можна просто побути",
-    triggerAccept: "Можу побути в цьому моменті",
-    triggerDecline: "Зараз просто побуду",
-    actionDone: "Цього достатньо",
-    actionSkip: "Не цього разу",
-    explanationContinue: "Візьму це з собою",
     keepForMe: "Збережи це для мене",
     keepForMeSaved: "збережено",
     returnBody: "Ти тут",
-    returnAction: "Повернутися до тиші",
     tapContinueHint: "торкни, щоб продовжити",
     inactivityNotificationTitle: "Pulsation",
     inactivityNotificationBody: "Одна дія для тебе зараз?",
@@ -304,8 +313,7 @@ const uiCopyByLocale: Record<
     aboutBack: "Повернутися",
     aboutVersionPrefix: "Версія",
     pathsLink: "Мої шляхи",
-    pathsTitle: "Твої шляхи",
-    pathsTodayNone: "Сьогодні ще не було дій для себе",
+    pathsTodayNone: "Сьогодні ще не було закінчених дій",
     pathsTodayCountLabel: (count) => {
       const n = count % 10;
       const n100 = count % 100;
@@ -314,7 +322,7 @@ const uiCopyByLocale: Record<
       return "дій для себе сьогодні";
     },
     pathsSavedLabel: "Збережені для тебе:",
-    pathsSavedEmpty: "Поки нічого збережено. Після повернення натисни «Збережи це для мене» — стане Збережено.",
+    pathsSavedEmpty: "Поки нема збережених дій",
     pathsRemoveSavedA11y: (label) => `Прибрати ${label}`,
   },
 };
@@ -323,6 +331,33 @@ export const interventionCopy = interventionLabelsByLocale[activeLocale];
 export const interventionGuidance = guidanceByLocale[activeLocale];
 export const uiCopy = uiCopyByLocale[activeLocale];
 export const triangleBreathCopy = triangleBreathCopyByLocale[activeLocale];
+export const FIND_THREE_VARIANT_COUNT = findThreeCopyByLocale.en.variants.length;
+
+export function getFindThreeIntro(locale: Locale = activeLocale): string {
+  return findThreeCopyByLocale[locale].intro;
+}
+
+export function getFindThreeVariant(variantIndex: number, locale: Locale = activeLocale): FindThreeVariant {
+  const list = findThreeCopyByLocale[locale].variants;
+  const normalized = ((variantIndex % list.length) + list.length) % list.length;
+  return list[normalized]!;
+}
+
+/** Pick 0..n-1, never the same as `lastIndex` when that index is valid. */
+export function pickNextFindThreeVariantIndex(lastIndex: number | undefined): number {
+  if (
+    lastIndex === undefined ||
+    lastIndex < 0 ||
+    lastIndex >= FIND_THREE_VARIANT_COUNT ||
+    !Number.isInteger(lastIndex)
+  ) {
+    return Math.floor(Math.random() * FIND_THREE_VARIANT_COUNT);
+  }
+  const candidates = Array.from({ length: FIND_THREE_VARIANT_COUNT }, (_, i) => i).filter(
+    (i) => i !== lastIndex,
+  );
+  return candidates[Math.floor(Math.random() * candidates.length)]!;
+}
 
 export function getTriangleBreathPhaseLabels(): TriangleBreathPhaseLabels {
   return triangleBreathCopy.phases;
@@ -342,3 +377,12 @@ export function pickReturnExplanation(intervention: InterventionType): string | 
   };
   return chosen;
 }
+
+export const __deliveryLayerCopyForTests = {
+  interventionLabelsByLocale,
+  guidanceByLocale,
+  findThreeCopyByLocale,
+  explanationPoolByLocale,
+  triangleBreathCopyByLocale,
+  uiCopyByLocale,
+} as const;

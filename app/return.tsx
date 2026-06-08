@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useFocusEffect, usePathname, useRouter } from "expo-router";
 import { Animated, Easing, StyleSheet, View } from "react-native";
 import { AnchoredCirclesScreen } from "../src/design/components/AnchoredCirclesScreen";
@@ -8,21 +8,12 @@ import { ExplanationText } from "../src/design/components/ExplanationText";
 import { pickReturnExplanation, uiCopy } from "../src/modules/delivery-layer";
 import { DEFAULT_INTERVENTION } from "../src/interventions/registry";
 import { useAppStore } from "../src/state/app-store";
-import {
-  copyReveal,
-  getReturnExplanationDelayMs,
-  getReturnHintFadeOutDelayMs,
-  getReturnKeepForMeDelayMs,
-  getReturnTapHintDelayMs,
-} from "../src/design/animation-rhythm";
-import { armFlowScreenEntryDelay, getFlowMainCopyDelayMs } from "../src/design/flow-screen-transition";
+import { copyReveal, getMainCopyDelayMs, getReturnExplanationDelayMs, getReturnKeepForMeAfterExplanationMs } from "../src/design/animation-rhythm";
+import { armFlowScreenEntryDelay } from "../src/design/flow-screen-transition";
 import { legibleOpacity } from "../src/design/accessibility";
 import { useHighContrast } from "../src/hooks/use-high-contrast";
 import { useFlowMainCopyRevealKey } from "../src/hooks/use-flow-main-copy-reveal-key";
-import { useRegisterCirclesHint } from "../src/hooks/use-register-circles-hint";
 import { useRegisterCirclesPress } from "../src/hooks/use-register-circles-press";
-import { useCirclesHintPresentation } from "../src/hooks/use-circles-hint-presentation";
-import { useFlowTapHintRegistration } from "../src/hooks/use-flow-tap-hint-registration";
 import {
   hasKeptIntervention,
   markInterventionKept,
@@ -33,8 +24,6 @@ import { footerFaintLinkOpacity, footerLinkTextStyle } from "../src/design/main-
 import { colors, spacing } from "../src/design/tokens";
 import { armInstantTriggerReturn, hasFlowCopyRevealed } from "../src/design/flow-copy-reveal";
 import { flowRevealIds } from "../src/design/flow-reveal-ids";
-import { getSchedulingProfile } from "../src/data/repositories/scheduling-profile-repo";
-import { isLastGraceReturnCycle } from "../src/modules/circles-hint-presentation";
 import { goToTrigger } from "../src/navigation/go-to-trigger";
 
 export default function ReturnScreen() {
@@ -47,6 +36,8 @@ export default function ReturnScreen() {
   const [isInterventionKept, setIsInterventionKept] = useState(() => hasKeptIntervention(selected));
   const [showKeepForMe, setShowKeepForMe] = useState(false);
   const [keepForMeSavedThisVisit, setKeepForMeSavedThisVisit] = useState(false);
+  const [explanationRevealed, setExplanationRevealed] = useState(false);
+  const [explanationTapEarly, setExplanationTapEarly] = useState(false);
   const [keepForMeFocusEpoch, setKeepForMeFocusEpoch] = useState(0);
   const keepForMeDismissedRef = useRef(false);
   const enteredAtRef = useRef<number>(Date.now());
@@ -55,29 +46,8 @@ export default function ReturnScreen() {
   const keepForMeOpacity = useRef(new Animated.Value(0)).current;
 
   const copyRevealKey = useFlowMainCopyRevealKey();
-  const mainCopyDelayMs = useMemo(() => getFlowMainCopyDelayMs(), [copyRevealKey]);
-  const returnExplanationDelayMs = getReturnExplanationDelayMs(mainCopyDelayMs);
-  const keepForMeDelayMs = getReturnKeepForMeDelayMs(mainCopyDelayMs);
-  const hintDelayMs = getReturnTapHintDelayMs(mainCopyDelayMs, !isInterventionKept);
-  const circlesHintPresentation = useCirclesHintPresentation(hintDelayMs);
-  const hintFadeOutDelayMs = useMemo(() => {
-    const profile = getSchedulingProfile();
-    const isLastGrace = isLastGraceReturnCycle(
-      profile.totalCompleted,
-      profile.tapHintRevealedAtCycle ?? null,
-    );
-    if (!isLastGrace || !hasFlowCopyRevealed(flowRevealIds.flowCirclesHint)) {
-      return undefined;
-    }
-    return getReturnHintFadeOutDelayMs(mainCopyDelayMs, !isInterventionKept);
-  }, [isInterventionKept, mainCopyDelayMs, copyRevealKey]);
-  const hintRegistration = useFlowTapHintRegistration(
-    circlesHintPresentation,
-    hintDelayMs,
-    true,
-    hintFadeOutDelayMs,
-  );
-  useRegisterCirclesHint(hintRegistration);
+  const mainLineDelayMs = getMainCopyDelayMs();
+  const returnExplanationDelayMs = getReturnExplanationDelayMs(mainLineDelayMs);
 
   const persistEngagement = useCallback(() => {
     if (engagementSavedRef.current) return;
@@ -99,12 +69,20 @@ export default function ReturnScreen() {
   }, [persistEngagement, selected]);
 
   const onCirclesPress = useCallback(() => {
+    if (!explanationRevealed) {
+      if (!hasFlowCopyRevealed(flowRevealIds.returnMain)) {
+        return;
+      }
+      setExplanationTapEarly(true);
+      setExplanationRevealed(true);
+      return;
+    }
     persistEngagement();
     clear();
     armInstantTriggerReturn();
     armFlowScreenEntryDelay();
     goToTrigger(router, pathname);
-  }, [clear, pathname, persistEngagement, router]);
+  }, [clear, explanationRevealed, pathname, persistEngagement, router]);
   useRegisterCirclesPress(onCirclesPress);
 
   useFocusEffect(
@@ -116,13 +94,22 @@ export default function ReturnScreen() {
       setIsInterventionKept(hasKeptIntervention(selected));
       setShowKeepForMe(false);
       setKeepForMeSavedThisVisit(false);
+      setExplanationRevealed(false);
+      setExplanationTapEarly(false);
       keepForMeOpacity.setValue(0);
       setKeepForMeFocusEpoch((epoch) => epoch + 1);
     }, [keepForMeOpacity, selected]),
   );
 
   useEffect(() => {
-    if (isInterventionKept) {
+    const timer = setTimeout(() => {
+      setExplanationRevealed(true);
+    }, returnExplanationDelayMs);
+    return () => clearTimeout(timer);
+  }, [returnExplanationDelayMs]);
+
+  useEffect(() => {
+    if (!explanationRevealed || isInterventionKept) {
       setShowKeepForMe(false);
       keepForMeOpacity.setValue(0);
       return;
@@ -141,10 +128,10 @@ export default function ReturnScreen() {
         easing: Easing.out(Easing.quad),
         useNativeDriver: true,
       }).start();
-    }, keepForMeDelayMs);
+    }, getReturnKeepForMeAfterExplanationMs());
 
     return () => clearTimeout(timer);
-  }, [keepForMeDelayMs, keepForMeOpacity, selected, isInterventionKept, keepForMeFocusEpoch]);
+  }, [explanationRevealed, keepForMeOpacity, selected, isInterventionKept, keepForMeFocusEpoch]);
 
   useEffect(
     () => () => {
@@ -180,12 +167,15 @@ export default function ReturnScreen() {
       </View>
     ) : null;
 
+  const explanationDelayMs = explanationTapEarly ? 0 : returnExplanationDelayMs;
+
   const followUp = (
     <View key={`below-main-${copyRevealKey}`} style={styles.belowMain}>
       <ExplanationText
+        key={`expl-${copyRevealKey}-${explanationTapEarly ? "tap" : "auto"}`}
         variant="explanation"
         holdAfterReveal
-        delayMs={returnExplanationDelayMs}
+        delayMs={explanationDelayMs}
         style={styles.explanationLine}
       >
         {returnExplanation}
@@ -198,7 +188,7 @@ export default function ReturnScreen() {
       pinMainLikeTrigger
       footer={keepForMeFooter}
       mainLine={
-        <ExplanationText key={`main-${copyRevealKey}`} variant="main" holdAfterReveal>
+        <ExplanationText key={`main-${copyRevealKey}`} variant="main" holdAfterReveal delayMs={mainLineDelayMs} revealId={flowRevealIds.returnMain}>
           {uiCopy.returnBody}
         </ExplanationText>
       }

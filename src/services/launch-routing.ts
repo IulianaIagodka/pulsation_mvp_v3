@@ -1,5 +1,5 @@
-import { clearAppBackgrounded, getSchedulingProfile } from "../data/repositories/scheduling-profile-repo";
-import { hadBackgroundSession } from "../modules/session-runtime";
+import { clearAppBackgrounded } from "../data/repositories/scheduling-profile-repo";
+import { isWarmProcessResume } from "../modules/session-runtime";
 import { hasCompletedExtendedOnboarding } from "./onboarding-gate";
 import { bootstrapPulsation } from "./pulsation-flow";
 
@@ -9,10 +9,10 @@ export function isLaunchOnboardingPath(pathname: string | null | undefined): boo
   return pathname === "/" || pathname === "/index" || pathname === "index";
 }
 
-/** Cold start after background (incl. process restart) — skip headline, land on trigger. */
+/** Warm resume in the same process — skip headline, land on trigger. Cold start → short onboarding. */
 export function shouldSkipLaunchOnboarding(): boolean {
   bootstrapPulsation();
-  return getSchedulingProfile().lastBackgroundAt != null;
+  return isWarmProcessResume();
 }
 
 /** First install → full onboarding; later cold starts → short headline; background → skip. */
@@ -29,9 +29,9 @@ export function resolveLaunchOnboardingKind(): LaunchOnboardingKind {
 /** Resume from background while the launch headline is visible — go to trigger. */
 export function shouldLeaveLaunchOnboardingOnResume(
   pathname: string | null | undefined,
-  hadBackground = hadBackgroundSession(),
+  warmResume = isWarmProcessResume(),
 ): boolean {
-  return hadBackground && isLaunchOnboardingPath(pathname);
+  return warmResume && isLaunchOnboardingPath(pathname);
 }
 
 export function clearLaunchOnboardingBackgroundFlag(): void {

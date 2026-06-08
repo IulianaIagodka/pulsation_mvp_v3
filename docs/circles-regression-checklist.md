@@ -19,12 +19,12 @@ Use this checklist before release whenever animation/layout is changed.
 
 ## Copy order (tap hint under circles)
 
-- [ ] On **extended onboarding**: **Tap circles — it's the button here** / **Торкнись кіл — це кнопка тут** fixed **under circles** right after **Pulsation exists…** fades in (`getOnboardingCirclesHintDelayMs`); **How it works:** + four steps continue after the headline fades out.
+- [ ] On **extended onboarding**: **Tap circles** fades in slowly after **Pulsation exists…** has fully appeared (`getOnboardingCirclesHintDelayMs`); **How it works:** + four steps continue after the headline fades out.
 - [ ] On **trigger**, **action**, **return**: **tap to continue** / **торкни, щоб продовжити** fixed **under circles** (same Y on every screen; slot always reserved, `opacity: 0` when hidden).
 - [ ] On **trigger**: **One action for you** first; then tap hint last (with **Show my paths** when `hasPathsContent()`).
 - [ ] On **action** (feet / jaw / shoulders / sounds / palms): tap hint fades in **last**, after the main instruction.
 - [ ] On **return**: tap hint last — with **Save for me** when shown, after explanation when already saved.
-- [ ] On **return**: order is **You are here** → explanation (fade after main); **Save this for me** and tap hint under circles fade in together.
+- [ ] On **return**: order is **You are here** → explanation (auto after main, or sooner on tap); **Save this for me** and tap hint under circles fade in together; **last tap** continues to trigger.
 - [ ] For the **first 2 completed cycles after tap hint first appears**, the hint stays visible on **every** flow screen (no re-fade between trigger / action / return).
 - [ ] On **triangle breath**, the under circles hint appears only **after 3 complete breath cycles**; circles animate during intro + triangle rhythm.
 - [ ] On return, **Save this for me** sits in the bottom footer (same zone as paths on trigger).
@@ -33,7 +33,7 @@ Use this checklist before release whenever animation/layout is changed.
 
 - [ ] Confirm there is no visible vertical “bounce” while circles breathe (only scale/opacity).
 - [ ] On `find_three_things`, verify three bullets appear one at a time (tap or every 2s, `findThreeThings.autoRevealIntervalMs`).
-- [ ] Run find 3 **twice in a row** (via trigger rotation): prompt set should **change** (7 variants in `find-three-variants.ts`; same set not twice in a row).
+- [ ] Run find 3 **twice in a row** (via trigger rotation): prompt set should **change** (7 variants in `delivery-layer.ts`; same set not twice in a row).
 - [ ] On **find 3**, circles tap **before** all bullets are shown only reveals the next bullet (does not go to return).
 - [ ] After all three bullets (and optional tap hint), circles tap goes to return — no auto-advance.
 - [ ] On return after find 3, explanation is a short single sentence and rotates across variants.

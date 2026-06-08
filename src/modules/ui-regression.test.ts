@@ -20,7 +20,11 @@ import {
   getTriangleBreathTotalMs,
   getActionSimpleTapHintDelayMs,
   getAuxiliaryCopyDelayMs,
+  getReturnExplanationDelayMs,
+  getReturnKeepForMeAfterExplanationMs,
   getReturnKeepForMeDelayMs,
+  getReturnTapHintAfterExplanationMs,
+  returnCopy,
   getTriggerPathsLinkDelayMs,
   getTriggerTapHintDelayMs,
   tapHintTiming,
@@ -93,6 +97,15 @@ describe("circles layout regression checks", () => {
     expect(tapHintTiming.returnTapHintMs).toBe(getReturnKeepForMeDelayMs());
   });
 
+  it("keeps return tap-revealed explanation timing after You are here", () => {
+    expect(getReturnKeepForMeAfterExplanationMs()).toBe(
+      copyReveal.lineGapMs - returnCopy.explanationGapMs,
+    );
+    expect(getReturnTapHintAfterExplanationMs()).toBe(
+      getFlowTapHintDelayMs(getReturnExplanationDelayMs(0)),
+    );
+  });
+
   it("keeps one shared copy reveal rhythm (fast, smooth)", () => {
     expect(copyReveal.delayMs).toBeGreaterThanOrEqual(breathingRhythm.motion.screenFadeMs);
     expect(copyReveal.fadeMs).toBeGreaterThan(1000);
@@ -132,7 +145,7 @@ describe("circles layout regression checks", () => {
     );
     expect(subtitle).toBe(howItWorksMount);
     expect(lastStep).toBe(howItWorksMount + getOnboardingStepLineCycleMs() * 4);
-    expect(hint).toBe(getFlowTapHintDelayMs(copyReveal.delayMs));
+    expect(hint).toBe(copyReveal.delayMs + copyReveal.fadeMs);
     expect(hint).toBeLessThan(howItWorksMount);
   });
 });

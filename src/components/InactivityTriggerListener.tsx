@@ -3,7 +3,7 @@ import { AppState } from "react-native";
 import { usePathname, useRouter } from "expo-router";
 import {
   consumeInactiveMinutesOnResume,
-  hadBackgroundSession,
+  isWarmProcessResume,
   recordAppStateChange,
 } from "../modules/session-runtime";
 import { goToTrigger } from "../navigation/go-to-trigger";
@@ -27,10 +27,10 @@ export function InactivityTriggerListener() {
   const tryResumeTrigger = useCallback(() => {
     void cancelInactivityNotification();
 
-    const hadBackground = hadBackgroundSession();
+    const warmResume = isWarmProcessResume();
     const inactiveMinutes = consumeInactiveMinutesOnResume();
 
-    if (shouldLeaveLaunchOnboardingOnResume(pathnameRef.current, hadBackground)) {
+    if (shouldLeaveLaunchOnboardingOnResume(pathnameRef.current, warmResume)) {
       goToTrigger(router, pathnameRef.current);
       return;
     }

@@ -77,6 +77,26 @@ export function getReturnExplanationDelayMs(mainLineDelayMs: number = getMainCop
   return mainLineDelayMs + copyReveal.fadeMs + returnCopy.explanationGapMs;
 }
 
+/** Return (tap-revealed explanation): Save for me after explanation fade starts. */
+export function getReturnKeepForMeAfterExplanationMs(): number {
+  return getReturnKeepForMeDelayMs(0) - getReturnExplanationDelayMs(0);
+}
+
+/** Return (tap-revealed explanation): tap hint when Save for me is hidden. */
+export function getReturnTapHintAfterExplanationMs(): number {
+  return getFlowTapHintDelayMs(getReturnExplanationDelayMs(0));
+}
+
+/** Return (tap-revealed explanation): last-grace tap hint fade-out anchor. */
+export function getReturnHintFadeOutAfterExplanationMs(
+  showKeepForMeFooter: boolean = true,
+): number {
+  const lastCopyStartMs = showKeepForMeFooter
+    ? getReturnKeepForMeAfterExplanationMs()
+    : getReturnExplanationDelayMs(0);
+  return lastCopyStartMs + copyReveal.fadeMs + flowHintGapMs;
+}
+
 /** @deprecated Use {@link getMainCopyFadeMs}. */
 export const onboardingRhythm = {
   fadeMs: copyReveal.fadeMs,
@@ -134,9 +154,9 @@ export function getOnboardingExplanationDelayMs(lineIndex: number): number {
   return getOnboardingHowItWorksMountDelayMs() + getOnboardingStepRevealDelayMs(lineIndex);
 }
 
-/** Tap circles — right after “Pulsation exists…” has fully faded in (before How it works). */
+/** Tap circles — after “Pulsation exists…” has fully faded in; same fade rhythm as main copy. */
 export function getOnboardingCirclesHintDelayMs(_stepCount: number = 0): number {
-  return getFlowTapHintDelayMs(copyReveal.delayMs);
+  return copyReveal.delayMs + copyReveal.fadeMs;
 }
 
 const flowHintGapMs = copyReveal.lineGapMs;

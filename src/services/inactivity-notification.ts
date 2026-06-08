@@ -53,7 +53,7 @@ export async function scheduleInactivityNotification(): Promise<void> {
       content: {
         title: uiCopy.inactivityNotificationTitle,
         body: uiCopy.inactivityNotificationBody,
-        data: { route: "/trigger" },
+        data: { route: "/action" },
       },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,

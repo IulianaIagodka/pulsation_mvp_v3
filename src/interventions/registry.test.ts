@@ -20,8 +20,10 @@ describe("intervention registry", () => {
   it("has non-empty copy for every intervention", () => {
     for (const id of ALL_INTERVENTIONS) {
       expect(interventionCopy[id]?.trim().length).toBeGreaterThan(0);
-      expect(interventionGuidance[id]?.actionText?.trim().length).toBeGreaterThan(0);
       expect(pickReturnExplanation(id)?.trim().length).toBeGreaterThan(0);
+      if (isSimpleInstruction(id)) {
+        expect(interventionGuidance[id].actionText.trim().length).toBeGreaterThan(0);
+      }
     }
   });
 

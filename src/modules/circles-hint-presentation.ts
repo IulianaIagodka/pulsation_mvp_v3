@@ -1,4 +1,7 @@
 import { footerFaintLinkOpacity } from "../design/tokens";
+import { hasFlowCopyRevealed } from "../design/flow-copy-reveal";
+import { flowRevealIds } from "../design/flow-reveal-ids";
+import { getSchedulingProfile, recordTapHintRevealedAtCycle } from "../data/repositories/scheduling-profile-repo";
 
 export type CirclesHintPresentation = {
   shouldShow: boolean;
@@ -8,6 +11,11 @@ export type CirclesHintPresentation = {
 
 /** Keep tap hint visible for this many completed cycles after it first appears. */
 export const CIRCLES_HINT_GRACE_CYCLES = 2;
+
+/** Anchor when grace was never persisted but the hint already appeared in-session. */
+export function getRetroactiveTapHintAnchorCycle(completedCycles: number): number {
+  return Math.max(0, completedCycles - CIRCLES_HINT_GRACE_CYCLES);
+}
 
 /** @deprecated Use {@link CIRCLES_HINT_GRACE_CYCLES}. */
 export const CIRCLES_HINT_FULL_CYCLES = CIRCLES_HINT_GRACE_CYCLES;
@@ -23,6 +31,23 @@ export function shouldShowTapHint(
     return true;
   }
   return completedCycles < hintRevealedAtCycle + CIRCLES_HINT_GRACE_CYCLES;
+}
+
+/** Keep tap hint visible across flow screens during the grace window (not while fading out). */
+export function shouldPersistFlowTapHint(fadeOutDelayMs?: number): boolean {
+  if (fadeOutDelayMs != null) {
+    return false;
+  }
+  if (!hasFlowCopyRevealed(flowRevealIds.flowCirclesHint)) {
+    return false;
+  }
+  const profile = getSchedulingProfile();
+  let hintAtCycle = profile.tapHintRevealedAtCycle ?? null;
+  if (hintAtCycle == null) {
+    recordTapHintRevealedAtCycle();
+    hintAtCycle = getSchedulingProfile().tapHintRevealedAtCycle ?? null;
+  }
+  return shouldShowTapHint(profile.totalCompleted, hintAtCycle);
 }
 
 /** Last return in the grace window — hint fades out once after all copy is shown. */
@@ -60,7 +85,10 @@ export function withLastGraceReturnTapHint(
   completedCycles: number,
   hintRevealedAtCycle: number | null,
 ): CirclesHintPresentation {
-  if (!isLastGraceReturnCycle(completedCycles, hintRevealedAtCycle)) {
+  if (
+    !isLastGraceReturnCycle(completedCycles, hintRevealedAtCycle) ||
+    !hasFlowCopyRevealed(flowRevealIds.flowCirclesHint)
+  ) {
     return presentation;
   }
   return {

@@ -38,10 +38,8 @@ export function PersistentCirclesLayer() {
       setStickyHint(circlesHint);
       return;
     }
-    if (!isFlowPath(pathname)) {
-      setStickyHint(null);
-    }
-  }, [circlesHint, pathname]);
+    setStickyHint(null);
+  }, [circlesHint]);
 
   const renderedHint = circlesHint ?? stickyHint;
 

@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { copyReveal } from "../design/animation-rhythm";
-import { hasFlowCopyRevealed } from "../design/flow-copy-reveal";
 import { flowRevealIds } from "../design/flow-reveal-ids";
+import { useHintSessionEpoch } from "./use-hint-session-epoch";
 import type { CirclesHintPresentation } from "../modules/circles-hint-presentation";
+import { shouldPersistFlowTapHint } from "../modules/circles-hint-presentation";
 import { uiCopy } from "../modules/delivery-layer";
 import type { CirclesHintRegistration } from "../types/circles-hint-registration";
 
@@ -13,10 +14,10 @@ export function useFlowTapHintRegistration(
   visible = true,
   fadeOutDelayMs?: number,
 ): CirclesHintRegistration {
+  const hintSessionEpoch = useHintSessionEpoch();
+
   return useMemo(() => {
-    const flowHintRevealed = hasFlowCopyRevealed(flowRevealIds.flowCirclesHint);
-    const graceActive = presentation.shouldShow;
-    const persistVisible = flowHintRevealed && graceActive;
+    const persistVisible = shouldPersistFlowTapHint(fadeOutDelayMs);
     return {
       presentation,
       delayMs: persistVisible ? 0 : delayMs,
@@ -28,5 +29,5 @@ export function useFlowTapHintRegistration(
       labelTransitionMs: copyReveal.fadeMs,
       fadeOutDelayMs,
     };
-  }, [delayMs, fadeOutDelayMs, presentation, visible]);
+  }, [delayMs, fadeOutDelayMs, hintSessionEpoch, presentation, visible]);
 }

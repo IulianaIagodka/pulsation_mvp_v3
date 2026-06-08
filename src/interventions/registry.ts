@@ -56,6 +56,11 @@ export const INTERVENTION_REGISTRY = [
 
 export type InterventionType = (typeof INTERVENTION_REGISTRY)[number]["id"];
 
+export type SimpleInterventionType = Extract<
+  (typeof INTERVENTION_REGISTRY)[number],
+  { presentation: "simple" }
+>["id"];
+
 export const ALL_INTERVENTIONS: readonly InterventionType[] = INTERVENTION_REGISTRY.map((entry) => entry.id);
 
 export const DEFAULT_INTERVENTION: InterventionType = ALL_INTERVENTIONS[0]!;
@@ -70,7 +75,7 @@ export function getIntervention(id: InterventionType) {
   return entry;
 }
 
-export function isSimpleInstruction(id: InterventionType): boolean {
+export function isSimpleInstruction(id: InterventionType): id is SimpleInterventionType {
   return getIntervention(id).presentation === "simple";
 }
 
