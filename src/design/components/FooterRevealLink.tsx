@@ -32,7 +32,7 @@ export function FooterRevealLink({
     fadeMs: copyReveal.fadeMs,
     holdAfterReveal,
     revealId,
-    forceVisible: instant,
+    forceVisible,
   });
 
   if (instant) {

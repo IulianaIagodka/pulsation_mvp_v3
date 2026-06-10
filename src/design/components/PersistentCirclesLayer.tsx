@@ -1,18 +1,13 @@
 import { usePathname } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { useStableLayoutInsets } from "../../hooks/use-stable-layout-insets";
 import { useStableWindowDimensions } from "../../hooks/use-stable-window-dimensions";
 import { useAppStore } from "../../state/app-store";
 import { circlesLayout } from "../animation-rhythm";
-import {
-  getCirclesAnchorMetrics,
-  getUnderCirclesHintBlockHeight,
-} from "../circles-anchor-layout";
+import { getCirclesAnchorMetrics } from "../circles-anchor-layout";
 import { setCirclesAnimationMode } from "../circles-breath-engine";
 import { PersistentCircles } from "./PersistentCircles";
-import { CirclesUnderHint } from "./CirclesUnderHint";
-import type { CirclesHintRegistration } from "../../types/circles-hint-registration";
 
 function isFlowPath(pathname: string): boolean {
   return (
@@ -27,21 +22,9 @@ function isFlowPath(pathname: string): boolean {
 export function PersistentCirclesLayer() {
   const pathname = usePathname();
   const insets = useStableLayoutInsets();
-  const { height: windowHeight, width: windowWidth } = useStableWindowDimensions();
+  const { height: windowHeight } = useStableWindowDimensions();
   const selected = useAppStore((s) => s.selectedIntervention);
   const circlesPressHandler = useAppStore((s) => s.circlesPressHandler);
-  const circlesHint = useAppStore((s) => s.circlesHint);
-  const [stickyHint, setStickyHint] = useState<CirclesHintRegistration | null>(null);
-
-  useEffect(() => {
-    if (circlesHint) {
-      setStickyHint(circlesHint);
-      return;
-    }
-    setStickyHint(null);
-  }, [circlesHint]);
-
-  const renderedHint = circlesHint ?? stickyHint;
 
   const mode =
     pathname === "/action" && selected === "triangle_breath" ? "triangle" : "calm";
@@ -53,7 +36,6 @@ export function PersistentCirclesLayer() {
   const metrics = getCirclesAnchorMetrics(windowHeight, insets);
   const circlesTop = insets.top + metrics.circlesCenterY - circlesLayout.size / 2;
   const flowVisible = isFlowPath(pathname);
-  const hintBlockHeight = getUnderCirclesHintBlockHeight(windowWidth);
 
   return (
     <View
@@ -66,25 +48,6 @@ export function PersistentCirclesLayer() {
     >
       <View style={styles.circlesBlock}>
         <PersistentCircles onPress={flowVisible ? (circlesPressHandler ?? undefined) : undefined} />
-        {flowVisible ? (
-          renderedHint ? (
-            <CirclesUnderHint
-              presentation={renderedHint.presentation}
-              visible={renderedHint.visible ?? true}
-              delayMs={renderedHint.delayMs}
-              fadeMs={renderedHint.fadeMs}
-              label={renderedHint.label}
-              revealId={renderedHint.revealId}
-              forceVisible={renderedHint.forceVisible}
-              holdAfterReveal={renderedHint.holdAfterReveal}
-              labelTransitionMs={renderedHint.labelTransitionMs}
-              fadeOutDelayMs={renderedHint.fadeOutDelayMs}
-              reserveSlot
-            />
-          ) : (
-            <View style={{ minHeight: hintBlockHeight }} />
-          )
-        ) : null}
       </View>
     </View>
   );

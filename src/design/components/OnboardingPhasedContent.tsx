@@ -5,7 +5,6 @@ import { copyReveal } from "../animation-rhythm";
 import { onboardingHeadlineTextStyle } from "../main-copy";
 import { colors, spacing } from "../tokens";
 import { CalmText } from "./CalmText";
-import { OverflowScrollView } from "./OverflowScrollView";
 import { OnboardingHowItWorksSteps, OnboardingHowItWorksSubtitle } from "./OnboardingIntroContent";
 import { uiCopy } from "../../modules/delivery-layer";
 
@@ -14,10 +13,16 @@ const FADE_IN_EASING = Easing.out(Easing.quad);
 type Props = {
   revealedLineCount: number;
   tapReveal?: boolean;
+  /** Tap on circles — every how-it-works line at once, shared smooth fade. */
+  tapBurstReveal?: boolean;
 };
 
 /** Extended onboarding: headline stays visible; tap reveals “How it works” + steps below. */
-export function OnboardingPhasedContent({ revealedLineCount, tapReveal = true }: Props) {
+export function OnboardingPhasedContent({
+  revealedLineCount,
+  tapReveal = true,
+  tapBurstReveal = false,
+}: Props) {
   const highContrast = useHighContrast();
   const headlineOpacity = useRef(new Animated.Value(0)).current;
   const headlineAnimationRef = useRef<Animated.CompositeAnimation | null>(null);
@@ -48,31 +53,31 @@ export function OnboardingPhasedContent({ revealedLineCount, tapReveal = true }:
   }, [headlineOpacity]);
 
   return (
-    <View style={styles.fill}>
-      <Animated.View style={[styles.headlineWrap, { opacity: headlineOpacity }]}>
+    <View style={styles.content}>
+      <Animated.View
+        style={[
+          styles.headlineWrap,
+          showHowItWorks && styles.headlineWrapWithBelow,
+          { opacity: headlineOpacity },
+        ]}
+      >
         <CalmText style={headlineStyle}>{uiCopy.onboardingLine}</CalmText>
       </Animated.View>
 
       {showHowItWorks ? (
         <View style={styles.howItWorksRoot}>
-          <View style={styles.subtitleSlot}>
-            <OnboardingHowItWorksSubtitle
-              phaseRelative
-              tapReveal={tapReveal}
-              revealedLineCount={revealedLineCount}
-            />
-          </View>
-          <OverflowScrollView
-            style={styles.stepsScroll}
-            contentContainerStyle={styles.stepsScrollContent}
-            keyboardShouldPersistTaps="handled"
-          >
-            <OnboardingHowItWorksSteps
-              phaseRelative
-              tapReveal={tapReveal}
-              revealedLineCount={revealedLineCount}
-            />
-          </OverflowScrollView>
+          <OnboardingHowItWorksSubtitle
+            phaseRelative
+            tapReveal={tapReveal}
+            tapBurstReveal={tapBurstReveal}
+            revealedLineCount={revealedLineCount}
+          />
+          <OnboardingHowItWorksSteps
+            phaseRelative
+            tapReveal={tapReveal}
+            tapBurstReveal={tapBurstReveal}
+            revealedLineCount={revealedLineCount}
+          />
         </View>
       ) : null}
     </View>
@@ -80,8 +85,7 @@ export function OnboardingPhasedContent({ revealedLineCount, tapReveal = true }:
 }
 
 const styles = StyleSheet.create({
-  fill: {
-    flex: 1,
+  content: {
     width: "100%",
     alignSelf: "stretch",
     minWidth: 0,
@@ -92,34 +96,18 @@ const styles = StyleSheet.create({
     minWidth: 0,
     paddingHorizontal: spacing.xs,
   },
+  headlineWrapWithBelow: {
+    marginBottom: spacing.sm,
+  },
   howItWorksRoot: {
-    flex: 1,
     width: "100%",
     alignSelf: "stretch",
     minWidth: 0,
-  },
-  subtitleSlot: {
-    width: "100%",
-    alignSelf: "stretch",
-    minWidth: 0,
-    paddingTop: spacing.lg,
-  },
-  stepsScroll: {
-    flex: 1,
-    width: "100%",
-    alignSelf: "stretch",
-    minWidth: 0,
-    minHeight: 0,
-  },
-  stepsScrollContent: {
-    alignItems: "stretch",
-    alignSelf: "stretch",
-    width: "100%",
-    minWidth: 0,
-    paddingBottom: spacing.sm,
+    paddingTop: spacing.xl,
   },
   mainText: onboardingHeadlineTextStyle,
   mainTextHighContrast: {
     color: colors.textPrimary,
+    opacity: 1,
   },
 });

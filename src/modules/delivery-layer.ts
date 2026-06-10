@@ -228,8 +228,7 @@ const uiCopyByLocale: Record<
   {
     onboardingLine: string;
     onboardingSubtitle: string;
-    onboardingSteps: readonly [string, string, string, string];
-    onboardingCirclesHint: string;
+    onboardingSteps: readonly [string, string, string];
     triggerPrompt: string;
     keepForMe: string;
     keepForMeSaved: string;
@@ -253,12 +252,10 @@ const uiCopyByLocale: Record<
     onboardingLine: "Pulsation exists to bring you back to yourself",
     onboardingSubtitle: "How it works:",
     onboardingSteps: [
-      "Simply exists in the background",
-      "One gentle invitation",
-      "One small action for you",
-      "A quiet return — «you are here»",
+      "It stays in the background",
+      "It invites you from time to time",
+      "Tap the circles to continue",
     ] as const,
-    onboardingCirclesHint: "Tap circles to continue — it is a button here",
     triggerPrompt: "One action for you",
     keepForMe: "Save this for me",
     keepForMeSaved: "Saved",
@@ -287,12 +284,10 @@ const uiCopyByLocale: Record<
     onboardingLine: "Pulsation допомагає повернутися до себе",
     onboardingSubtitle: "Як це працює:",
     onboardingSteps: [
-      "Просто існує у фоні",
-      "Одне м’яке запрошення",
-      "Одна маленька дія для тебе",
-      "Коротке повернення — «ти тут»",
+      "Лишається у фоні",
+      "Час від часу запрошує",
+      "Торкни кола, щоб продовжити",
     ] as const,
-    onboardingCirclesHint: "Торкни кола, щоб продовжити — це кнопка тут",
     triggerPrompt: "Одна дія для тебе",
     keepForMe: "Збережи це для мене",
     keepForMeSaved: "збережено",

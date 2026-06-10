@@ -1,6 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { ExplanationText } from "./ExplanationText";
 import {
+  copyReveal,
   getOnboardingExplanationDelayMs,
   getOnboardingStepRevealDelayMs,
   onboardingCopy,
@@ -25,36 +26,54 @@ type IntroBelowProps = {
   phaseRelative?: boolean;
   /** Tap on circles reveals each line; auto timing when false. */
   tapReveal?: boolean;
+  /** Tap burst — all how-it-works lines at once (shared smooth fade). */
+  tapBurstReveal?: boolean;
   revealedLineCount?: number;
 };
 
-function useOnboardingLineTiming(phaseRelative: boolean, tapReveal: boolean) {
+function useOnboardingLineTiming(phaseRelative: boolean, tapReveal: boolean, tapBurstReveal: boolean) {
   const delayFor = (lineIndex: number) =>
-    tapReveal
+    tapBurstReveal || tapReveal
       ? 0
       : phaseRelative
         ? getOnboardingStepRevealDelayMs(lineIndex)
         : getOnboardingExplanationDelayMs(lineIndex);
-  const stepFadeMs = phaseRelative ? onboardingCopy.stepFadeMs : undefined;
+  const stepFadeMs = phaseRelative
+    ? tapBurstReveal
+      ? copyReveal.fadeMs
+      : onboardingCopy.stepFadeMs
+    : undefined;
   return { delayFor, stepFadeMs };
 }
 
-function isLineVisible(lineIndex: number, tapReveal: boolean, revealedLineCount: number): boolean {
+function isLineVisible(
+  lineIndex: number,
+  tapReveal: boolean,
+  revealedLineCount: number,
+  lineCount: number,
+  tapBurstReveal: boolean,
+): boolean {
   if (screenshotMode || !tapReveal) {
+    return true;
+  }
+  if (tapBurstReveal && revealedLineCount >= lineCount) {
     return true;
   }
   return revealedLineCount > lineIndex;
 }
 
+const onboardingHowItWorksLineCount = 1 + uiCopy.onboardingSteps.length;
+
 /** Pinned “How it works:” — does not scroll with steps. */
 export function OnboardingHowItWorksSubtitle({
   phaseRelative = false,
   tapReveal = false,
+  tapBurstReveal = false,
   revealedLineCount = 0,
 }: IntroBelowProps) {
-  const { delayFor, stepFadeMs } = useOnboardingLineTiming(phaseRelative, tapReveal);
+  const { delayFor, stepFadeMs } = useOnboardingLineTiming(phaseRelative, tapReveal, tapBurstReveal);
 
-  if (!isLineVisible(0, tapReveal, revealedLineCount)) {
+  if (!isLineVisible(0, tapReveal, revealedLineCount, onboardingHowItWorksLineCount, tapBurstReveal)) {
     return null;
   }
 
@@ -76,15 +95,16 @@ export function OnboardingHowItWorksSubtitle({
 export function OnboardingHowItWorksSteps({
   phaseRelative = false,
   tapReveal = false,
+  tapBurstReveal = false,
   revealedLineCount = 0,
 }: IntroBelowProps) {
-  const { delayFor, stepFadeMs } = useOnboardingLineTiming(phaseRelative, tapReveal);
+  const { delayFor, stepFadeMs } = useOnboardingLineTiming(phaseRelative, tapReveal, tapBurstReveal);
 
   return (
     <View style={styles.steps}>
       {uiCopy.onboardingSteps.map((step, index) => {
         const lineIndex = index + 1;
-        if (!isLineVisible(lineIndex, tapReveal, revealedLineCount)) {
+        if (!isLineVisible(lineIndex, tapReveal, revealedLineCount, onboardingHowItWorksLineCount, tapBurstReveal)) {
           return null;
         }
         return (
@@ -137,6 +157,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     marginTop: screenshotMode ? spacing.xs : 0,
+    marginBottom: spacing.sm,
   },
   steps: {
     width: "100%",
@@ -144,9 +165,9 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   stepLine: {
-    marginTop: spacing.sm,
+    marginTop: spacing.xs,
   },
   stepLineFirst: {
-    marginTop: spacing.sm,
+    marginTop: 0,
   },
 });

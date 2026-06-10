@@ -8,11 +8,10 @@ import { ExplanationText } from "../src/design/components/ExplanationText";
 import { pickReturnExplanation, uiCopy } from "../src/modules/delivery-layer";
 import { DEFAULT_INTERVENTION } from "../src/interventions/registry";
 import { useAppStore } from "../src/state/app-store";
-import { copyReveal, getMainCopyDelayMs, getReturnExplanationDelayMs, getReturnKeepForMeAfterExplanationMs } from "../src/design/animation-rhythm";
-import { armFlowScreenEntryDelay } from "../src/design/flow-screen-transition";
+import { copyReveal, getReturnExplanationDelayMs, getReturnKeepForMeAfterExplanationMs } from "../src/design/animation-rhythm";
 import { legibleOpacity } from "../src/design/accessibility";
 import { useHighContrast } from "../src/hooks/use-high-contrast";
-import { useFlowMainCopyRevealKey } from "../src/hooks/use-flow-main-copy-reveal-key";
+import { useFlowMainCopyDelayMs } from "../src/hooks/use-flow-main-copy-delay-ms";
 import { useRegisterCirclesPress } from "../src/hooks/use-register-circles-press";
 import {
   hasKeptIntervention,
@@ -22,7 +21,7 @@ import {
 import { playKeepForMeHaptic } from "../src/services/haptic-regulation";
 import { footerFaintLinkOpacity, footerLinkTextStyle } from "../src/design/main-copy";
 import { colors, spacing } from "../src/design/tokens";
-import { armInstantTriggerReturn, hasFlowCopyRevealed } from "../src/design/flow-copy-reveal";
+import { clearFlowCopyRevealed, hasFlowCopyRevealed } from "../src/design/flow-copy-reveal";
 import { flowRevealIds } from "../src/design/flow-reveal-ids";
 import { goToTrigger } from "../src/navigation/go-to-trigger";
 
@@ -45,9 +44,14 @@ export default function ReturnScreen() {
   const engagementSavedRef = useRef(false);
   const keepForMeOpacity = useRef(new Animated.Value(0)).current;
 
-  const copyRevealKey = useFlowMainCopyRevealKey();
-  const mainLineDelayMs = getMainCopyDelayMs();
+  const mainLineDelayMs = useFlowMainCopyDelayMs();
   const returnExplanationDelayMs = getReturnExplanationDelayMs(mainLineDelayMs);
+
+  useEffect(() => {
+    return () => {
+      clearFlowCopyRevealed(flowRevealIds.returnMain);
+    };
+  }, []);
 
   const persistEngagement = useCallback(() => {
     if (engagementSavedRef.current) return;
@@ -79,8 +83,6 @@ export default function ReturnScreen() {
     }
     persistEngagement();
     clear();
-    armInstantTriggerReturn();
-    armFlowScreenEntryDelay();
     goToTrigger(router, pathname);
   }, [clear, explanationRevealed, pathname, persistEngagement, router]);
   useRegisterCirclesPress(onCirclesPress);
@@ -170,9 +172,9 @@ export default function ReturnScreen() {
   const explanationDelayMs = explanationTapEarly ? 0 : returnExplanationDelayMs;
 
   const followUp = (
-    <View key={`below-main-${copyRevealKey}`} style={styles.belowMain}>
+    <View style={styles.belowMain}>
       <ExplanationText
-        key={`expl-${copyRevealKey}-${explanationTapEarly ? "tap" : "auto"}`}
+        key={explanationTapEarly ? "tap" : "auto"}
         variant="explanation"
         holdAfterReveal
         delayMs={explanationDelayMs}
@@ -188,7 +190,7 @@ export default function ReturnScreen() {
       pinMainLikeTrigger
       footer={keepForMeFooter}
       mainLine={
-        <ExplanationText key={`main-${copyRevealKey}`} variant="main" holdAfterReveal delayMs={mainLineDelayMs} revealId={flowRevealIds.returnMain}>
+        <ExplanationText variant="main" holdAfterReveal delayMs={mainLineDelayMs} revealId={flowRevealIds.returnMain}>
           {uiCopy.returnBody}
         </ExplanationText>
       }

@@ -1,11 +1,9 @@
 import { flowRevealIds } from "./flow-reveal-ids";
 import {
   __flowCopyRevealInternals,
-  armInstantTriggerReturn,
+  clearFlowCopyRevealed,
   hasFlowCopyRevealed,
   markFlowCopyRevealed,
-  markFlowCopyShown,
-  markTriggerFlowRevealed,
   shouldInstantFlowReveal,
 } from "./flow-copy-reveal";
 
@@ -15,33 +13,25 @@ describe("flow-copy-reveal", () => {
   });
 
   it("remembers revealed copy for the session", () => {
-    expect(hasFlowCopyRevealed("trigger-main")).toBe(false);
-    markFlowCopyRevealed("trigger-main");
-    expect(hasFlowCopyRevealed("trigger-main")).toBe(true);
-  });
-
-  it("marks trigger copy slots when the user leaves the flow step", () => {
-    markTriggerFlowRevealed();
-    expect(hasFlowCopyRevealed(flowRevealIds.triggerMain)).toBe(true);
-    expect(hasFlowCopyRevealed(flowRevealIds.triggerPaths)).toBe(true);
-  });
-
-  it("does not instant-show trigger copy from session alone", () => {
+    expect(hasFlowCopyRevealed(flowRevealIds.triggerMain)).toBe(false);
     markFlowCopyRevealed(flowRevealIds.triggerMain);
-    expect(shouldInstantFlowReveal(flowRevealIds.triggerMain)).toBe(false);
-    markFlowCopyRevealed(flowRevealIds.triggerPaths);
-    expect(shouldInstantFlowReveal(flowRevealIds.triggerPaths)).toBe(false);
-  });
-
-  it("instant-shows return main after it has been revealed once", () => {
-    markFlowCopyShown(flowRevealIds.returnMain);
-    expect(shouldInstantFlowReveal(flowRevealIds.returnMain)).toBe(true);
-  });
-
-  it("arms trigger flow reveal before navigating back to trigger", () => {
-    armInstantTriggerReturn();
     expect(hasFlowCopyRevealed(flowRevealIds.triggerMain)).toBe(true);
-    expect(hasFlowCopyRevealed(flowRevealIds.triggerPaths)).toBe(true);
-    expect(shouldInstantFlowReveal(flowRevealIds.triggerMain)).toBe(false);
+  });
+
+  it("does not instant-show from session marks alone", () => {
+    markFlowCopyRevealed(flowRevealIds.returnMain);
+    expect(hasFlowCopyRevealed(flowRevealIds.returnMain)).toBe(true);
+    expect(shouldInstantFlowReveal(flowRevealIds.returnMain)).toBe(false);
+  });
+
+  it("clears a reveal slot for the next visit", () => {
+    markFlowCopyRevealed(flowRevealIds.returnMain);
+    clearFlowCopyRevealed(flowRevealIds.returnMain);
+    expect(hasFlowCopyRevealed(flowRevealIds.returnMain)).toBe(false);
+  });
+
+  it("instant-shows only when forceVisible is set", () => {
+    expect(shouldInstantFlowReveal(flowRevealIds.returnMain, true)).toBe(true);
+    expect(shouldInstantFlowReveal(flowRevealIds.returnMain, false)).toBe(false);
   });
 });

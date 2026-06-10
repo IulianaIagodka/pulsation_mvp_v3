@@ -3,7 +3,8 @@ import { bootstrapPulsation } from "./pulsation-flow";
 
 export function hasCompletedExtendedOnboarding(): boolean {
   bootstrapPulsation();
-  return getOutcomesProfile().extendedOnboardingCompleted === true;
+  const profile = getOutcomesProfile();
+  return profile.extendedOnboardingCompleted === true || profile.onboardingCompleted === true;
 }
 
 export function markExtendedOnboardingCompleted(): void {
@@ -16,18 +17,3 @@ export function markExtendedOnboardingCompleted(): void {
   });
 }
 
-/** @deprecated Use hasCompletedExtendedOnboarding for first-install gating. */
-export function hasCompletedOnboarding(): boolean {
-  bootstrapPulsation();
-  return getOutcomesProfile().onboardingCompleted === true;
-}
-
-export function markOnboardingCompleted(): void {
-  bootstrapPulsation();
-  const profile = getOutcomesProfile();
-  saveOutcomesProfile({
-    ...profile,
-    onboardingCompleted: true,
-    extendedOnboardingCompleted: true,
-  });
-}

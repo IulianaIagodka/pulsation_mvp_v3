@@ -1,4 +1,5 @@
-import { SourceSerif4_400Regular, useFonts } from "@expo-google-fonts/source-serif-4";
+import { Roboto_400Regular } from "@expo-google-fonts/roboto";
+import { RobotoSerif_400Regular, useFonts } from "@expo-google-fonts/roboto-serif";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { bootstrapPulsation } from "../src/services/pulsation-flow";
@@ -13,7 +14,7 @@ import { StyleSheet, View } from "react-native";
 import { SafeAreaProvider, initialWindowMetrics } from "react-native-safe-area-context";
 
 export default function Layout() {
-  const [fontsLoaded] = useFonts({ SourceSerif4_400Regular });
+  const [fontsLoaded] = useFonts({ RobotoSerif_400Regular, Roboto_400Regular });
 
   useEffect(() => {
     bootstrapPulsation();

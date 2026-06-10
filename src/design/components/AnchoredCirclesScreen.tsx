@@ -10,13 +10,12 @@ import { CalmPressable } from "./CalmPressable";
 import { resolvePressableTextOpacity } from "../pressable-highlight";
 import { clamp, scaleByWidth } from "../responsive";
 import {
-  getContentZoneTopWithoutHint,
+  getCirclesAnchorMetrics,
+  getFollowUpContentLayout,
+  getFlowMainCopyTop,
   getMainCopySlotHeight,
   getReturnFollowUpTop,
   getScreenEquatorY,
-  getCirclesAnchorMetrics,
-  getFollowUpContentLayout,
-  getTriggerMainCopyTop,
 } from "../circles-anchor-layout";
 import { useAppStore } from "../../state/app-store";
 import { uiCopy } from "../../modules/delivery-layer";
@@ -92,10 +91,12 @@ export function AnchoredCirclesScreen({
   const footerHeight = footerLinkCount > 0 ? footerRowHeight * footerLinkCount + scaleByWidth(spacing.xs, windowWidth) : 0;
   const scrollBottomPad =
     footerLinkCount > 0 ? footerHeight + footerBottomInset : scaleByWidth(spacing.xl, windowWidth);
+  const flowMainCopyTop = getFlowMainCopyTop(metrics, windowWidth, fontScale);
   const contentZoneTop = compactCapture
     ? metrics.circlesBottomY + scaleByWidth(spacing.xs, windowWidth)
-    : getContentZoneTopWithoutHint(metrics, windowWidth);
-  const triggerMainCopyTop = getTriggerMainCopyTop(metrics, windowWidth);
+    : flowMainCopyTop;
+  const triggerMainCopyTop =
+    pinMainLikeTrigger && !compactCapture ? flowMainCopyTop : contentZoneTop;
   const mainCopySlotHeight = getMainCopySlotHeight(windowWidth, fontScale);
   const screenEquatorY = getScreenEquatorY(windowHeight, insets);
   const belowEquatorTop = pinMainLikeTrigger
@@ -104,12 +105,19 @@ export function AnchoredCirclesScreen({
   const useEquatorLayout = centerContent && pinMainLikeTrigger;
   const afterMainTop = triggerMainCopyTop + mainCopySlotHeight;
   const pinnedAfterMain = mainLine != null ? children : null;
+  const unifiedMainScroll =
+    pinMainLikeTrigger &&
+    mainLine != null &&
+    pinnedAfterMain != null &&
+    belowEquator == null &&
+    !expandMainToFooter;
   const mainOnlyScroll =
     pinMainLikeTrigger &&
     mainLine != null &&
     pinnedAfterMain == null &&
     belowEquator == null &&
     !expandMainToFooter;
+  const mainBandScroll = mainOnlyScroll || unifiedMainScroll;
   const hasFollowUpBelowMain = pinnedAfterMain != null || belowEquator != null;
   const mainZoneBottom =
     footerLinkCount > 0 ? footerHeight + footerBottomInset : scaleByWidth(spacing.sm, windowWidth);
@@ -160,7 +168,7 @@ export function AnchoredCirclesScreen({
               pointerEvents="box-none"
               style={[
                 styles.mainAnchorSlot,
-                expandMainToFooter || mainOnlyScroll
+                expandMainToFooter || mainBandScroll
                   ? { top: triggerMainCopyTop, bottom: mainZoneBottom }
                   : hasFollowUpBelowMain && mainClampHeight != null
                     ? { top: pinnedMainTop, height: mainClampHeight }
@@ -169,13 +177,14 @@ export function AnchoredCirclesScreen({
                 (expandMainToFooter || pinMainLikeTrigger) && styles.mainAnchorStretch,
               ]}
             >
-              {mainOnlyScroll ? (
+              {mainBandScroll ? (
                 <OverflowScrollView
                   style={styles.mainZoneScroll}
                   contentContainerStyle={styles.mainZoneScrollContentTop}
                   keyboardShouldPersistTaps="handled"
                 >
                   <SoftCard flush>{mainLine}</SoftCard>
+                  {pinnedAfterMain}
                 </OverflowScrollView>
               ) : hasFollowUpBelowMain && mainLine != null && mainClampHeight != null ? (
                 <OverflowScrollView
@@ -191,7 +200,7 @@ export function AnchoredCirclesScreen({
                 <SoftCard flush>{mainLine ?? children}</SoftCard>
               )}
             </View>
-            {pinnedAfterMain ? (
+            {pinnedAfterMain && !unifiedMainScroll ? (
               pinMainLikeTrigger && mainLine != null ? (
                 <OverflowScrollView
                   style={[
@@ -327,6 +336,7 @@ const styles = StyleSheet.create({
   },
   equatorRoot: {
     flex: 1,
+    zIndex: 1,
   },
   mainAnchorSlot: {
     position: "absolute",
@@ -335,7 +345,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     paddingHorizontal: spacing.sm,
-    zIndex: 2,
+    zIndex: 1,
   },
   mainAnchorCentered: {
     justifyContent: "center",
@@ -367,6 +377,7 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     alignSelf: "stretch",
     width: "100%",
+    maxWidth: "100%",
     minWidth: 0,
     paddingBottom: spacing.sm,
   },
@@ -382,6 +393,7 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     alignSelf: "stretch",
     width: "100%",
+    maxWidth: "100%",
     minWidth: 0,
   },
   belowEquator: {

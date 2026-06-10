@@ -27,6 +27,26 @@ export function contentOverflows(
   return viewportHeight > 0 && contentHeight > viewportHeight + slack;
 }
 
+/** True when the user has not scrolled to the bottom yet. */
+export function canScrollDown(
+  scrollOffsetY: number,
+  viewportHeight: number,
+  contentHeight: number,
+  slack = OVERFLOW_SLACK_PX,
+): boolean {
+  return scrollOffsetY + viewportHeight < contentHeight - slack;
+}
+
+/** Bottom fade hint — content continues below the visible area. */
+export function shouldShowScrollOverflowHint(
+  overflows: boolean,
+  scrollOffsetY: number,
+  viewportHeight: number,
+  contentHeight: number,
+): boolean {
+  return overflows && canScrollDown(scrollOffsetY, viewportHeight, contentHeight);
+}
+
 /** Sum vertical padding from a content-container style (array-safe, no RN dependency). */
 export function getVerticalContentPadding(style: unknown): { top: number; bottom: number } {
   const flat = flattenPaddingStyle(style);

@@ -1,9 +1,7 @@
 import { getOutcomesProfile, saveOutcomesProfile } from "../data/repositories/outcomes-repo";
 import {
   hasCompletedExtendedOnboarding,
-  hasCompletedOnboarding,
   markExtendedOnboardingCompleted,
-  markOnboardingCompleted,
 } from "./onboarding-gate";
 
 jest.mock("../data/repositories/outcomes-repo", () => ({
@@ -41,6 +39,18 @@ describe("onboarding-gate", () => {
     expect(hasCompletedExtendedOnboarding()).toBe(true);
   });
 
+  it("returns true when legacy onboardingCompleted is set without extended flag", () => {
+    (getOutcomesProfile as jest.Mock).mockReturnValue({
+      preferredByHour: {},
+      completionRates: {},
+      preferenceScores: {},
+      recentInterventions: [],
+      onboardingCompleted: true,
+      extendedOnboardingCompleted: false,
+    });
+    expect(hasCompletedExtendedOnboarding()).toBe(true);
+  });
+
   it("persists extendedOnboardingCompleted on mark", () => {
     markExtendedOnboardingCompleted();
     expect(saveOutcomesProfile).toHaveBeenCalledWith(
@@ -51,28 +61,4 @@ describe("onboarding-gate", () => {
     );
   });
 
-  it("returns false until onboarding is marked complete", () => {
-    expect(hasCompletedOnboarding()).toBe(false);
-  });
-
-  it("returns true after markOnboardingCompleted", () => {
-    (getOutcomesProfile as jest.Mock).mockReturnValue({
-      preferredByHour: {},
-      completionRates: {},
-      preferenceScores: {},
-      recentInterventions: [],
-      onboardingCompleted: true,
-    });
-    expect(hasCompletedOnboarding()).toBe(true);
-  });
-
-  it("persists extendedOnboardingCompleted when legacy onboarding is marked", () => {
-    markOnboardingCompleted();
-    expect(saveOutcomesProfile).toHaveBeenCalledWith(
-      expect.objectContaining({
-        extendedOnboardingCompleted: true,
-        onboardingCompleted: true,
-      }),
-    );
-  });
 });

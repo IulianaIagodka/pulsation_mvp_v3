@@ -44,12 +44,6 @@ export const breathingRhythm = {
     textFadeInMs: copyReveal.fadeMs,
     textFadeOutMs: 900,
   },
-  /** @deprecated Use {@link copyReveal}. */
-  returnScreen: { primaryDelayMs: copyReveal.delayMs },
-  /** @deprecated Use {@link copyReveal}. */
-  triggerScreen: { primaryDelayMs: copyReveal.delayMs, fadeMs: copyReveal.fadeMs },
-  /** @deprecated Use {@link copyReveal}. */
-  actionScreen: { primaryDelayMs: copyReveal.delayMs },
 } as const;
 
 /** Main line — same delay on every screen. */
@@ -82,12 +76,6 @@ export function getReturnKeepForMeAfterExplanationMs(): number {
   return getReturnKeepForMeDelayMs(0) - getReturnExplanationDelayMs(0);
 }
 
-/** @deprecated Use {@link getMainCopyFadeMs}. */
-export const onboardingRhythm = {
-  fadeMs: copyReveal.fadeMs,
-  afterHeadlineMs: copyReveal.lineGapMs,
-  stepGapMs: copyReveal.lineGapMs,
-} as const;
 
 /** Extended onboarding — headline stays visible; auto or tap reveals “How it works” + steps. */
 export const onboardingCopy = {
@@ -129,11 +117,6 @@ export function getOnboardingExplanationDelayMs(lineIndex: number): number {
   return getOnboardingHowItWorksMountDelayMs() + getOnboardingStepRevealDelayMs(lineIndex);
 }
 
-/** Tap circles — after “Pulsation exists…” has fully faded in. */
-export function getOnboardingCirclesHintDelayMs(_stepCount: number = 0): number {
-  return copyReveal.delayMs + copyReveal.fadeMs;
-}
-
 /** Trigger footer: Show my paths together with the main line. */
 export function getTriggerPathsLinkDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
   return mainLineDelayMs;
@@ -146,6 +129,10 @@ export function getReturnKeepForMeDelayMs(mainLineDelayMs: number = getMainCopyD
 
 export const circlesLayout = {
   size: 136,
+  /** Outermost ring — drives clearance below circles at max inhale. */
+  outerBorderWidth: 1.15,
+  shadowOffsetY: 6,
+  shadowRadius: 18,
   anchorRatio: 0.36,
   textGap: 12,
   slotMinHeight: 160,
@@ -156,10 +143,6 @@ export function getFindThreeBulletsStartDelayMs(mainLineDelayMs: number = getMai
   return getAuxiliaryCopyDelayMs(mainLineDelayMs);
 }
 
-/** @deprecated Use {@link getFindThreeBulletsStartDelayMs}. */
-export function getFindThreeIntroDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
-  return getFindThreeBulletsStartDelayMs(mainLineDelayMs);
-}
 
 /** Phase labels start after main intro + calm gap. */
 export function getTriangleBreathIntroDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {

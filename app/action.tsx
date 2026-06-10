@@ -12,7 +12,7 @@ import { getCappedFontScale } from "../src/design/accessibility";
 import { CalmText } from "../src/design/components/CalmText";
 import { AnchoredCirclesScreen } from "../src/design/components/AnchoredCirclesScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
-import { useFlowMainCopyRevealKey } from "../src/hooks/use-flow-main-copy-reveal-key";
+import { useFlowMainCopyDelayMs } from "../src/hooks/use-flow-main-copy-delay-ms";
 import { useRegisterCirclesPress } from "../src/hooks/use-register-circles-press";
 import {
   activeLocale,
@@ -24,7 +24,6 @@ import {
   uiCopy,
 } from "../src/modules/delivery-layer";
 import { assignNextFindThreeVariant } from "../src/services/find-three-flow";
-import { armInstantTriggerReturn } from "../src/design/flow-copy-reveal";
 import { registerInterventionOutcome } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
 import {
@@ -36,11 +35,10 @@ import {
 import { colors, spacing } from "../src/design/tokens";
 import {
   breathingRhythm,
-  getFindThreeIntroDelayMs,
-  getMainCopyDelayMs,
+  getFindThreeBulletsStartDelayMs,
   getTriangleBreathIntroDelayMs,
 } from "../src/design/animation-rhythm";
-import { armFlowScreenEntryDelay, consumeFlowScreenEntryDelayMs } from "../src/design/flow-screen-transition";
+import { armFlowScreenEntryDelay } from "../src/design/flow-screen-transition";
 import { legibleOpacity } from "../src/design/accessibility";
 import { useHighContrast } from "../src/hooks/use-high-contrast";
 import { explanationTextStyle } from "../src/design/main-copy";
@@ -56,11 +54,7 @@ export default function ActionScreen() {
   const phaseSlotHeight = Math.round(scaleByWidth(24, width) * fontScale) + scaleByWidth(spacing.sm, width);
   const findThreeLineMinHeight = Math.round(scaleByWidth(24, width) * fontScale);
   const highContrast = useHighContrast();
-  const copyRevealKey = useFlowMainCopyRevealKey();
-  const mainLineDelayMs = useMemo(
-    () => getMainCopyDelayMs() + consumeFlowScreenEntryDelayMs(),
-    [copyRevealKey],
-  );
+  const mainLineDelayMs = useFlowMainCopyDelayMs();
   const phaseLabelOpacity = legibleOpacity(
     breathingRhythm.explanationText.textOpacity,
     highContrast,
@@ -94,7 +88,6 @@ export default function ActionScreen() {
     completionRef.current = true;
     isTransitioningRef.current = true;
     registerInterventionOutcome(selected, true);
-    armInstantTriggerReturn();
     armFlowScreenEntryDelay();
     router.replace("/return");
   }, [router, selected]);
@@ -141,7 +134,7 @@ export default function ActionScreen() {
     setFindThreeSequenceStarted(false);
     cancelFindThreeIntroTimer();
 
-    const bulletsStartMs = getFindThreeIntroDelayMs(mainLineDelayMs);
+    const bulletsStartMs = getFindThreeBulletsStartDelayMs(mainLineDelayMs);
     findThreeIntroTimerRef.current = setTimeout(() => {
       if (findThreeSessionRef.current !== session) return;
       findThreeIntroTimerRef.current = null;
@@ -262,15 +255,15 @@ export default function ActionScreen() {
 
   const mainLineOnly =
     presentation === "find_three" ? (
-      <ExplanationText key={`main-${copyRevealKey}`} holdAfterReveal variant="main">
+      <ExplanationText holdAfterReveal variant="main" delayMs={mainLineDelayMs}>
         {getFindThreeIntro(locale)}
       </ExplanationText>
     ) : presentation === "triangle_breath" ? (
-      <ExplanationText key={`main-${copyRevealKey}`} holdAfterReveal variant="main">
+      <ExplanationText holdAfterReveal variant="main" delayMs={mainLineDelayMs}>
         {triangleBreathCopy.intro}
       </ExplanationText>
     ) : isSimpleInstruction(selected) ? (
-      <ExplanationText key={`main-${copyRevealKey}`} holdAfterReveal variant="main">
+      <ExplanationText holdAfterReveal variant="main" delayMs={mainLineDelayMs}>
         {interventionGuidance[selected].actionText}
       </ExplanationText>
     ) : null;
@@ -283,7 +276,7 @@ export default function ActionScreen() {
             ? findThreeQueue.map((item, index) =>
                 index < findThreeRevealedCount ? (
                   <ExplanationText
-                    key={`${copyRevealKey}-${findThreeVariantIndex ?? 0}-${index}`}
+                    key={`${findThreeVariantIndex ?? 0}-${index}`}
                     variant="explanation"
                     holdAfterReveal
                     delayMs={0}

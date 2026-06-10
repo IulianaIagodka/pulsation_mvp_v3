@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 import { colors } from "./tokens";
 import { circlesLayout } from "./animation-rhythm";
 
-/** Shared concentric rings — matches CirclesFocus on every screen. */
+/** Shared concentric rings — same circles visual on every screen. */
 export const circlesVisualStyles = StyleSheet.create({
   outer: {
     width: circlesLayout.size,

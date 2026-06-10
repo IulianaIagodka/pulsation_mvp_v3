@@ -188,12 +188,18 @@ function startTriangleMode() {
 /** Re-attach breath loop once circles view is mounted (native driver stops without a view). */
 export function resumeCalmLoopAfterViewMount() {
   if (requestedMode === "calm") {
+    if (calmLoopActive && runningAnimation) {
+      return;
+    }
     startCalmLoop(true);
     return;
   }
 
   // Triangle intro still uses the calm loop until timed breath starts.
   if (triangleIntroTimer) {
+    if (calmLoopActive && runningAnimation) {
+      return;
+    }
     startCalmLoop(true, { preserveTriangleIntro: true });
   }
 }

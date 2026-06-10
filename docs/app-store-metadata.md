@@ -1,10 +1,10 @@
 # App Store Metadata (EN + UK) for Pulsation
 
-## Connect — активний submit (1.0.2, build 34+)
+## Connect — активний реліз (1.0.2, build 36)
 
+**App Store:** **1.0.2** build **36** LIVE ✅ (2026-06-10).  
 **Скріншоти:** завантажені ✅ (онбординг може потребувати оновлення після typography polish).  
-**build 33:** submitted 2026-06-08 (superseded).  
-**build 34+:** 1.0.2 train — тексти нижче **vs build 33**.
+**Наступний submit:** train **1.0.3+** — What's New / Review Notes з секцій нижче як шаблон для **1.0.2 vs 33**.
 
 ### What's New → EN (1.0.2) — вставити в Connect при submit
 

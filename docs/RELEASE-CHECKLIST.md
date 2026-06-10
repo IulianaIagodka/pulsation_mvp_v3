@@ -2,14 +2,11 @@
 
 | Версія | Build | Статус |
 |--------|-------|--------|
-| **1.0.0** | 26 | **LIVE** в App Store ✅ |
-| **1.0.1** | 28 | superseded |
-| **1.0.1** | 31 | **In Review** ⏳ |
-| **1.0.1** | 32 | у репо (superseded EAS auto-increment) |
-| **1.0.1** | 33 | submitted ✅ (superseded) |
-| **1.0.2** | 34+ | **building** ⏳ |
+| **1.0.0** | 26 | superseded |
+| **1.0.1** | 28–33 | superseded |
+| **1.0.2** | 36 | **LIVE** в App Store ✅ |
 
-**Зараз:** train **1.0.2** — onboarding + typography polish → EAS build + submit.
+**Зараз:** **1.0.2** build **36** — LIVE в App Store ✅. Наступні правки → train **1.0.3+**.
 
 Android: `docs/ANDROID-RELEASE-CHECKLIST.md`
 
@@ -113,9 +110,9 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 
 Тексти готові в репо — див. **`docs/app-store-metadata.md`** → секція **Connect — активний реліз**.
 
-### C1. Тексти (1.0.2 build 34+)
+### C1. Тексти (1.0.2 build 36) — LIVE ✅
 
-- [x] **What's New** EN + UK — `docs/app-store-metadata.md` → **Connect — активний submit** (1.0.2 vs 33)
+- [x] **What's New** EN + UK — у Store (build **36**)
 - [ ] **Promotional Text** (опційно)
 - [x] **Review Notes** — у `docs/app-store-metadata.md` (секція 1.0.2 build 34+)
 
@@ -132,10 +129,8 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 
 ### C4. App Review
 
-- [x] 1.0.0 пройшов review
-- [x] Review Notes для build **31** відправлені з submit
-- [x] Build **33** submitted via EAS (2026-06-08)
-- [ ] Connect → **Submit for Review** build **33** (після обробки Apple)
+- [x] 1.0.0 пройшов review (build **26**)
+- [x] 1.0.2 build **36** — approve → **Release** у Store ✅
 
 ---
 
@@ -162,7 +157,7 @@ npm audit --omit=dev
 - [ ] **Expo compatibility:** `npx expo-doctor` — перевірити перед EAS
 - [ ] **Security:** `npm audit --omit=dev` переглянуто; high/critical відсутні або задокументовані
 
-Поточний стан репо (1.0.2 build **34+**):
+Поточний стан Store (1.0.2 build **36** LIVE):
 - iOS **version** `1.0.2`, **buildNumber** EAS auto-increment (remote)
 - Шрифт: **Source Serif 4 Regular**
 - Копі — `src/modules/delivery-layer.ts` (en + uk)
@@ -173,7 +168,7 @@ npm audit --omit=dev
 - **Paths** — лічильник і **Saved for you:** **20**; збережені айтеми **17**
 - Усе з build 33: кола, tap hint лише на онбордингу, без flash на return, paths з main copy
 
-### D2. UX/UI перевірка для adaptive circles hint
+### D2. UX/UI перевірка (Store build **36** на iPhone)
 
 - [ ] **Onboarding only**: **Tap circles** fixed **under circles** (не на trigger/action/return)
 - [ ] **Return**: порядок — **You are here** → пояснення (без tap hint під колами)
@@ -194,29 +189,22 @@ npm audit --omit=dev
 
 - [x] Submit for Review → approve → **Release** у Store
 
-### 1.0.1 (build 31) — In Review ⏳
+### 1.0.1 (build 28–33) — superseded
 
-- [x] Connect → **1.0.1** → build **31** → **Submit for Review**
-- [ ] **Approve** → **Release** або чекати build **32**
+- [x] Train закритий; замінено **1.0.2**
 
-### 1.0.2 (build 34+) — in progress ⏳
+### 1.0.2 (build 36) — виконано ✅
 
 - [x] Bump **version** `1.0.2`
-- [ ] `npm run build:ios:testflight` → submit
-- [ ] Connect → **1.0.2** → **Submit for Review** (What's New + Review Notes з `docs/app-store-metadata.md`)
-
-### 1.0.1 (build 33) — submitted ✅
-
-- [x] `npm run build:ios:testflight` — build `017b9aed`
-- [x] `npm run submit:ios:testflight` — submission `9e4d7b3e`
-- [x] Train **1.0.1** closed — нові білди лише на **1.0.2+**
+- [x] EAS build + submit → build **36**
+- [x] Connect → **1.0.2** → **Submit for Review** → approve → **Release** у Store
 
 ---
 
-## Поки чекаєш review
+## Після релізу 1.0.2 (build 36)
 
-1. [ ] **Нічого не міняти** в Connect для build **31**
-2. [ ] TestFlight build **33** → D2 на iPhone
+1. [ ] Перевірити апку з App Store на iPhone (D2 regression)
+2. [ ] (Опційно) оновити скріни в Connect під typography polish
 3. [ ] Android: Play Console (`docs/ANDROID-RELEASE-CHECKLIST.md`)
 
 ---

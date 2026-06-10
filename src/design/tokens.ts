@@ -39,8 +39,10 @@ export const colors = {
   surfaceSecondary: base.surfaceSecondary,
   textPrimary: lighten(base.textPrimary, textPrimaryLift),
   textSecondary: lighten(base.textSecondary, textSecondaryLift),
-  /** Darker companion to {@link textSecondary} — onboarding how-it-works block. */
+  /** Main lines at 20 pt — base secondary without lift (calmer than lifted secondary). */
   textSecondaryDeep: base.textSecondary,
+  /** Onboarding how-it-works steps — slightly quieter than main headline. */
+  textSecondaryMuted: "#657688",
   borderSoft: base.borderSoft,
 } as const;
 
@@ -60,3 +62,6 @@ export const typography = {
 
 /** Faint footer links — About / Paths / Save / tap hint. */
 export const footerFaintLinkOpacity = 0.48;
+
+/** Main lines at 20 pt — softer than lifted secondary; explanation stays at 17 pt + 0.75 opacity. */
+export const mainCopyOpacity = 0.92;

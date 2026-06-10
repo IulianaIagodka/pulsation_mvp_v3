@@ -1,7 +1,7 @@
 import { type TextStyle } from "react-native";
 import { legibleOpacity } from "./accessibility";
-import { appFontFamily } from "./app-font";
-import { colors, footerFaintLinkOpacity } from "./tokens";
+import { appFontFamily, utilityFontFamily } from "./app-font";
+import { colors, footerFaintLinkOpacity, mainCopyOpacity } from "./tokens";
 
 const sharedFont: Pick<TextStyle, "fontFamily" | "fontWeight"> = {
   fontFamily: appFontFamily,
@@ -11,7 +11,7 @@ const sharedFont: Pick<TextStyle, "fontFamily" | "fontWeight"> = {
 /** Section heading — “How it works:”, About title, paths count. */
 export const sectionHeadingTextStyle: TextStyle = {
   ...sharedFont,
-  color: colors.textSecondary,
+  color: colors.textSecondaryDeep,
   fontSize: 20,
   lineHeight: 24,
   textAlign: "center",
@@ -20,12 +20,13 @@ export const sectionHeadingTextStyle: TextStyle = {
   maxWidth: "100%",
   alignSelf: "stretch",
   flexShrink: 1,
+  opacity: mainCopyOpacity,
 };
 
-/** Primary calm line — matches onboarding “Pulsation exists”. */
+/** Primary calm line — trigger, action, return, onboarding headline. */
 export const mainCopyTextStyle: TextStyle = {
   ...sharedFont,
-  color: colors.textSecondary,
+  color: colors.textSecondaryDeep,
   fontSize: 20,
   lineHeight: 28,
   textAlign: "center",
@@ -34,23 +35,38 @@ export const mainCopyTextStyle: TextStyle = {
   maxWidth: "100%",
   alignSelf: "stretch",
   flexShrink: 1,
+  opacity: mainCopyOpacity,
 };
 
-/** Extended onboarding headline — same size, lighter than the block below. */
+/** Extended onboarding headline — same tone as main copy; tighter wrap when two lines. */
 export const onboardingHeadlineTextStyle: TextStyle = {
   ...mainCopyTextStyle,
-  color: colors.textSecondary,
+  lineHeight: 24,
 };
 
-/** How it works + steps — same size as headline, slightly darker. */
+/** How it works + steps — quieter and smaller than headline. */
 export const onboardingDetailTextStyle: TextStyle = {
-  ...mainCopyTextStyle,
-  color: colors.textSecondaryDeep,
+  ...sharedFont,
+  color: colors.textSecondaryMuted,
+  fontSize: 17,
+  lineHeight: 22,
+  textAlign: "center",
+  letterSpacing: 0.15,
+  width: "100%",
+  maxWidth: "100%",
+  alignSelf: "stretch",
+  flexShrink: 1,
+  opacity: 1,
 };
 
-/** Footer links — Save / Return / Paths / About / onboarding hint. */
+const utilityFont: Pick<TextStyle, "fontFamily" | "fontWeight"> = {
+  fontFamily: utilityFontFamily,
+  fontWeight: "400",
+};
+
+/** Footer links — Save / Return / Paths / About / onboarding tap hint. */
 export const footerLinkTextStyle: TextStyle = {
-  ...sharedFont,
+  ...utilityFont,
   color: colors.textSecondary,
   fontSize: 12,
   lineHeight: 16,
@@ -83,5 +99,3 @@ export const explanationTextStyle: TextStyle = {
   flexShrink: 1,
 };
 
-/** @deprecated Use {@link footerLinkTextStyle} + {@link getFooterFaintLinkStyle}. */
-export const tapHintTextStyle: TextStyle = footerLinkTextStyle;

@@ -3,13 +3,13 @@ import {
   MAX_FONT_SIZE_MULTIPLIER,
   MIN_FONT_SIZE_MULTIPLIER,
 } from "../design/accessibility-scale";
-import { contentOverflows, getVerticalContentPadding } from "../design/overflow-scroll";
+import { contentOverflows, getVerticalContentPadding, shouldShowScrollOverflowHint } from "../design/overflow-scroll";
+import { getFlowCopyTextWidth, getFlowScreenHorizontalInset } from "../design/responsive";
 import {
   breathingRhythm,
   copyReveal,
-  getFindThreeIntroDelayMs,
+  getFindThreeBulletsStartDelayMs,
   getMainCopyFadeMs,
-  getOnboardingCirclesHintDelayMs,
   getOnboardingExplanationDelayMs,
   getOnboardingHowItWorksMountDelayMs,
   getOnboardingLastLineIndex,
@@ -44,6 +44,15 @@ describe("font scale accessibility caps", () => {
   });
 });
 
+describe("flow copy width", () => {
+  it("subtracts safe-area insets and flow screen horizontal padding for wrapping", () => {
+    expect(getFlowScreenHorizontalInset(390)).toBe(78);
+    expect(getFlowCopyTextWidth(390, { left: 0, right: 0 })).toBe(312);
+    expect(getFlowCopyTextWidth(390, { left: 12, right: 12 })).toBe(288);
+    expect(getFlowCopyTextWidth(390, { left: 0, right: 0 }, 20)).toBe(370);
+  });
+});
+
 describe("overflow scroll behavior", () => {
   it("enables scroll only when content exceeds the viewport", () => {
     expect(contentOverflows(400, 400)).toBe(false);
@@ -57,6 +66,13 @@ describe("overflow scroll behavior", () => {
     expect(padding).toEqual({ top: 0, bottom: 16 });
     expect(contentOverflows(100, 90 + padding.top + padding.bottom)).toBe(true);
     expect(contentOverflows(100, 80 + padding.top + padding.bottom)).toBe(false);
+  });
+
+  it("shows a bottom scroll hint until the user reaches the end", () => {
+    expect(shouldShowScrollOverflowHint(true, 0, 400, 500)).toBe(true);
+    expect(shouldShowScrollOverflowHint(true, 95, 400, 500)).toBe(true);
+    expect(shouldShowScrollOverflowHint(true, 96, 400, 500)).toBe(false);
+    expect(shouldShowScrollOverflowHint(false, 0, 400, 500)).toBe(false);
   });
 });
 
@@ -77,17 +93,13 @@ describe("circles layout regression checks", () => {
   });
 
   it("keeps find-three-things intro before bullets and auto-reveal calm", () => {
-    expect(getFindThreeIntroDelayMs()).toBeGreaterThan(2000);
+    expect(getFindThreeBulletsStartDelayMs()).toBeGreaterThan(2000);
     expect(breathingRhythm.findThreeThings.autoRevealIntervalMs).toBe(2000);
     expect(breathingRhythm.findThreeThings.revealDurationMs).toBeGreaterThan(0);
   });
 
   it("reveals paths link with main copy on trigger", () => {
     expect(getTriggerPathsLinkDelayMs()).toBe(copyReveal.delayMs);
-  });
-
-  it("reveals onboarding circles hint after main line fades in", () => {
-    expect(getOnboardingCirclesHintDelayMs()).toBe(copyReveal.delayMs + copyReveal.fadeMs);
   });
 
   it("keeps return tap-revealed explanation timing after You are here", () => {
@@ -104,7 +116,7 @@ describe("circles layout regression checks", () => {
     expect(getMainCopyFadeMs()).toBe(copyReveal.fadeMs);
     expect(breathingRhythm.explanationText.textOpacity).toBeLessThan(1);
     expect(breathingRhythm.explanationText.textOpacity).toBeGreaterThanOrEqual(0.72);
-    expect(getFindThreeIntroDelayMs()).toBeGreaterThan(copyReveal.delayMs + copyReveal.fadeMs);
+    expect(getFindThreeBulletsStartDelayMs()).toBeGreaterThan(copyReveal.delayMs + copyReveal.fadeMs);
   });
 
   it("keeps triangle breath cycle at 4-2-5 seconds for 3 cycles", () => {
@@ -122,8 +134,8 @@ describe("circles layout regression checks", () => {
   it("keeps extended onboarding copy phases ordered (headline + hint, auto or tap how it works)", () => {
     const howItWorksMount = getOnboardingHowItWorksMountDelayMs();
     const subtitle = getOnboardingExplanationDelayMs(0);
-    const lastStep = getOnboardingExplanationDelayMs(getOnboardingLastLineIndex(4));
-    const hint = getOnboardingCirclesHintDelayMs();
+    const stepCount = 3;
+    const lastStep = getOnboardingExplanationDelayMs(getOnboardingLastLineIndex(stepCount));
 
     expect(onboardingCopy.headlineHoldMs).toBeGreaterThanOrEqual(1200);
     expect(getOnboardingStepLineCycleMs()).toBeGreaterThan(onboardingCopy.stepFadeMs);
@@ -131,8 +143,6 @@ describe("circles layout regression checks", () => {
       copyReveal.delayMs + copyReveal.fadeMs + onboardingCopy.headlineHoldMs,
     );
     expect(subtitle).toBe(howItWorksMount);
-    expect(lastStep).toBe(howItWorksMount + getOnboardingStepLineCycleMs() * 4);
-    expect(hint).toBe(copyReveal.delayMs + copyReveal.fadeMs);
-    expect(hint).toBeLessThan(howItWorksMount);
+    expect(lastStep).toBe(howItWorksMount + getOnboardingStepLineCycleMs() * stepCount);
   });
 });

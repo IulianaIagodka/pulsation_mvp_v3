@@ -29,8 +29,6 @@ export const CIRCLE_TURNS =
 export const CIRCLE_STROKE_WIDTH = 1;
 export const CIRCLE_STROKE_WIDTH_HIGH_CONTRAST = 1.05;
 
-/** @deprecated Legacy ring radii — kept for regression docs only. */
-export const CIRCLE_RING_RADII = [5, 19, 31, 43, 55] as const;
 
 type CircleSegment = {
   rOuter: number;

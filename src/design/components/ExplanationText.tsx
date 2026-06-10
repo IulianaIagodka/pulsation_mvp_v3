@@ -1,5 +1,6 @@
-import { PropsWithChildren, useRef } from "react";
+import { PropsWithChildren, useMemo, useRef } from "react";
 import { Animated, Easing, StyleProp, StyleSheet, Text, View, ViewStyle, type EasingFunction } from "react-native";
+import { useStableWindowDimensions } from "../../hooks/use-stable-window-dimensions";
 import { applyCappedFontScale, legibleOpacity } from "../accessibility";
 import { breathingRhythm, copyReveal } from "../animation-rhythm";
 import { shouldInstantFlowReveal } from "../flow-copy-reveal";
@@ -11,8 +12,10 @@ import {
   onboardingDetailTextStyle,
   sectionHeadingTextStyle,
 } from "../main-copy";
+import { getFlowCopyTextWidth } from "../responsive";
 import { colors, spacing } from "../tokens";
 import { useHighContrast } from "../../hooks/use-high-contrast";
+import { useStableLayoutInsets } from "../../hooks/use-stable-layout-insets";
 
 const EXPLANATION_FADE_EASING = Easing.out(Easing.quad);
 
@@ -44,6 +47,9 @@ export function ExplanationText({
   forceVisible = false,
 }: Props) {
   const highContrast = useHighContrast();
+  const { width } = useStableWindowDimensions();
+  const insets = useStableLayoutInsets();
+  const copyWidth = useMemo(() => getFlowCopyTextWidth(width, insets), [insets, width]);
   const instant = shouldInstantFlowReveal(revealId, forceVisible);
   const opacity = useRef(new Animated.Value(instant ? 1 : 0)).current;
 
@@ -54,7 +60,7 @@ export function ExplanationText({
     fadeEasing,
     holdAfterReveal,
     revealId,
-    forceVisible: instant,
+    forceVisible,
   });
 
   const resolvedTextOpacity = textOpacity ?? breathingRhythm.explanationText.textOpacity;
@@ -79,14 +85,21 @@ export function ExplanationText({
         ? [styles.wrap, styles.wrapMain, style]
         : [styles.wrap, styles.wrapExplanation, style];
 
+  const widthStyle = {
+    width: "100%" as const,
+    maxWidth: copyWidth,
+    alignSelf: "center" as const,
+    minWidth: 0,
+  };
+
   const copy = (
-    <Text allowFontScaling={false} style={applyCappedFontScale(textStyle)}>
+    <Text allowFontScaling={false} style={applyCappedFontScale([textStyle, { width: "100%", flexShrink: 1 }])}>
       {children}
     </Text>
   );
 
   return (
-    <View style={wrapStyle}>
+    <View style={[wrapStyle, widthStyle, style]}>
       <Animated.View style={[styles.inner, { opacity }]}>{copy}</Animated.View>
     </View>
   );
@@ -130,14 +143,17 @@ const styles = StyleSheet.create({
   mainText: mainCopyTextStyle,
   mainTextHighContrast: {
     color: colors.textPrimary,
+    opacity: 1,
   },
   onboardingDetailText: onboardingDetailTextStyle,
   onboardingDetailTextHighContrast: {
     color: colors.textPrimary,
+    opacity: 1,
   },
   headingText: sectionHeadingTextStyle,
   headingTextHighContrast: {
     color: colors.textPrimary,
+    opacity: 1,
   },
   text: explanationTextStyle,
   textHighContrast: {

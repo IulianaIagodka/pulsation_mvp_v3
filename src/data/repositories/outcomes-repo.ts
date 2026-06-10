@@ -32,7 +32,7 @@ export function getOutcomesProfile(): OutcomesProfile {
       saveOutcomesProfile(initial);
       return initial;
     }
-    return {
+    const profile: OutcomesProfile = {
       preferredByHour: safeParseJson(row.preferred_by_hour, {}),
       completionRates: safeParseJson(row.completion_rates, {}),
       preferenceScores: safeParseJson(row.preference_scores ?? "{}", {}),
@@ -43,6 +43,12 @@ export function getOutcomesProfile(): OutcomesProfile {
       onboardingCompleted: Boolean(row.onboarding_completed),
       extendedOnboardingCompleted: Boolean(row.extended_onboarding_completed),
     };
+    if (profile.onboardingCompleted && !profile.extendedOnboardingCompleted) {
+      const migrated = { ...profile, extendedOnboardingCompleted: true };
+      saveOutcomesProfile(migrated);
+      return migrated;
+    }
+    return profile;
   } catch (error) {
     console.warn("[outcomes-repo] Failed to read outcomes profile:", error);
     return getInitialOutcomesProfile();

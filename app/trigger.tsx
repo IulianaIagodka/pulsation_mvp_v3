@@ -2,16 +2,15 @@ import { useCallback, useRef, useState } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
 import { AnchoredCirclesScreen } from "../src/design/components/AnchoredCirclesScreen";
 import { ExplanationText } from "../src/design/components/ExplanationText";
-import { markFlowCopyRevealed } from "../src/design/flow-copy-reveal";
 import { flowRevealIds } from "../src/design/flow-reveal-ids";
 import { uiCopy } from "../src/modules/delivery-layer";
-import { useFlowMainCopyRevealKey } from "../src/hooks/use-flow-main-copy-reveal-key";
+import { useFlowMainCopyDelayMs } from "../src/hooks/use-flow-main-copy-delay-ms";
 import { useRegisterCirclesPress } from "../src/hooks/use-register-circles-press";
 import { decideIntervention, registerPulsationDismissed } from "../src/services/pulsation-flow";
 import { useAppStore } from "../src/state/app-store";
 import { playTriggerHaptic } from "../src/services/haptic-regulation";
 import { hasPathsContent } from "../src/services/paths-stats";
-import { getMainCopyDelayMs, getTriggerPathsLinkDelayMs } from "../src/design/animation-rhythm";
+import { getTriggerPathsLinkDelayMs } from "../src/design/animation-rhythm";
 import { armFlowScreenEntryDelay } from "../src/design/flow-screen-transition";
 
 export default function TriggerScreen() {
@@ -19,8 +18,7 @@ export default function TriggerScreen() {
   const setSelected = useAppStore((s) => s.setSelectedIntervention);
   const wentToActionRef = useRef(false);
   const playedHapticRef = useRef(false);
-  const copyRevealKey = useFlowMainCopyRevealKey();
-  const mainLineDelayMs = getMainCopyDelayMs();
+  const mainLineDelayMs = useFlowMainCopyDelayMs();
   const pathsLinkDelayMs = getTriggerPathsLinkDelayMs(mainLineDelayMs);
   const [showPathsLink, setShowPathsLink] = useState(() => hasPathsContent());
 
@@ -45,7 +43,6 @@ export default function TriggerScreen() {
 
   const onCirclesPress = useCallback(() => {
     wentToActionRef.current = true;
-    markFlowCopyRevealed(flowRevealIds.triggerMain);
     armFlowScreenEntryDelay();
     router.push("/action");
   }, [router]);
@@ -55,11 +52,9 @@ export default function TriggerScreen() {
     <AnchoredCirclesScreen
       showPathsLink={showPathsLink}
       pathsLinkRevealDelayMs={pathsLinkDelayMs}
-      pathsLinkRevealKey={copyRevealKey}
       pinMainLikeTrigger
       mainLine={
         <ExplanationText
-          key={`main-${copyRevealKey}`}
           variant="main"
           holdAfterReveal
           revealId={flowRevealIds.triggerMain}

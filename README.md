@@ -23,7 +23,7 @@ Pulsation is a cross-platform mobile MVP that offers one gentle micro-action at 
 - `src/modules/trigger-engine.ts`: orchestration across safety + adaptive logic
 - `src/modules/eligibility-safety.ts`: hard safety rules (quiet hours, cap, cooldown, dismissal dampening)
 - `src/modules/state-interpreter.ts`: context interpretation for adaptation
-- `src/interventions/registry.ts`: intervention catalog (presentation mode, hint timing, defaults)
+- `src/interventions/registry.ts`: intervention catalog (presentation mode, defaults)
 - `src/modules/intervention-planner.ts`: adaptive intervention selection (time-of-day, completion rates, variety)
 - `src/modules/adaptive-scheduler.ts`: dynamic Pulsation interval from local engagement signals
 - `src/data/repositories/scheduling-profile-repo.ts`: persists scheduling profile (opens, completions, ignores)
@@ -47,10 +47,10 @@ Schema is defined in `src/data/schema.ts`. See `docs/adaptive-scheduling.md` for
 
 ## UX Flow
 
-1. **Onboarding** (`app/index.tsx`): **first install** — full flow (`ExtendedOnboardingFlow`): **Pulsation exists…** stays visible; **Tap circles — it's the button here** under circles; **How it works:** + four steps appear below (auto or first tap shows all); second tap → trigger; footer **About** only; once per install (`extended_onboarding_completed`). **Later cold starts** — short headline + **About**; tap circles → trigger. **Resume from background** — skip onboarding, open **One action for you** directly.
-2. **Trigger** (`app/trigger.tsx`): same circles slot; **One action for you** and **Show my paths** / **Мої шляхи** fade in together when you already have today’s actions or saved items; **tap to continue** last under circles. Paths → `app/paths.tsx`.
-3. **Action** (`app/action.tsx`): one micro-intervention (feet / find 3 / triangle breath / relax jaw / drop shoulders / notice 3 sounds / press palms together). Main line starts at the **same Y** as trigger **One action for you** and return **You are here**; bullets / phases / hint flow **below** main. **Simple actions:** **tap to continue** fades in **with** the main instruction. **Find 3 things:** shows three cues from **7 rotating sets** (`delivery-layer.ts`); same set never repeats back-to-back. Until all three bullets are visible, **circles tap reveals the next bullet** instead of completing the action; hint appears after all bullets. **Triangle breath**: soft haptic at inhale start and light haptic at exhale start (`startTriangleBreathHapticLoop`); hint after 3 breath cycles. **Circles are the same visual everywhere** (`circles-visual.ts` + `CirclesRings`). Action → return uses **`router.replace`** (no stack fade — `animation: "none"` on flow screens).
-4. **Return** (`app/return.tsx`): **You are here** (pinned main, fade-in) → explanation (fade after main); **Save this for me** in the **footer** and **tap to continue** under circles fade in **together** (tap last); if already saved, tap appears after the explanation. Tap circles → trigger.
+1. **Onboarding** (`app/index.tsx`): **first install** — full flow (`ExtendedOnboardingFlow`): **Pulsation exists…** stays visible; **How it works:** + three steps appear below (auto one-by-one, or first circles tap reveals all together); second tap → trigger; footer **About** only; once per install (`extended_onboarding_completed`). **Later cold starts** — short headline + **About**; tap circles → trigger. **Resume from background** — skip onboarding, open **One action for you** directly.
+2. **Trigger** (`app/trigger.tsx`): same circles slot; **One action for you** and **Show my paths** / **Мої шляхи** fade in together when you already have today’s actions or saved items. Paths → `app/paths.tsx`.
+3. **Action** (`app/action.tsx`): one micro-intervention (feet / find 3 / triangle breath / relax jaw / drop shoulders / notice 3 sounds / press palms together). Main line starts at the **same Y** as trigger **One action for you** and return **You are here**; bullets / phases flow **below** main. **Find 3 things:** shows three cues from **7 rotating sets** (`delivery-layer.ts`); same set never repeats back-to-back. Until all three bullets are visible, **circles tap reveals the next bullet** instead of completing the action. **Triangle breath**: soft haptic at inhale start and light haptic at exhale start (`startTriangleBreathHapticLoop`). **Circles are the same visual everywhere** (`circles-visual.ts` + `CirclesRings`). Action → return uses **`router.replace`** (no stack fade — `animation: "none"` on flow screens).
+4. **Return** (`app/return.tsx`): **You are here** (pinned main, fade-in) → explanation (auto after main, or sooner on circles tap); **Save this for me** in the **footer**; if already saved, the control is hidden. Second circles tap → trigger.
 
 Stack navigation uses a calm **fade** between routes (`app/_layout.tsx`, `breathingRhythm.motion.screenFadeMs`).
 
@@ -72,11 +72,9 @@ Dark minimal palette from technical requirements is implemented in `src/design/t
 
 | Piece | Where |
 | ----- | ----- |
-| Main line typography | `src/design/main-copy.ts` — **Source Serif 4**; main **20 pt**, explanations **17 pt**, footer/tap **12 pt** |
+| Main line typography | `src/design/main-copy.ts` — **Roboto Serif** for main copy, **Roboto** for service UI; main **20 pt**, explanations **17 pt**, footer **12 pt** |
 | Soft explanation-style fades | `ExplanationText` + `breathingRhythm.explanationText` |
-| Onboarding step rhythm | `onboardingRhythm` + `getOnboardingExplanationDelayMs` |
-| Gentle screen text entrance | `GentleTextTransition` (opacity only) |
-| Tap hint | **Extended onboarding only**: **Tap circles — it's the button here** under circles after **Pulsation exists…**; steps below (auto or first tap). **Triangle breath**: hint after **3 breath cycles**. |
+| Onboarding step rhythm | `onboardingCopy` + `getOnboardingExplanationDelayMs` |
 | Find 3 sequential bullets | `findThreeThings.autoRevealIntervalMs` |
 | Action → return (“You are here”) | Circles tap on action (`app/action.tsx`); find 3 requires all bullets first |
 | Save for me | `app/return.tsx` + `src/services/adaptive-preferences.ts` (`keptInterventions`) |

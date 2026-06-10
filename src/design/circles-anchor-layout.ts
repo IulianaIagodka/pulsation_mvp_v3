@@ -22,36 +22,46 @@ export function getCirclesAnchorMetrics(
   return { contentHeight, scrollHeight, circlesCenterY, circlesBottomY };
 }
 
-/** Extra space below circles layout box during inhale scale + shadow. */
-export function getCirclesBreathBottomOverflow(windowWidth: number): number {
-  const { size } = circlesLayout;
+/** Bottom overflow from layout box to visual edge of the largest ring at max inhale. */
+export function getLargestCircleBottomOverflow(windowWidth: number): number {
+  const { size, outerBorderWidth, shadowOffsetY, shadowRadius } = circlesLayout;
   const { scaleInhale } = breathingRhythm.circles;
-  const scaleOverflow = (size / 2) * (scaleInhale - 1);
-  // outerHighlighted: shadowRadius 18 + shadowOffset.y 6
-  const shadowSlack = scaleByWidth(16, windowWidth);
-  return scaleOverflow + shadowSlack;
+  const radius = size / 2;
+  const inhaleOverflow = radius * (scaleInhale - 1);
+  const borderOverflow = outerBorderWidth / 2;
+  const shadowOverflow = shadowOffsetY + shadowRadius;
+  const buffer = scaleByWidth(spacing.xs, windowWidth);
+  return inhaleOverflow + borderOverflow + shadowOverflow + buffer;
 }
 
-/** Gap between circles block and tap hint — clears max inhale diameter + shadow. */
+/** Visible breathing room between largest circle edge and main copy. */
+export function getMainCopyBelowCirclesGap(windowWidth: number): number {
+  return scaleByWidth(circlesLayout.textGap + spacing.xl + spacing.md + spacing.sm, windowWidth);
+}
+
+/** Gap between circles block and hint slot — clears max inhale diameter + shadow. */
 export function getCirclesToHintGap(windowWidth: number): number {
-  return getCirclesBreathBottomOverflow(windowWidth) + scaleByWidth(4, windowWidth);
+  return getLargestCircleBottomOverflow(windowWidth) + scaleByWidth(4, windowWidth);
 }
 
-/** Reserved height for inline hint below main copy (includes top margin). */
-export function getInlineHintSlotHeight(windowWidth: number, fontScale = getCappedFontScale()): number {
+/** Fixed text line under circles — scales with Dynamic Type (up to ~2 lines). */
+export function getUnderCirclesHintSlotHeight(windowWidth: number, fontScale = getCappedFontScale()): number {
   const capped = getCappedFontScale(fontScale);
-  const lineHeight = clamp(Math.round(scaleByWidth(22, windowWidth) * capped), 20, 48);
-  return lineHeight + scaleByWidth(spacing.sm, windowWidth) * 2;
-}
-
-/** Fixed text line under circles — same on every flow screen (not scaled by Dynamic Type). */
-export function getUnderCirclesHintSlotHeight(windowWidth: number): number {
-  return scaleByWidth(14, windowWidth);
+  const lineHeight = clamp(Math.round(scaleByWidth(16, windowWidth) * capped), 16, 44);
+  return lineHeight * 2;
 }
 
 /** Full reserved block: gap + hint line (matches `PersistentCirclesLayer`). */
-export function getUnderCirclesHintBlockHeight(windowWidth: number): number {
-  return getCirclesToHintGap(windowWidth) + getUnderCirclesHintSlotHeight(windowWidth);
+export function getUnderCirclesHintBlockHeight(windowWidth: number, fontScale = getCappedFontScale()): number {
+  return getCirclesToHintGap(windowWidth) + getUnderCirclesHintSlotHeight(windowWidth, fontScale);
+}
+
+/** Block above circles when onboarding tap hint uses `placement: "above"`. */
+export function getCirclesHintAboveBlockHeight(
+  windowWidth: number,
+  fontScale = getCappedFontScale(),
+): number {
+  return getUnderCirclesHintSlotHeight(windowWidth, fontScale) + getCirclesToHintGap(windowWidth);
 }
 
 /** One main line — used for text min-height and tight follow-up spacing. */
@@ -60,10 +70,12 @@ export function getMainCopySingleLineHeight(windowWidth: number, fontScale = get
   return Math.round(scaleByWidth(28, windowWidth) * capped);
 }
 
-/** Reserved height for the primary main line — scales with Dynamic Type (up to ~2 lines). */
+/** Reserved height for the primary main line — scales with Dynamic Type (multi-line wrap). */
 export function getMainCopySlotHeight(windowWidth: number, fontScale = getCappedFontScale()): number {
   const lineHeight = getMainCopySingleLineHeight(windowWidth, fontScale);
-  return clamp(lineHeight * 2, 52, lineHeight * 4);
+  const capped = getCappedFontScale(fontScale);
+  const lineBudget = capped > 1.5 ? 6 : 4;
+  return clamp(lineHeight * 2, 52, lineHeight * lineBudget);
 }
 
 /** Vertical center of the full display, in scroll coordinates (below top safe area). */
@@ -74,12 +86,47 @@ export function getScreenEquatorY(
   return windowHeight / 2 - insets.top;
 }
 
-/** Main line Y — shared across flow screens (no under-circles hint gap). */
-export function getTriggerMainCopyTop(
+/** Visual bottom of largest circle (max inhale + shadow) in scroll coordinates below top safe area. */
+export function getVisualCirclesBottomY(
   metrics: CirclesAnchorMetrics,
   windowWidth: number,
+  hintAboveBlockHeight = 0,
 ): number {
-  return getContentZoneTopWithoutHint(metrics, windowWidth);
+  return (
+    metrics.circlesBottomY -
+    hintAboveBlockHeight +
+    getLargestCircleBottomOverflow(windowWidth)
+  );
+}
+
+export type CirclesHintPlacement = "above" | "below" | "none";
+
+/** Top of main copy — always below visual circles; never overlaps rings or tap hint. */
+export function getMainCopyZoneTop(
+  metrics: CirclesAnchorMetrics,
+  windowWidth: number,
+  fontScale = getCappedFontScale(),
+  hintPlacement: CirclesHintPlacement = "none",
+): number {
+  const copyGap = getMainCopyBelowCirclesGap(windowWidth);
+  const hintAboveBlockHeight =
+    hintPlacement === "above" ? getCirclesHintAboveBlockHeight(windowWidth, fontScale) : 0;
+  const visualCirclesBottom = getVisualCirclesBottomY(metrics, windowWidth, hintAboveBlockHeight);
+
+  if (hintPlacement === "below") {
+    return visualCirclesBottom + getUnderCirclesHintBlockHeight(windowWidth, fontScale) + copyGap;
+  }
+
+  return visualCirclesBottom + copyGap;
+}
+
+/** Main line Y on every flow screen — matches extended onboarding (“Pulsation exists…”). */
+export function getFlowMainCopyTop(
+  metrics: CirclesAnchorMetrics,
+  windowWidth: number,
+  fontScale = getCappedFontScale(),
+): number {
+  return getMainCopyZoneTop(metrics, windowWidth, fontScale, "above");
 }
 
 /** Bottom inset for the shared main-line band — matches trigger with paths footer. */
@@ -101,7 +148,7 @@ export function getCenteredMainCopyTop(
   mainZoneBottom: number,
 ): number {
   const metrics = getCirclesAnchorMetrics(windowHeight, insets);
-  const bandTop = getTriggerMainCopyTop(metrics, windowWidth);
+  const bandTop = getMainCopyZoneTop(metrics, windowWidth, fontScale, "none");
   const bandBottom = windowHeight - insets.top - mainZoneBottom;
   const singleLineHeight = getMainCopySingleLineHeight(windowWidth, fontScale);
   const bandHeight = Math.max(0, bandBottom - bandTop);
@@ -114,7 +161,7 @@ export function getReturnFollowUpTop(
   windowWidth: number,
   fontScale = getCappedFontScale(),
 ): number {
-  const mainTop = getTriggerMainCopyTop(metrics, windowWidth);
+  const mainTop = getFlowMainCopyTop(metrics, windowWidth, fontScale);
   const mainSlotHeight = getMainCopySlotHeight(windowWidth, fontScale);
   const gap = scaleByWidth(16, windowWidth);
   return mainTop + mainSlotHeight + gap;
@@ -148,7 +195,7 @@ export function getFollowUpContentLayout(
         fontScale,
         getFlowMainZoneBottom(windowWidth, fontScale, footerBottomInset),
       )
-    : getTriggerMainCopyTop(metrics, windowWidth);
+    : getFlowMainCopyTop(metrics, windowWidth, fontScale);
   const mainClampHeight = mainSlotHeight;
 
   return {
@@ -157,13 +204,4 @@ export function getFollowUpContentLayout(
     scrollTop: mainTop + mainClampHeight + gap,
     scrollBottom: footerReserve,
   };
-}
-
-/** Top of main copy below circles block (rings + fixed under-circles hint slot). */
-export function getContentZoneTopWithoutHint(
-  metrics: CirclesAnchorMetrics,
-  windowWidth: number,
-): number {
-  const gap = scaleByWidth(circlesLayout.textGap, windowWidth);
-  return metrics.circlesBottomY + getUnderCirclesHintBlockHeight(windowWidth) + gap;
 }

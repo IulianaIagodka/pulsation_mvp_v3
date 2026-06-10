@@ -6,6 +6,7 @@ import { AboutFooterLink } from "../src/design/components/AboutFooterLink";
 import { OverflowScrollView } from "../src/design/components/OverflowScrollView";
 import { CalmScreen } from "../src/design/components/CalmScreen";
 import { CalmText } from "../src/design/components/CalmText";
+import { utilityFontFamily } from "../src/design/app-font";
 import { getCappedFontScale, legibleOpacity } from "../src/design/accessibility";
 import { getContentMaxWidth } from "../src/design/responsive";
 import { useHighContrast } from "../src/hooks/use-high-contrast";
@@ -71,6 +72,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   title: {
+    fontFamily: utilityFontFamily,
     fontSize: 20,
     lineHeight: 24,
     color: colors.textPrimary,
@@ -82,6 +84,7 @@ const styles = StyleSheet.create({
     opacity: 0.98,
   },
   paragraph: {
+    fontFamily: utilityFontFamily,
     textAlign: "left",
     color: colors.textSecondary,
     fontSize: 17,
@@ -94,6 +97,7 @@ const styles = StyleSheet.create({
     opacity: 0.95,
   },
   version: {
+    fontFamily: utilityFontFamily,
     marginTop: spacing.sm,
     color: colors.textSecondary,
     fontSize: 12,

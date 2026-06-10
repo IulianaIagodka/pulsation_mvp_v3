@@ -203,6 +203,7 @@ const styles = StyleSheet.create({
   },
   todayCountHighContrast: {
     color: colors.textPrimary,
+    opacity: 1,
   },
   pathsMetaLabel: {
     ...explanationTextStyle,
@@ -238,6 +239,7 @@ const styles = StyleSheet.create({
   },
   savedSectionHeadingHighContrast: {
     color: colors.textPrimary,
+    opacity: 1,
   },
   savedSectionLabel: {
     marginTop: 0,

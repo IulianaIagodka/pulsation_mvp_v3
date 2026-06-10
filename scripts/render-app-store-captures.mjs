@@ -30,12 +30,10 @@ const COPY = {
   onboardingLine: "Pulsation exists to bring you back to yourself",
   onboardingSubtitle: "How it works:",
   onboardingSteps: [
-    "Simply exists in the background",
-    "One gentle invitation",
-    "One small action for you",
-    "A quiet return — «you are here»",
+    "It stays in the background",
+    "It invites you from time to time",
+    "Tap the circles to continue",
   ],
-  onboardingCirclesHint: "Tap circles to continue — it is a button here",
   triggerPrompt: "One action for you",
   actionText:
     "Place your feet on the ground, notice the pressure under them, take one slow breath",
@@ -149,7 +147,6 @@ const SCREENS = {
         const block = mutedText(step, y + 56 + i * 44, 28, 0.58);
         return block;
       }),
-      mutedText(COPY.onboardingCirclesHint, y + 56 + COPY.onboardingSteps.length * 44 + 20, 24, 0.58),
       footerLink(COPY.aboutLink, H - 120),
     ].join("");
     return screenSvg(body);
