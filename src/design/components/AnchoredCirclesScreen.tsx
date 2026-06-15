@@ -8,15 +8,8 @@ import { circlesLayout } from "../animation-rhythm";
 import { spacing } from "../tokens";
 import { CalmPressable } from "./CalmPressable";
 import { resolvePressableTextOpacity } from "../pressable-highlight";
-import { clamp, scaleByWidth } from "../responsive";
-import {
-  getCirclesAnchorMetrics,
-  getFollowUpContentLayout,
-  getFlowMainCopyTop,
-  getMainCopySlotHeight,
-  getReturnFollowUpTop,
-  getScreenEquatorY,
-} from "../circles-anchor-layout";
+import { scaleByWidth } from "../responsive";
+import { getAnchoredCirclesScreenLayout } from "../anchored-circles-screen-layout";
 import { useAppStore } from "../../state/app-store";
 import { uiCopy } from "../../modules/delivery-layer";
 import { resetPulsationLocalData } from "../../services/pulsation-flow";
@@ -84,50 +77,22 @@ export function AnchoredCirclesScreen({
     router.replace("/");
   }, [clearIntervention, router]);
 
-  const metrics = getCirclesAnchorMetrics(windowHeight, insets);
-  const footerBottomInset = Math.max(insets.bottom, scaleByWidth(spacing.sm, windowWidth));
   const footerLinkCount = (showPathsLink ? 1 : 0) + (footer ? 1 : 0);
-  const footerRowHeight = clamp(scaleByWidth(44, windowWidth) * fontScale, 44, 132);
-  const footerHeight = footerLinkCount > 0 ? footerRowHeight * footerLinkCount + scaleByWidth(spacing.xs, windowWidth) : 0;
-  const scrollBottomPad =
-    footerLinkCount > 0 ? footerHeight + footerBottomInset : scaleByWidth(spacing.xl, windowWidth);
-  const flowMainCopyTop = getFlowMainCopyTop(metrics, windowWidth, fontScale);
-  const contentZoneTop = compactCapture
-    ? metrics.circlesBottomY + scaleByWidth(spacing.xs, windowWidth)
-    : flowMainCopyTop;
-  const triggerMainCopyTop =
-    pinMainLikeTrigger && !compactCapture ? flowMainCopyTop : contentZoneTop;
-  const mainCopySlotHeight = getMainCopySlotHeight(windowWidth, fontScale);
-  const screenEquatorY = getScreenEquatorY(windowHeight, insets);
-  const belowEquatorTop = pinMainLikeTrigger
-    ? getReturnFollowUpTop(metrics, windowWidth, fontScale)
-    : screenEquatorY + scaleByWidth(36, windowWidth) * fontScale;
-  const useEquatorLayout = centerContent && pinMainLikeTrigger;
-  const afterMainTop = triggerMainCopyTop + mainCopySlotHeight;
   const pinnedAfterMain = mainLine != null ? children : null;
-  const unifiedMainScroll =
-    pinMainLikeTrigger &&
-    mainLine != null &&
-    pinnedAfterMain != null &&
-    belowEquator == null &&
-    !expandMainToFooter;
-  const mainOnlyScroll =
-    pinMainLikeTrigger &&
-    mainLine != null &&
-    pinnedAfterMain == null &&
-    belowEquator == null &&
-    !expandMainToFooter;
-  const mainBandScroll = mainOnlyScroll || unifiedMainScroll;
-  const hasFollowUpBelowMain = pinnedAfterMain != null || belowEquator != null;
-  const mainZoneBottom =
-    footerLinkCount > 0 ? footerHeight + footerBottomInset : scaleByWidth(spacing.sm, windowWidth);
-  const followUpLayout = hasFollowUpBelowMain
-    ? getFollowUpContentLayout(windowHeight, insets, windowWidth, fontScale, mainZoneBottom)
-    : null;
-  const pinnedMainTop = followUpLayout?.mainTop ?? triggerMainCopyTop;
-  const mainClampHeight = followUpLayout?.mainClampHeight;
-  const scrollBelowMainTop = followUpLayout?.scrollTop ?? belowEquatorTop;
-  const scrollBelowMainBottom = followUpLayout?.scrollBottom ?? mainZoneBottom;
+  const layout = getAnchoredCirclesScreenLayout({
+    windowHeight,
+    windowWidth,
+    insets,
+    fontScale,
+    footerLinkCount,
+    centerContent,
+    compactCapture,
+    pinMainLikeTrigger,
+    expandMainToFooter,
+    hasMainLine: mainLine != null,
+    hasPinnedAfterMain: pinnedAfterMain != null,
+    hasBelowEquator: belowEquator != null,
+  });
 
   const pinnedFooter =
     footerLinkCount > 0 ? (
@@ -156,28 +121,31 @@ export function AnchoredCirclesScreen({
         {circles ? (
           <View
             pointerEvents="box-none"
-            style={[styles.circlesLayer, { top: metrics.circlesCenterY - circlesLayout.size / 2 }]}
+            style={[
+              styles.circlesLayer,
+              { top: layout.metrics.circlesCenterY - circlesLayout.size / 2 },
+            ]}
           >
             {circles}
           </View>
         ) : null}
 
-        {useEquatorLayout ? (
+        {layout.useEquatorLayout ? (
           <View pointerEvents="box-none" style={styles.equatorRoot}>
             <View
               pointerEvents="box-none"
               style={[
                 styles.mainAnchorSlot,
-                expandMainToFooter || mainBandScroll
-                  ? { top: triggerMainCopyTop, bottom: mainZoneBottom }
-                  : hasFollowUpBelowMain && mainClampHeight != null
-                    ? { top: pinnedMainTop, height: mainClampHeight }
-                    : { top: triggerMainCopyTop, minHeight: mainCopySlotHeight },
+                expandMainToFooter || layout.mainBandScroll
+                  ? { top: layout.triggerMainCopyTop, bottom: layout.mainZoneBottom }
+                  : layout.hasFollowUpBelowMain && layout.mainClampHeight != null
+                    ? { top: layout.pinnedMainTop, height: layout.mainClampHeight }
+                    : { top: layout.triggerMainCopyTop, minHeight: layout.mainCopySlotHeight },
                 expandMainToFooter && styles.mainAnchorCentered,
                 (expandMainToFooter || pinMainLikeTrigger) && styles.mainAnchorStretch,
               ]}
             >
-              {mainBandScroll ? (
+              {layout.mainBandScroll ? (
                 <OverflowScrollView
                   style={styles.mainZoneScroll}
                   contentContainerStyle={styles.mainZoneScrollContentTop}
@@ -186,7 +154,7 @@ export function AnchoredCirclesScreen({
                   <SoftCard flush>{mainLine}</SoftCard>
                   {pinnedAfterMain}
                 </OverflowScrollView>
-              ) : hasFollowUpBelowMain && mainLine != null && mainClampHeight != null ? (
+              ) : layout.hasFollowUpBelowMain && mainLine != null && layout.mainClampHeight != null ? (
                 <OverflowScrollView
                   style={styles.mainClampScroll}
                   contentContainerStyle={styles.mainClampScrollContent}
@@ -200,12 +168,12 @@ export function AnchoredCirclesScreen({
                 <SoftCard flush>{mainLine ?? children}</SoftCard>
               )}
             </View>
-            {pinnedAfterMain && !unifiedMainScroll ? (
+            {pinnedAfterMain && !layout.unifiedMainScroll ? (
               pinMainLikeTrigger && mainLine != null ? (
                 <OverflowScrollView
                   style={[
                     styles.belowEquatorScroll,
-                    { top: scrollBelowMainTop, bottom: scrollBelowMainBottom },
+                    { top: layout.scrollBelowMainTop, bottom: layout.scrollBelowMainBottom },
                   ]}
                   contentContainerStyle={[
                     styles.belowEquatorScrollContent,
@@ -218,7 +186,7 @@ export function AnchoredCirclesScreen({
               ) : (
                 <View
                   pointerEvents="box-none"
-                  style={[styles.afterMainAnchorSlot, { top: afterMainTop }]}
+                  style={[styles.afterMainAnchorSlot, { top: layout.afterMainTop }]}
                 >
                   <SoftCard flush>{pinnedAfterMain}</SoftCard>
                 </View>
@@ -229,7 +197,7 @@ export function AnchoredCirclesScreen({
                 <OverflowScrollView
                   style={[
                     styles.belowEquatorScroll,
-                    { top: scrollBelowMainTop, bottom: scrollBelowMainBottom },
+                    { top: layout.scrollBelowMainTop, bottom: layout.scrollBelowMainBottom },
                   ]}
                   contentContainerStyle={[
                     styles.belowEquatorScrollContent,
@@ -244,7 +212,7 @@ export function AnchoredCirclesScreen({
                   pointerEvents="box-none"
                   style={[
                     styles.belowEquator,
-                    { top: belowEquatorTop, paddingBottom: scrollBottomPad },
+                    { top: layout.belowEquatorTop, paddingBottom: layout.scrollBottomPad },
                   ]}
                 >
                   {belowEquator}
@@ -258,8 +226,8 @@ export function AnchoredCirclesScreen({
             contentContainerStyle={[
               styles.scrollContent,
               {
-                paddingTop: contentZoneTop,
-                paddingBottom: scrollBottomPad,
+                paddingTop: layout.contentZoneTop,
+                paddingBottom: layout.scrollBottomPad,
               },
             ]}
             keyboardShouldPersistTaps="handled"
@@ -274,7 +242,7 @@ export function AnchoredCirclesScreen({
         )}
 
         {pinnedFooter ? (
-          <View pointerEvents="box-none" style={[styles.footer, { paddingBottom: footerBottomInset }]}>
+          <View pointerEvents="box-none" style={[styles.footer, { paddingBottom: layout.footerBottomInset }]}>
             {pinnedFooter}
           </View>
         ) : null}

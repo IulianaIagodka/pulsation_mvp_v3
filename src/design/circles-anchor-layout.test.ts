@@ -3,6 +3,7 @@ jest.mock("./accessibility", () => ({
 }));
 
 import { breathingRhythm, circlesLayout } from "./animation-rhythm";
+import { getAnchoredCirclesScreenLayout } from "./anchored-circles-screen-layout";
 import {
   getCirclesAnchorMetrics,
   getCirclesHintAboveBlockHeight,
@@ -39,6 +40,32 @@ describe("circles anchor layout", () => {
 
     expect(flowTop).toBe(onboardingTop);
     expect(flowTop).toBeLessThan(triggerLegacyTop);
+  });
+
+  it("keeps trigger, action, and return main copy pinned to the same Y", () => {
+    const base = {
+      windowHeight: 844,
+      windowWidth: 390,
+      insets: { top: 47, bottom: 34 },
+      fontScale: 1.2,
+      pinMainLikeTrigger: true,
+      hasMainLine: true,
+    };
+
+    const trigger = getAnchoredCirclesScreenLayout({ ...base, footerLinkCount: 1 });
+    const action = getAnchoredCirclesScreenLayout({ ...base, hasPinnedAfterMain: true });
+    const returnScreen = getAnchoredCirclesScreenLayout({
+      ...base,
+      footerLinkCount: 1,
+      hasPinnedAfterMain: true,
+    });
+
+    expect(trigger.triggerMainCopyTop).toBe(trigger.flowMainCopyTop);
+    expect(action.pinnedMainTop).toBe(trigger.flowMainCopyTop);
+    expect(returnScreen.pinnedMainTop).toBe(trigger.flowMainCopyTop);
+    expect(returnScreen.scrollBelowMainTop).toBeGreaterThanOrEqual(
+      returnScreen.pinnedMainTop + returnScreen.mainCopySlotHeight,
+    );
   });
 
   it("keeps main copy below visual circles bottom for every hint placement", () => {
