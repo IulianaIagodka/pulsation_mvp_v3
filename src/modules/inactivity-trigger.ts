@@ -4,6 +4,8 @@ import { computeAdaptiveIntervalMinutes, explainInterval } from "./adaptive-sche
 import { checkEligibility } from "./eligibility-safety";
 
 export const INACTIVITY_TRIGGER_MINUTES = 20;
+export const INACTIVITY_TRIGGER_MIN_ADAPTIVE_MINUTES = 10;
+export const INACTIVITY_TRIGGER_MAX_ADAPTIVE_MINUTES = 30;
 
 const blockedPathPrefixes = ["/action", "/return"];
 
@@ -14,6 +16,13 @@ function parseOptionalEnvMinutes(raw: string | undefined): number | undefined {
   return Math.max(0, n);
 }
 
+function clampAdaptiveTriggerMinutes(minutes: number): number {
+  return Math.max(
+    INACTIVITY_TRIGGER_MIN_ADAPTIVE_MINUTES,
+    Math.min(INACTIVITY_TRIGGER_MAX_ADAPTIVE_MINUTES, Math.round(minutes)),
+  );
+}
+
 export function resolveAdaptiveIntervalMinutes(): number {
   const profile = getSchedulingProfile();
   const safety = getSafetyState();
@@ -21,7 +30,7 @@ export function resolveAdaptiveIntervalMinutes(): number {
 }
 
 export function getAdaptiveTriggerThresholdMinutes(): number {
-  const minutes = resolveAdaptiveIntervalMinutes();
+  const minutes = clampAdaptiveTriggerMinutes(resolveAdaptiveIntervalMinutes());
   recordScheduledInterval(minutes);
   return minutes;
 }
@@ -31,7 +40,7 @@ export function getInactivityTriggerThresholdMinutes(): number {
   if (envOverride !== undefined) return envOverride;
 
   try {
-    return resolveAdaptiveIntervalMinutes();
+    return clampAdaptiveTriggerMinutes(resolveAdaptiveIntervalMinutes());
   } catch {
     return INACTIVITY_TRIGGER_MINUTES;
   }
@@ -84,7 +93,10 @@ export function getSchedulingExplanation(): string {
     const profile = getSchedulingProfile();
     const safety = getSafetyState();
     const { factors } = computeAdaptiveIntervalMinutes(profile, safety);
-    return explainInterval(factors);
+    const triggerMinutes = clampAdaptiveTriggerMinutes(factors.finalMinutes);
+    const explanation = explainInterval(factors);
+    if (triggerMinutes === factors.finalMinutes) return explanation;
+    return `${explanation}, capped to ${triggerMinutes}m trigger window`;
   } catch {
     return `base ${INACTIVITY_TRIGGER_MINUTES}m`;
   }

@@ -10,7 +10,7 @@ Use this file when filling **App Privacy** in App Store Connect.
 - No third-party analytics SDK.
 - No ad SDK.
 - Data stays on device (SQLite).
-- Notifications are local reminders only (scheduled on device).
+- Notifications are periodic local one-action reminders only (scheduled on device).
 - No backend data collection from the app.
 
 ## What is stored locally (on device)
@@ -43,7 +43,7 @@ Storage layer: local SQLite DB (`src/data/schema.ts`).
 
 ## Notifications
 
-- App may schedule a local reminder after inactivity (about 20 minutes).
+- App may schedule local reminders after inactivity (adaptively around 20 minutes apart, within a 10-30 minute window).
 - Notification generation is local/on-device.
 - No remote marketing push campaigns from backend.
 

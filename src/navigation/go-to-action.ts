@@ -4,7 +4,7 @@ import { decideIntervention } from "../services/pulsation-flow";
 import { useAppStore } from "../state/app-store";
 import { matchesAppRoute } from "./route-path";
 
-/** Open the action step directly — e.g. from an inactivity notification tap. */
+/** Open the action step directly after the user accepts the trigger prompt. */
 export function goToAction(router: Router, pathname: string): void {
   if (matchesAppRoute(pathname, "/action")) {
     return;

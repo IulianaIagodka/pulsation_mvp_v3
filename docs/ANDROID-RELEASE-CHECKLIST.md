@@ -86,7 +86,7 @@ GOOGLE_SERVICE_ACCOUNT_KEY_PATH=~/secrets/pulsation-play-service-account.json \
 ### A4. Notifications на Android (перевірка)
 
 - [ ] `expo-notifications` plugin уже в `app.json`
-- [ ] На **реальному** Android (не лише Expo Go): дозвіл на notifications → inactivity reminder через ~20 хв після background
+- [ ] На **реальному** Android (не лише Expo Go): дозвіл на notifications → periodic one-action reminders every ~20 хв після background (10-30 хв adaptive window)
 - [ ] Tap notification → відкриває `/trigger` (`NotificationOpenListener`)
 
 Якщо push не потрібен (лише local schedule) — FCM/google-services.json часто **не обов’язковий**; якщо EAS build скаржиться — додати за [Expo Notifications setup](https://docs.expo.dev/push-notifications/fcm-credentials/).
