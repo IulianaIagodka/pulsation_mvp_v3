@@ -113,7 +113,7 @@ clamp to [18m, 240m]
 
 **When the interval is computed**
 
-- On background → schedule a finite rolling set of local notifications: one at the adaptive interval, then one per day for the next 6 days if the app stays unopened (interval persisted as `lastScheduledIntervalMinutes`).
+- On background → schedule one local notification at the adaptive interval, capped to the 10-30 minute trigger window (interval persisted as `lastScheduledIntervalMinutes`).
 - On resume → compare inactive minutes against current interval; also check eligibility.
 
 **Eligibility gates** (unchanged, from `eligibility-safety.ts`)

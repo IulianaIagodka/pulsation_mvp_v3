@@ -4,25 +4,6 @@ import { getAdaptiveTriggerThresholdMinutes, getInactivityNotificationDelaySecon
 import { uiCopy } from "../modules/delivery-layer";
 
 export const INACTIVITY_NOTIFICATION_ID = "pulsation-inactivity-trigger";
-export const INACTIVITY_NOTIFICATION_LOOKAHEAD_DAYS = 7;
-
-const secondsPerDay = 24 * 60 * 60;
-
-function getInactivityNotificationIdentifier(index: number): string {
-  return index === 0 ? INACTIVITY_NOTIFICATION_ID : `${INACTIVITY_NOTIFICATION_ID}-${index + 1}`;
-}
-
-export function getInactivityNotificationIdentifiers(): string[] {
-  return Array.from({ length: INACTIVITY_NOTIFICATION_LOOKAHEAD_DAYS }, (_, index) =>
-    getInactivityNotificationIdentifier(index),
-  );
-}
-
-async function cancelScheduledInactivityNotifications(): Promise<void> {
-  for (const identifier of getInactivityNotificationIdentifiers()) {
-    await Notifications.cancelScheduledNotificationAsync(identifier);
-  }
-}
 
 export function configureInactivityNotifications() {
   Notifications.setNotificationHandler({
@@ -63,26 +44,23 @@ export async function scheduleInactivityNotification(): Promise<void> {
     const granted = await ensurePermissions();
     if (!granted) return;
 
-    await cancelScheduledInactivityNotifications();
+    await Notifications.cancelScheduledNotificationAsync(INACTIVITY_NOTIFICATION_ID);
 
     const thresholdMinutes = getAdaptiveTriggerThresholdMinutes();
-    const firstDelaySeconds = getInactivityNotificationDelaySeconds(thresholdMinutes);
 
-    for (let index = 0; index < INACTIVITY_NOTIFICATION_LOOKAHEAD_DAYS; index += 1) {
-      await Notifications.scheduleNotificationAsync({
-        identifier: getInactivityNotificationIdentifier(index),
-        content: {
-          title: uiCopy.inactivityNotificationTitle,
-          body: uiCopy.inactivityNotificationBody,
-          data: { route: "/trigger" },
-        },
-        trigger: {
-          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-          seconds: firstDelaySeconds + index * secondsPerDay,
-          repeats: false,
-        },
-      });
-    }
+    await Notifications.scheduleNotificationAsync({
+      identifier: INACTIVITY_NOTIFICATION_ID,
+      content: {
+        title: uiCopy.inactivityNotificationTitle,
+        body: uiCopy.inactivityNotificationBody,
+        data: { route: "/trigger" },
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: getInactivityNotificationDelaySeconds(thresholdMinutes),
+        repeats: false,
+      },
+    });
   } catch (error) {
     console.warn("[inactivity-notification] schedule failed:", error);
   }
@@ -92,7 +70,7 @@ export async function cancelInactivityNotification(): Promise<void> {
   if (Platform.OS === "web") return;
 
   try {
-    await cancelScheduledInactivityNotifications();
+    await Notifications.cancelScheduledNotificationAsync(INACTIVITY_NOTIFICATION_ID);
   } catch (error) {
     console.warn("[inactivity-notification] cancel failed:", error);
   }

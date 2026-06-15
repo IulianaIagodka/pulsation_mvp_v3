@@ -1,11 +1,14 @@
-jest.mock("../data/repositories/scheduling-profile-repo", () => ({
-  getSchedulingProfile: () => ({
+const mockGetSchedulingProfile = jest.fn(() => ({
     consecutiveIgnored: 0,
     totalCompleted: 0,
     completionsByType: {},
     completionsByHour: {},
-  }),
-  recordScheduledInterval: jest.fn(),
+}));
+const mockRecordScheduledInterval = jest.fn();
+
+jest.mock("../data/repositories/scheduling-profile-repo", () => ({
+  getSchedulingProfile: mockGetSchedulingProfile,
+  recordScheduledInterval: mockRecordScheduledInterval,
   recordAppOpen: jest.fn(),
 }));
 
@@ -21,7 +24,9 @@ jest.mock("../data/repositories/safety-repo", () => ({
 }));
 
 import {
+  INACTIVITY_TRIGGER_MAX_ADAPTIVE_MINUTES,
   INACTIVITY_TRIGGER_MINUTES,
+  getAdaptiveTriggerThresholdMinutes,
   getInactivityNotificationDelaySeconds,
   getInactivityTriggerThresholdMinutes,
   isPathBlockedForAutoTrigger,
@@ -33,6 +38,13 @@ describe("inactivity trigger", () => {
   afterEach(() => {
     delete process.env.EXPO_PUBLIC_INACTIVITY_TRIGGER_MINUTES;
     delete process.env.EXPO_PUBLIC_SIMULATED_INACTIVE_MINUTES;
+    mockGetSchedulingProfile.mockReturnValue({
+      consecutiveIgnored: 0,
+      totalCompleted: 0,
+      completionsByType: {},
+      completionsByHour: {},
+    });
+    mockRecordScheduledInterval.mockClear();
   });
 
   it("uses env override for fixed QA thresholds", () => {
@@ -50,6 +62,20 @@ describe("inactivity trigger", () => {
   it("schedules notification delay from threshold minutes", () => {
     expect(getInactivityNotificationDelaySeconds(20)).toBe(1200);
     expect(getInactivityNotificationDelaySeconds(1)).toBe(60);
+  });
+
+  it("caps adaptive production thresholds to the 10-30 minute reminder window", () => {
+    mockGetSchedulingProfile.mockReturnValue({
+      consecutiveIgnored: 10,
+      totalCompleted: 0,
+      completionsByType: {},
+      completionsByHour: {},
+    });
+
+    expect(getAdaptiveTriggerThresholdMinutes()).toBe(INACTIVITY_TRIGGER_MAX_ADAPTIVE_MINUTES);
+    expect(mockRecordScheduledInterval).toHaveBeenCalledWith(
+      INACTIVITY_TRIGGER_MAX_ADAPTIVE_MINUTES,
+    );
   });
 
   it("supports QA env overrides for simulated inactivity", () => {
