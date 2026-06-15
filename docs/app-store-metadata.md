@@ -4,33 +4,35 @@
 
 **App Store:** **1.0.2** build **36** LIVE ✅ (2026-06-10).  
 **Скріншоти:** завантажені ✅ (онбординг може потребувати оновлення після typography polish).  
-**Наступний submit:** train **1.0.3+** — What's New / Review Notes з секцій нижче як шаблон для **1.0.2 vs 33**.
+**Наступний submit:** train **1.0.3+** — використати секції **1.0.3** нижче; історичні **1.0.2** блоки лишаються для reference.
 
-### What's New → EN (1.0.2) — вставити в Connect при submit
-
-```
-- Clearer onboarding — Pulsation exists… stays on screen; How it works and steps appear below; first tap shows all steps, second tap continues (or steps auto-reveal if you wait).
-- Calmer typography — Source Serif 4 throughout; main lines 20 pt; explanations 17 pt; footer links and tap hint 12 pt.
-- Paths polish — today's count at 20 pt; Saved for you: at 20 pt; saved items at 17 pt.
-- Calmer flow — tap hint under circles only on onboarding; no repeating hint on trigger, action, or return.
-```
-
-### What's New → UK (1.0.2) — вставити в Connect при submit
+### What's New → EN (1.0.3) — вставити в Connect при submit
 
 ```
-- Зрозуміліший онбординг — Pulsation допомагає… лишається на екрані; Як це працює: і кроки з’являються нижче; перший тап — усі кроки одразу, другий — продовжити (або кроки з’являються самі, якщо почекати).
-- Спокійніша типографіка — Source Serif 4; головні рядки 20 pt; пояснення 17 pt; footer і tap hint 12 pt.
-- Мої шляхи — лічильник 20 pt; Збережені для тебе: 20 pt; збережені дії 17 pt.
-- Спокійніший флоу — підказка під колами лише на онбордингу.
+- More reliable resume flow — cold starts, background returns, and onboarding routing are handled more consistently.
+- More dependable circles tap — the global circles button now keeps the focused screen action active and avoids blocking footer links.
+- Smoother visual timing — main copy, follow-up text, bullets, and footer links share one stable reveal rhythm.
 ```
 
-### Review Notes (1.0.2)
+### What's New → UK (1.0.3) — вставити в Connect при submit
 
-Скопіювати з секцій **App Review Notes (version 1.0.2 — build 34+)** (EN) та UK-аналог нижче при submit.
+```
+- Надійніший resume flow — cold start, повернення з background і onboarding routing працюють послідовніше.
+- Надійніший tap по колах — глобальна кнопка тримає дію focused screen і не перекриває footer links.
+- Плавніший візуальний ритм — main copy, пояснення, bullets і footer links мають єдиний стабільний reveal timing.
+```
 
-### Після submit 1.0.2
+### Review Notes (1.0.3)
 
-1. Connect → **1.0.2** → **Submit for Review** (після обробки Apple).
+This build keeps the core user path unchanged and focuses on reliability polish:
+
+- background/resume/onboarding routing is now driven by one explicit resume snapshot;
+- the global circles press handler is guarded so only the focused screen action is active;
+- copy reveal timing and anchored main-copy layout are centralized and covered by regression tests.
+
+### Після submit 1.0.3
+
+1. Connect → **1.0.3** → **Submit for Review** (після обробки Apple).
 2. TestFlight на iPhone → regression checklist.
 
 ---

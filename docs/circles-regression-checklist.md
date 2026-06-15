@@ -13,7 +13,7 @@ Use this checklist before release whenever animation/layout is changed.
 ## Interaction (tap)
 
 - [ ] Tap circles on **each** flow screen and verify navigation / completion (circles are wrapped in `Pressable`; layer has `zIndex` + `elevation`).
-- [ ] If tap feels dead, check Android: circles layer should stay **above** the `ScrollView` hit target (`PersistentCirclesLayer` elevation). Layer is **circles-sized only** (no full-screen overlay) so footer links stay visible and tappable.
+- [ ] If tap feels dead, check Android: circles layer should stay **above** the `ScrollView` hit target (`CIRCLES_LAYER_ELEVATION` / `CIRCLES_LAYER_Z_INDEX`). Layer is **circles hit-target sized only** (no full-screen overlay) so footer links stay visible and tappable.
 - [ ] **About** on onboarding footer only; **Show my paths** / **Мої шляхи** only on **trigger** when there is today’s count or saved items — together with “One action for you”.
 - [ ] **Save this for me** / **Збережи це для мене** pinned in the **footer** on return (not in scroll body); tap → **Saved** / **Збережено** (not clickable).
 
@@ -34,8 +34,8 @@ Use this checklist before release whenever animation/layout is changed.
 - [ ] On **find 3**, circles tap **before** all bullets are shown only reveals the next bullet (does not go to return).
 - [ ] After all three bullets, circles tap goes to return — no auto-advance.
 - [ ] On return after find 3, explanation is a short single sentence and rotates across variants.
-- [ ] Action → return: only **one** return screen (back does not land on return again); **You are here** fades in like action main copy (`getMainCopyDelayMs` + `copyReveal.fadeMs`).
-- [ ] **One action for you**, **You are here**, and action main line (feet / find 3 / triangle) **start at the same Y** (`getFlowMainCopyTop`); **no vertical jump** when explanation / bullets appear.
+- [ ] Action → return: only **one** return screen (back does not land on return again); **You are here** follows the shared `FlowCopyTimeline` main-copy reveal.
+- [ ] **One action for you**, **You are here**, and action main line (feet / find 3 / triangle) **start at the same Y** (`getAnchoredCirclesScreenLayout` / `getFlowMainCopyTop`); **no vertical jump** when explanation / bullets appear.
 - [ ] **Find 3 things:** — gap to first bullet matches return main → explanation (~10px layout + 16px margin); no large empty slot under the title.
 - [ ] On `triangle_breath`, verify phase words (`inhale` / `hold` / `exhale`) crossfade gently; **both** holds show “hold / затримка”.
 - [ ] On `triangle_breath`, feel haptic at **inhale start** and **exhale start** (device build, not Expo Go only).
@@ -46,4 +46,4 @@ Use this checklist before release whenever animation/layout is changed.
 
 ## Automated safety net
 
-- [ ] Run `npm test -- --runInBand` and ensure `ui-regression.test.ts` passes.
+- [ ] Run `npm test -- --runInBand` and ensure `ui-regression.test.ts`, `circles-anchor-layout.test.ts`, `flow-screen-transition.test.ts`, and `flow-copy-reveal.test.ts` pass.

@@ -5,8 +5,9 @@
 | **1.0.0** | 26 | superseded |
 | **1.0.1** | 28–33 | superseded |
 | **1.0.2** | 36 | **LIVE** в App Store ✅ |
+| **1.0.3** | EAS auto-increment | next TestFlight/App Store train |
 
-**Зараз:** **1.0.2** build **36** — LIVE в App Store ✅. Наступні правки → train **1.0.3+**.
+**Зараз:** Store має **1.0.2** build **36** LIVE ✅; репо/app config підготовлено до train **1.0.3+**.
 
 Android: `docs/ANDROID-RELEASE-CHECKLIST.md`
 
@@ -152,25 +153,27 @@ npx expo-doctor
 npm audit --omit=dev
 ```
 
-- [x] **Regression:** `npm test` зелений (22 suites, 108 tests)
+- [x] **Regression:** `npm test` зелений (оновлювати count після локального/CI прогону)
 - [x] **Type compatibility:** `npx tsc --noEmit` без помилок
 - [ ] **Expo compatibility:** `npx expo-doctor` — перевірити перед EAS
 - [ ] **Security:** `npm audit --omit=dev` переглянуто; high/critical відсутні або задокументовані
 
-Поточний стан Store (1.0.2 build **36** LIVE):
-- iOS **version** `1.0.2`, **buildNumber** EAS auto-increment (remote)
+Поточний стан Store / repo:
+- Store: **1.0.2** build **36** LIVE
+- Repo/app config: iOS **version** `1.0.3`, **buildNumber** EAS auto-increment (remote)
 - Шрифт: **Source Serif 4 Regular**
 - Копі — `src/modules/delivery-layer.ts` (en + uk)
 
-Зміни в 1.0.2 (vs 33 — що відчує юзер):
-- **Onboarding** — **Pulsation exists…** лишається; **How it works** + кроки нижче; 1-й тап — усі кроки, 2-й — далі; авто без тапу
-- **Typography** — main **20**, пояснення **17**, footer/tap **12**
-- **Paths** — лічильник і **Saved for you:** **20**; збережені айтеми **17**
-- Усе з build 33: кола, tap hint лише на онбордингу, без flash на return, paths з main copy
+Зміни в 1.0.3 (vs Store 1.0.2 — що відчує юзер):
+- **Resume/onboarding** — cold start після kill/background не має випадково перескакувати в trigger; warm resume лишається швидким.
+- **Кола як кнопка** — глобальний tap handler активний лише для focused screen; Android overlay лишається tight навколо кіл і над scroll content.
+- **Timing/layout** — main copy / bullets / explanation / footer reveal мають один timeline; **One action for you**, action main і **You are here** лишаються на спільному Y.
 
-### D2. UX/UI перевірка (Store build **36** на iPhone)
+### D2. UX/UI перевірка (TestFlight 1.0.3 на iPhone + Android smoke)
 
-- [ ] **Onboarding only**: **Tap circles** fixed **under circles** (не на trigger/action/return)
+- [ ] **Cold start after kill/background**: показує onboarding/headline path, не випадковий trigger.
+- [ ] **Warm resume**: якщо app була background у цьому процесі, onboarding headline не блокує trigger resume path.
+- [ ] **Onboarding only**: **Tap circles** / onboarding copy behavior не з’являється на trigger/action/return.
 - [ ] **Return**: порядок — **You are here** → пояснення (без tap hint під колами)
 - [ ] **Return**: **You are here** не стрибає по Y при появі пояснення / hint
 - [ ] **Accessibility XXL**: main line лишається на місці
@@ -180,6 +183,7 @@ npm audit --omit=dev
 - [ ] `find_three`: кола не завершують дію, поки не показані всі 3 буліти
 - [ ] `return`: **Збережи це для мене** не показується для вже збереженої дії
 - [ ] Онбординг: **Pulsation exists** лишається → **Tap circles** під колами → **How it works** + кроки нижче; 1-й тап — усі кроки, 2-й — trigger
+- [ ] Android: tap по колах працює на кожному flow screen; footer links лишаються tappable.
 
 ---
 

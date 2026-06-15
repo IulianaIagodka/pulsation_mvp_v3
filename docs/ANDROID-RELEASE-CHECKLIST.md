@@ -1,6 +1,6 @@
 # Pulsation — план релізу Android (Google Play)
 
-Статус: **Фаза A в репо готова** (iOS build 26 у review). Далі: Play Console + перший AAB.  
+Статус: **Фаза A в репо готова** (iOS **1.0.2 build 36** live; repo train **1.0.3+**). Далі: Play Console + перший AAB.  
 Мета: **перший production AAB** у **Google Play Console** → internal testing → production.
 
 Паралельно з iOS можна вести окремо; metadata і privacy URL **перевикористовуються**.
@@ -315,4 +315,4 @@ Internal testing (1–3 дні) → Closed testing (опційно) → Producti
 | iOS **approved** 1.0.0 | Android можна випустити **1.0.1** одразу (з paths, онбордингом) — вирівняти версію з репо |
 | iOS **rejected** | Взяти ті самі правки в Android listing notes; тестувати повний флоу як у iOS Review Notes |
 
-Версія в репо зараз: **1.0.1** — логічно перший Play release теж **1.0.1**, без окремого «1.0.0» на Android.
+Версія в репо зараз: **1.0.3** — логічно перший Play release теж **1.0.3**, без окремого «1.0.0» на Android.
