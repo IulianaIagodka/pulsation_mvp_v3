@@ -44,8 +44,8 @@ const COPY = {
   aboutTitle: "About Pulsation",
   aboutParagraphs: [
     "Pulsation offers short, calming micro-actions when everyday digital use feels like a lot.",
-    "If you allow notifications, after some time away the app may send one quiet invitation on this device. Timing adapts gently to your rhythm. No marketing messages.",
-    "Pulsation does not read or analyze your other apps.",
+    "If you allow notifications, while the app is in the background it may send quiet one-action invitations from time to time. Timing adapts gently to your rhythm. No marketing messages.",
+    "Pulsation does not read or analyze your other apps; it uses only local app state on this device.",
     "This is a wellbeing app, not a medical device or substitute for professional care.",
   ],
   aboutBack: "Return",

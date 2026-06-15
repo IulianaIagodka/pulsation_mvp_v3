@@ -1,6 +1,6 @@
 # Adaptive Pulsation Scheduling
 
-Pulsation invites you back to yourself — it is not a reminder system. Scheduling runs entirely on-device: no server, account, cloud sync, or external analytics.
+Pulsation helps interrupt stuck scrolling by inviting you back to one small action from time to time. The MVP does not monitor other apps; scheduling runs entirely on-device from Pulsation background/resume state, with no server, account, cloud sync, or external analytics.
 
 ---
 

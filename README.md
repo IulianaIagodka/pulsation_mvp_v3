@@ -1,6 +1,6 @@
 # Pulsation MVP
 
-Pulsation is a cross-platform mobile MVP that offers one gentle micro-action at a time when you open the calm intervention flow. It uses on-device session context and local history to choose among seven micro-interventions (it does not read other apps).
+Pulsation is a cross-platform mobile MVP for helping people pause when they get stuck scrolling. It does not monitor or read other apps; instead, while Pulsation is in the background, it periodically schedules local "One action for you" invitations that open a calm flow with one gentle micro-action at a time. On-device session context and local history choose among seven micro-interventions.
 
 ## Stack
 

@@ -10,7 +10,7 @@ Use this file when filling **App Privacy** in App Store Connect.
 - No third-party analytics SDK.
 - No ad SDK.
 - Data stays on device (SQLite).
-- Notifications are local reminders only (scheduled on device).
+- Notifications are periodic local one-action reminders only (scheduled on device).
 - No backend data collection from the app.
 
 ## What is stored locally (on device)
