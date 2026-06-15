@@ -4,7 +4,7 @@ import { getAdaptiveTriggerThresholdMinutes, getInactivityNotificationDelaySecon
 import { uiCopy } from "../modules/delivery-layer";
 
 export const INACTIVITY_NOTIFICATION_ID = "pulsation-inactivity-trigger";
-export const INACTIVITY_NOTIFICATION_SERIES_COUNT = 4;
+export const INACTIVITY_NOTIFICATION_SERIES_COUNT = 6;
 
 function getInactivityNotificationIdentifier(index: number): string {
   return index === 0 ? INACTIVITY_NOTIFICATION_ID : `${INACTIVITY_NOTIFICATION_ID}-${index + 1}`;

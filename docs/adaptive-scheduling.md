@@ -114,7 +114,7 @@ trigger delivery caps each background interval to [10m, 30m]
 
 **When the interval is computed**
 
-- On background → schedule a short finite series of local notifications at the adaptive interval, with each gap capped to the 10-30 minute trigger window (interval persisted as `lastScheduledIntervalMinutes`).
+- On background → schedule a finite series of 6 local notifications from time to time at the adaptive interval, with each gap capped to the 10-30 minute trigger window (interval persisted as `lastScheduledIntervalMinutes`).
 - On resume → compare inactive minutes against current interval; also check eligibility.
 
 **Eligibility gates** (unchanged, from `eligibility-safety.ts`)

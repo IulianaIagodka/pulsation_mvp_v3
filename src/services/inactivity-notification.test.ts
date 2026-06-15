@@ -51,6 +51,8 @@ describe("inactivity notifications", () => {
       `${INACTIVITY_NOTIFICATION_ID}-2`,
       `${INACTIVITY_NOTIFICATION_ID}-3`,
       `${INACTIVITY_NOTIFICATION_ID}-4`,
+      `${INACTIVITY_NOTIFICATION_ID}-5`,
+      `${INACTIVITY_NOTIFICATION_ID}-6`,
     ]);
   });
 
@@ -93,7 +95,7 @@ describe("inactivity notifications", () => {
       INACTIVITY_NOTIFICATION_SERIES_COUNT,
     );
     expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenLastCalledWith(
-      `${INACTIVITY_NOTIFICATION_ID}-4`,
+      `${INACTIVITY_NOTIFICATION_ID}-6`,
     );
   });
 });
