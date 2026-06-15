@@ -43,7 +43,7 @@ Storage layer: local SQLite DB (`src/data/schema.ts`).
 
 ## Notifications
 
-- App may schedule a local reminder after inactivity (about 20 minutes).
+- App may schedule local reminders after inactivity (about 20 minutes, then occasional local follow-ups if unopened).
 - Notification generation is local/on-device.
 - No remote marketing push campaigns from backend.
 

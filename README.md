@@ -109,7 +109,7 @@ For QA only, set `EXPO_PUBLIC_TEST_ROTATE_INTERVENTIONS=true` to cycle through a
 
 ## Inactivity trigger (adaptive)
 
-When Pulsation is in the background, it schedules **one local invitation** after a **dynamic interval** (~20 min base, adapted by recent completions, ignores, and absence — see `docs/adaptive-scheduling.md`):
+When Pulsation is in the background, it schedules a finite rolling set of **local invitations** after a **dynamic interval** (~20 min base, adapted by recent completions, ignores, and absence — see `docs/adaptive-scheduling.md`). If the app stays unopened, one quiet follow-up remains pending for each of the next few days:
 
 1. A **local notification** may appear (“One action for you now?” / “Одна дія для тебе зараз?”).
 2. Reopening the app after the threshold navigates to `/trigger` (not during action / return), if eligibility passes (cooldown, daily cap, etc.).
