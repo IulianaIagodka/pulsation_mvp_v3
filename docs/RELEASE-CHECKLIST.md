@@ -5,9 +5,9 @@
 | **1.0.0** | 26 | superseded |
 | **1.0.1** | 28–33 | superseded |
 | **1.0.2** | 36 | **LIVE** в App Store ✅ |
-| **1.0.3** | EAS auto-increment | next TestFlight/App Store train |
+| **1.0.3** | 39 | submitted to App Store Connect / Apple processing |
 
-**Зараз:** Store має **1.0.2** build **36** LIVE ✅; репо/app config підготовлено до train **1.0.3+**.
+**Зараз:** Store має **1.0.2** build **36** LIVE ✅; **1.0.3 build 39** завантажено в App Store Connect і очікує Apple processing/TestFlight availability.
 
 Android: `docs/ANDROID-RELEASE-CHECKLIST.md`
 
@@ -160,7 +160,7 @@ npm audit --omit=dev
 
 Поточний стан Store / repo:
 - Store: **1.0.2** build **36** LIVE
-- Repo/app config: iOS **version** `1.0.3`, **buildNumber** EAS auto-increment (remote)
+- Latest submitted: iOS **version** `1.0.3`, build **39** (EAS auto-increment remote)
 - Шрифт: **Source Serif 4 Regular**
 - Копі — `src/modules/delivery-layer.ts` (en + uk)
 
@@ -202,6 +202,13 @@ npm audit --omit=dev
 - [x] Bump **version** `1.0.2`
 - [x] EAS build + submit → build **36**
 - [x] Connect → **1.0.2** → **Submit for Review** → approve → **Release** у Store
+
+### 1.0.3 (build 39) — TestFlight / processing
+
+- [x] Bump **version** `1.0.3`
+- [x] EAS build + auto-submit → build **39**
+- [ ] App Store Connect processing complete → TestFlight available
+- [ ] TestFlight device regression (`docs/circles-regression-checklist.md` + D2 above)
 
 ---
 
