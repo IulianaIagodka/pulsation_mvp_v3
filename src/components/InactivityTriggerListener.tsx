@@ -2,8 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { AppState } from "react-native";
 import { usePathname, useRouter } from "expo-router";
 import {
-  consumeInactiveMinutesOnResume,
-  isWarmProcessResume,
+  consumeResumeSessionOnForeground,
   recordAppStateChange,
 } from "../modules/session-runtime";
 import { goToTrigger } from "../navigation/go-to-trigger";
@@ -27,19 +26,18 @@ export function InactivityTriggerListener() {
   const tryResumeTrigger = useCallback(() => {
     void cancelInactivityNotification();
 
-    const warmResume = isWarmProcessResume();
-    const inactiveMinutes = consumeInactiveMinutesOnResume();
+    const resumeSession = consumeResumeSessionOnForeground();
 
-    if (shouldLeaveLaunchOnboardingOnResume(pathnameRef.current, warmResume)) {
+    if (shouldLeaveLaunchOnboardingOnResume(pathnameRef.current, resumeSession)) {
       goToTrigger(router, pathnameRef.current);
       return;
     }
 
-    if (inactiveMinutes <= 0) return;
+    if (resumeSession.kind !== "warm" || resumeSession.inactiveMinutes <= 0) return;
 
     recordAppOpen(Date.now());
-    if (isPathBlockedForAutoTrigger(pathnameRef.current, inactiveMinutes)) return;
-    if (!shouldAutoOpenTrigger(inactiveMinutes)) return;
+    if (isPathBlockedForAutoTrigger(pathnameRef.current, resumeSession.inactiveMinutes)) return;
+    if (!shouldAutoOpenTrigger(resumeSession.inactiveMinutes)) return;
 
     goToTrigger(router, pathnameRef.current);
   }, [router]);

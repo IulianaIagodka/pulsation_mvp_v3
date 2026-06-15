@@ -1,5 +1,8 @@
-import { clearAppBackgrounded } from "../data/repositories/scheduling-profile-repo";
-import { isWarmProcessResume } from "../modules/session-runtime";
+import {
+  consumeResumeSessionOnForeground,
+  getResumeSessionSnapshot,
+  type ResumeSessionSnapshot,
+} from "../modules/session-runtime";
 import { hasCompletedExtendedOnboarding } from "./onboarding-gate";
 import { bootstrapPulsation } from "./pulsation-flow";
 
@@ -9,15 +12,22 @@ export function isLaunchOnboardingPath(pathname: string | null | undefined): boo
   return pathname === "/" || pathname === "/index" || pathname === "index";
 }
 
+function isWarmResume(resumeSession: ResumeSessionSnapshot | boolean): boolean {
+  return typeof resumeSession === "boolean" ? resumeSession : resumeSession.warmResume;
+}
+
 /** Warm resume in the same process — skip headline, land on trigger. Cold start → short onboarding. */
-export function shouldSkipLaunchOnboarding(): boolean {
+export function shouldSkipLaunchOnboarding(
+  resumeSession: ResumeSessionSnapshot = getResumeSessionSnapshot(),
+): boolean {
   bootstrapPulsation();
-  return isWarmProcessResume();
+  return resumeSession.warmResume;
 }
 
 /** First install → full onboarding; later cold starts → short headline; background → skip. */
 export function resolveLaunchOnboardingKind(): LaunchOnboardingKind {
-  if (shouldSkipLaunchOnboarding()) {
+  const resumeSession = getResumeSessionSnapshot();
+  if (shouldSkipLaunchOnboarding(resumeSession)) {
     return "skip";
   }
   if (!hasCompletedExtendedOnboarding()) {
@@ -29,11 +39,11 @@ export function resolveLaunchOnboardingKind(): LaunchOnboardingKind {
 /** Resume from background while the launch headline is visible — go to trigger. */
 export function shouldLeaveLaunchOnboardingOnResume(
   pathname: string | null | undefined,
-  warmResume = isWarmProcessResume(),
+  resumeSession: ResumeSessionSnapshot | boolean = getResumeSessionSnapshot(),
 ): boolean {
-  return warmResume && isLaunchOnboardingPath(pathname);
+  return isWarmResume(resumeSession) && isLaunchOnboardingPath(pathname);
 }
 
 export function clearLaunchOnboardingBackgroundFlag(): void {
-  clearAppBackgrounded();
+  consumeResumeSessionOnForeground();
 }
