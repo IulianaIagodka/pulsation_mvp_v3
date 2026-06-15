@@ -73,6 +73,14 @@ describe("launch-routing", () => {
     expect(shouldLeaveLaunchOnboardingOnResume("/", isWarmProcessResume())).toBe(true);
     expect(shouldLeaveLaunchOnboardingOnResume("/trigger", isWarmProcessResume())).toBe(false);
     expect(shouldLeaveLaunchOnboardingOnResume("/", false)).toBe(false);
+    expect(
+      shouldLeaveLaunchOnboardingOnResume("/", {
+        kind: "cold-start",
+        inactiveMinutes: 540,
+        warmResume: false,
+        coldStartAfterBackground: true,
+      }),
+    ).toBe(false);
   });
 
   it("recognizes launch onboarding paths", () => {
@@ -82,6 +90,7 @@ describe("launch-routing", () => {
   });
 
   it("clears persisted background flag when skipping launch onboarding", () => {
+    recordAppStateChange("background");
     clearLaunchOnboardingBackgroundFlag();
     expect(clearAppBackgrounded).toHaveBeenCalled();
   });

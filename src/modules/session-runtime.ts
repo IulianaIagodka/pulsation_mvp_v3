@@ -12,34 +12,77 @@ let backgroundStartedAt: number | null = null;
 let hasBeenBackgrounded = false;
 let pendingInactiveMinutes = 0;
 
+export type ResumeSessionKind = "none" | "warm" | "cold-start";
+
+export type ResumeSessionSnapshot = {
+  kind: ResumeSessionKind;
+  inactiveMinutes: number;
+  warmResume: boolean;
+  coldStartAfterBackground: boolean;
+};
+
+const emptyResumeSession: ResumeSessionSnapshot = {
+  kind: "none",
+  inactiveMinutes: 0,
+  warmResume: false,
+  coldStartAfterBackground: false,
+};
+
 /** Same JS process resumed from background — not a cold start after kill. */
 export function isWarmProcessResume(): boolean {
   return hasBeenBackgrounded || backgroundStartedAt != null;
 }
 
 export function hadBackgroundSession(): boolean {
-  const now = Date.now();
-  return (
-    isWarmProcessResume() ||
-    getSchedulingProfile().lastBackgroundAt != null ||
-    getPersistedBackgroundMinutes(now) > 0
-  );
+  return getResumeSessionSnapshot().kind !== "none";
 }
 
-function getPersistedBackgroundMinutes(now: number): number {
+function getPersistedBackgroundAt(): number | null {
   const lastBackgroundAt = getSchedulingProfile().lastBackgroundAt;
-  if (!lastBackgroundAt) return 0;
+  return typeof lastBackgroundAt === "number" ? lastBackgroundAt : null;
+}
+
+function getElapsedMinutesSince(startedAt: number | null, now: number): number {
+  if (startedAt == null) return 0;
+  return Math.max(0, Math.floor((now - startedAt) / 60000));
+}
+
+function getPersistedBackgroundMinutes(now: number, lastBackgroundAt: number | null): number {
+  if (lastBackgroundAt == null) return 0;
   return Math.max(0, Math.floor((now - lastBackgroundAt) / 60000));
 }
 
-function resolveInactiveMinutes(now: number): number {
+function resolveInactiveMinutes(now: number, lastBackgroundAt: number | null): number {
   const fromPending = pendingInactiveMinutes;
-  const fromOngoing =
-    backgroundStartedAt != null
-      ? Math.max(0, Math.floor((now - backgroundStartedAt) / 60000))
-      : 0;
-  const fromPersisted = getPersistedBackgroundMinutes(now);
+  const fromOngoing = getElapsedMinutesSince(backgroundStartedAt, now);
+  const fromPersisted = getPersistedBackgroundMinutes(now, lastBackgroundAt);
   return Math.max(fromPending, fromOngoing, fromPersisted);
+}
+
+export function getResumeSessionSnapshot(): ResumeSessionSnapshot {
+  const now = Date.now();
+  const lastBackgroundAt = getPersistedBackgroundAt();
+  const inactiveMinutes = resolveInactiveMinutes(now, lastBackgroundAt);
+
+  if (isWarmProcessResume() || pendingInactiveMinutes > 0) {
+    return {
+      kind: "warm",
+      inactiveMinutes,
+      warmResume: true,
+      coldStartAfterBackground: false,
+    };
+  }
+
+  if (lastBackgroundAt != null) {
+    return {
+      kind: "cold-start",
+      inactiveMinutes,
+      warmResume: false,
+      coldStartAfterBackground: true,
+    };
+  }
+
+  return emptyResumeSession;
 }
 
 export function recordAppStateChange(nextStateRaw: AppStateStatus) {
@@ -56,8 +99,9 @@ export function recordAppStateChange(nextStateRaw: AppStateStatus) {
   }
   if (currentState !== "active" && nextState === "active") {
     activeStartedAt = now;
-    if (backgroundStartedAt != null || getPersistedBackgroundMinutes(now) > 0) {
-      pendingInactiveMinutes = resolveInactiveMinutes(now);
+    const lastBackgroundAt = getPersistedBackgroundAt();
+    if (backgroundStartedAt != null || lastBackgroundAt != null) {
+      pendingInactiveMinutes = resolveInactiveMinutes(now, lastBackgroundAt);
       backgroundStartedAt = null;
     } else {
       pendingInactiveMinutes = 0;
@@ -66,19 +110,19 @@ export function recordAppStateChange(nextStateRaw: AppStateStatus) {
   currentState = nextState;
 }
 
-export function consumeInactiveMinutesOnResume(): number {
-  const now = Date.now();
-  const hasPersistedBackground = getPersistedBackgroundMinutes(now) > 0;
-  if (!hasBeenBackgrounded && !hasPersistedBackground) {
-    return 0;
-  }
+export function consumeResumeSessionOnForeground(): ResumeSessionSnapshot {
+  const snapshot = getResumeSessionSnapshot();
+  if (snapshot.kind === "none") return snapshot;
 
-  const minutes = resolveInactiveMinutes(now);
   pendingInactiveMinutes = 0;
   backgroundStartedAt = null;
   hasBeenBackgrounded = false;
   clearAppBackgrounded();
-  return minutes;
+  return snapshot;
+}
+
+export function consumeInactiveMinutesOnResume(): number {
+  return consumeResumeSessionOnForeground().inactiveMinutes;
 }
 
 export function getActiveSessionMinutes() {
@@ -88,8 +132,7 @@ export function getActiveSessionMinutes() {
 }
 
 export function getPendingInactiveMinutes() {
-  const now = Date.now();
-  return resolveInactiveMinutes(now);
+  return getResumeSessionSnapshot().inactiveMinutes;
 }
 
 export const __sessionRuntimeInternals = {
