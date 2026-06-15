@@ -1,6 +1,10 @@
 /** Persists “already revealed” across navigations within the same app session. */
 const revealed = new Set<string>();
 
+export type FlowCopyRevealSnapshot = {
+  revealedIds: string[];
+};
+
 export function hasFlowCopyRevealed(revealId: string): boolean {
   return revealed.has(revealId);
 }
@@ -17,8 +21,16 @@ export function shouldInstantFlowReveal(_revealId?: string, forceVisible?: boole
   return forceVisible === true;
 }
 
+export function getFlowCopyRevealSnapshot(): FlowCopyRevealSnapshot {
+  return { revealedIds: Array.from(revealed).sort() };
+}
+
+export function resetFlowCopyRevealSession(): void {
+  revealed.clear();
+}
+
 export const __flowCopyRevealInternals = {
   resetForTests() {
-    revealed.clear();
+    resetFlowCopyRevealSession();
   },
 };

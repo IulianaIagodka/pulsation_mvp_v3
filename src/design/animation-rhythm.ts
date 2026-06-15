@@ -58,17 +58,72 @@ export function getMainCopyFadeMs(): number {
 
 /** When the next line starts fading (after previous line finishes). */
 export function getAuxiliaryCopyDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
-  return mainLineDelayMs + copyReveal.fadeMs + copyReveal.lineGapMs;
+  return getFlowCopyTimelineFromMainDelay(mainLineDelayMs).auxiliaryDelayMs;
 }
+
+export type FlowCopyTimeline = {
+  /** Fade/route delay consumed from the previous screen transition. */
+  entryDelayMs: number;
+  /** Main copy starts fading in. */
+  mainDelayMs: number;
+  /** Main copy has fully faded in; return taps may reveal follow-up after this. */
+  mainRevealedMs: number;
+  /** Generic next line/footer starts after main copy is readable. */
+  auxiliaryDelayMs: number;
+  /** Return explanation starts after "You are here" is readable, before the generic footer. */
+  returnExplanationDelayMs: number;
+  /** Return footer starts on the generic auxiliary beat. */
+  returnKeepForMeDelayMs: number;
+  /** Trigger footer appears together with the main prompt. */
+  triggerPathsDelayMs: number;
+  /** Find-three bullets start on the generic auxiliary beat. */
+  findThreeBulletsStartDelayMs: number;
+  /** Triangle phase labels start on the generic auxiliary beat. */
+  triangleBreathIntroDelayMs: number;
+};
 
 /** Return follow-up — explanation fades in a bit sooner than generic auxiliary copy. */
 export const returnCopy = {
   explanationGapMs: 200,
 } as const;
 
+function buildFlowCopyTimeline(entryDelayMs: number, mainDelayMs: number): FlowCopyTimeline {
+  const mainRevealedMs = mainDelayMs + copyReveal.fadeMs;
+  const auxiliaryDelayMs = mainRevealedMs + copyReveal.lineGapMs;
+  const returnExplanationDelayMs = mainRevealedMs + returnCopy.explanationGapMs;
+
+  return {
+    entryDelayMs,
+    mainDelayMs,
+    mainRevealedMs,
+    auxiliaryDelayMs,
+    returnExplanationDelayMs,
+    returnKeepForMeDelayMs: auxiliaryDelayMs,
+    triggerPathsDelayMs: mainDelayMs,
+    findThreeBulletsStartDelayMs: auxiliaryDelayMs,
+    triangleBreathIntroDelayMs: auxiliaryDelayMs,
+  };
+}
+
+export function getFlowCopyTimeline(entryDelayMs = 0): FlowCopyTimeline {
+  const normalizedEntryDelayMs = Math.max(0, entryDelayMs);
+  return buildFlowCopyTimeline(
+    normalizedEntryDelayMs,
+    getMainCopyDelayMs() + normalizedEntryDelayMs,
+  );
+}
+
+function getFlowCopyTimelineFromMainDelay(mainLineDelayMs: number): FlowCopyTimeline {
+  const normalizedMainLineDelayMs = Math.max(0, mainLineDelayMs);
+  return buildFlowCopyTimeline(
+    Math.max(0, normalizedMainLineDelayMs - getMainCopyDelayMs()),
+    normalizedMainLineDelayMs,
+  );
+}
+
 /** Return: soft explanation after **You are here** has faded in. */
 export function getReturnExplanationDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
-  return mainLineDelayMs + copyReveal.fadeMs + returnCopy.explanationGapMs;
+  return getFlowCopyTimelineFromMainDelay(mainLineDelayMs).returnExplanationDelayMs;
 }
 
 /** Return (tap-revealed explanation): Save for me after explanation fade starts. */
@@ -119,12 +174,12 @@ export function getOnboardingExplanationDelayMs(lineIndex: number): number {
 
 /** Trigger footer: Show my paths together with the main line. */
 export function getTriggerPathsLinkDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
-  return mainLineDelayMs;
+  return getFlowCopyTimelineFromMainDelay(mainLineDelayMs).triggerPathsDelayMs;
 }
 
 /** Return screen: "Save this for me" when the follow-up explanation begins. */
 export function getReturnKeepForMeDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
-  return getAuxiliaryCopyDelayMs(mainLineDelayMs);
+  return getFlowCopyTimelineFromMainDelay(mainLineDelayMs).returnKeepForMeDelayMs;
 }
 
 export const circlesLayout = {
@@ -140,13 +195,13 @@ export const circlesLayout = {
 
 /** First find-three bullet — after main intro finishes fading. */
 export function getFindThreeBulletsStartDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
-  return getAuxiliaryCopyDelayMs(mainLineDelayMs);
+  return getFlowCopyTimelineFromMainDelay(mainLineDelayMs).findThreeBulletsStartDelayMs;
 }
 
 
 /** Phase labels start after main intro + calm gap. */
 export function getTriangleBreathIntroDelayMs(mainLineDelayMs: number = getMainCopyDelayMs()): number {
-  return getAuxiliaryCopyDelayMs(mainLineDelayMs);
+  return getFlowCopyTimelineFromMainDelay(mainLineDelayMs).triangleBreathIntroDelayMs;
 }
 
 export function getTriangleBreathCirclesCycleMs(): number {

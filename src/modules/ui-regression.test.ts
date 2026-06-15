@@ -15,9 +15,12 @@ import {
   getOnboardingLastLineIndex,
   getOnboardingStepLineCycleMs,
   onboardingCopy,
+  getFlowCopyTimeline,
   getTriangleBreathLabelCycleMs,
+  getTriangleBreathIntroDelayMs,
   getTriangleBreathTotalMs,
   getAuxiliaryCopyDelayMs,
+  getMainCopyDelayMs,
   getReturnExplanationDelayMs,
   getReturnKeepForMeAfterExplanationMs,
   getReturnKeepForMeDelayMs,
@@ -138,6 +141,38 @@ describe("circles layout regression checks", () => {
     expect(breathingRhythm.explanationText.textOpacity).toBeLessThan(1);
     expect(breathingRhythm.explanationText.textOpacity).toBeGreaterThanOrEqual(0.72);
     expect(getFindThreeBulletsStartDelayMs()).toBeGreaterThan(copyReveal.delayMs + copyReveal.fadeMs);
+  });
+
+  it("keeps the flow copy timeline ordered after route fade", () => {
+    const entryDelayMs = breathingRhythm.motion.screenFadeMs;
+    const timeline = getFlowCopyTimeline(entryDelayMs);
+
+    expect(timeline.mainDelayMs).toBe(copyReveal.delayMs + entryDelayMs);
+    expect(timeline.mainRevealedMs).toBe(timeline.mainDelayMs + copyReveal.fadeMs);
+    expect(timeline.returnExplanationDelayMs).toBe(
+      timeline.mainRevealedMs + returnCopy.explanationGapMs,
+    );
+    expect(timeline.auxiliaryDelayMs).toBe(timeline.mainRevealedMs + copyReveal.lineGapMs);
+    expect(timeline.returnExplanationDelayMs).toBeLessThan(timeline.returnKeepForMeDelayMs);
+    expect(timeline.returnKeepForMeDelayMs).toBe(timeline.auxiliaryDelayMs);
+    expect(timeline.findThreeBulletsStartDelayMs).toBe(timeline.auxiliaryDelayMs);
+    expect(timeline.triangleBreathIntroDelayMs).toBe(timeline.auxiliaryDelayMs);
+    expect(timeline.triggerPathsDelayMs).toBe(timeline.mainDelayMs);
+  });
+
+  it("keeps individual timing helpers backed by the same timeline", () => {
+    const entryDelayMs = breathingRhythm.motion.screenFadeMs;
+    const timeline = getFlowCopyTimeline(entryDelayMs);
+    const mainDelayMs = getMainCopyDelayMs() + entryDelayMs;
+
+    expect(getReturnExplanationDelayMs(mainDelayMs)).toBe(timeline.returnExplanationDelayMs);
+    expect(getReturnKeepForMeDelayMs(mainDelayMs)).toBe(timeline.returnKeepForMeDelayMs);
+    expect(getAuxiliaryCopyDelayMs(mainDelayMs)).toBe(timeline.auxiliaryDelayMs);
+    expect(getFindThreeBulletsStartDelayMs(mainDelayMs)).toBe(
+      timeline.findThreeBulletsStartDelayMs,
+    );
+    expect(getTriangleBreathIntroDelayMs(mainDelayMs)).toBe(timeline.triangleBreathIntroDelayMs);
+    expect(getTriggerPathsLinkDelayMs(mainDelayMs)).toBe(timeline.triggerPathsDelayMs);
   });
 
   it("keeps triangle breath cycle at 4-2-5 seconds for 3 cycles", () => {

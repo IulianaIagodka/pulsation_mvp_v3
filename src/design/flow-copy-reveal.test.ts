@@ -2,8 +2,10 @@ import { flowRevealIds } from "./flow-reveal-ids";
 import {
   __flowCopyRevealInternals,
   clearFlowCopyRevealed,
+  getFlowCopyRevealSnapshot,
   hasFlowCopyRevealed,
   markFlowCopyRevealed,
+  resetFlowCopyRevealSession,
   shouldInstantFlowReveal,
 } from "./flow-copy-reveal";
 
@@ -16,6 +18,9 @@ describe("flow-copy-reveal", () => {
     expect(hasFlowCopyRevealed(flowRevealIds.triggerMain)).toBe(false);
     markFlowCopyRevealed(flowRevealIds.triggerMain);
     expect(hasFlowCopyRevealed(flowRevealIds.triggerMain)).toBe(true);
+    expect(getFlowCopyRevealSnapshot()).toEqual({
+      revealedIds: [flowRevealIds.triggerMain],
+    });
   });
 
   it("does not instant-show from session marks alone", () => {
@@ -33,5 +38,14 @@ describe("flow-copy-reveal", () => {
   it("instant-shows only when forceVisible is set", () => {
     expect(shouldInstantFlowReveal(flowRevealIds.returnMain, true)).toBe(true);
     expect(shouldInstantFlowReveal(flowRevealIds.returnMain, false)).toBe(false);
+  });
+
+  it("can reset the reveal session explicitly", () => {
+    markFlowCopyRevealed(flowRevealIds.returnMain);
+    markFlowCopyRevealed(flowRevealIds.triggerMain);
+
+    resetFlowCopyRevealSession();
+
+    expect(getFlowCopyRevealSnapshot()).toEqual({ revealedIds: [] });
   });
 });
