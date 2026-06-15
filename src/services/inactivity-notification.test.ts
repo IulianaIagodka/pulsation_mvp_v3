@@ -29,7 +29,6 @@ import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import {
   INACTIVITY_NOTIFICATION_ID,
-  INACTIVITY_NOTIFICATION_SERIES_COUNT,
   cancelInactivityNotification,
   getInactivityNotificationIdentifiers,
   scheduleInactivityNotification,
@@ -45,55 +44,42 @@ describe("inactivity notifications", () => {
     (Notifications.scheduleNotificationAsync as jest.Mock).mockResolvedValue("scheduled");
   });
 
-  it("uses stable identifiers for the adaptive background reminder series", () => {
-    expect(getInactivityNotificationIdentifiers()).toEqual([
-      INACTIVITY_NOTIFICATION_ID,
-      `${INACTIVITY_NOTIFICATION_ID}-2`,
-      `${INACTIVITY_NOTIFICATION_ID}-3`,
-      `${INACTIVITY_NOTIFICATION_ID}-4`,
-      `${INACTIVITY_NOTIFICATION_ID}-5`,
-      `${INACTIVITY_NOTIFICATION_ID}-6`,
-    ]);
+  it("uses one stable identifier for the next adaptive background reminder", () => {
+    expect(getInactivityNotificationIdentifiers()).toEqual([INACTIVITY_NOTIFICATION_ID]);
   });
 
-  it("schedules adaptive background reminders that open the trigger screen", async () => {
+  it("schedules only the next adaptive background reminder that opens the trigger screen", async () => {
     await scheduleInactivityNotification();
 
-    const identifiers = getInactivityNotificationIdentifiers();
-    expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenCalledTimes(
-      INACTIVITY_NOTIFICATION_SERIES_COUNT,
-    );
+    expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenCalledTimes(6);
     expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenNthCalledWith(
       1,
       INACTIVITY_NOTIFICATION_ID,
     );
-    expect(Notifications.scheduleNotificationAsync).toHaveBeenCalledTimes(
-      INACTIVITY_NOTIFICATION_SERIES_COUNT,
+    expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenLastCalledWith(
+      `${INACTIVITY_NOTIFICATION_ID}-6`,
     );
+    expect(Notifications.scheduleNotificationAsync).toHaveBeenCalledTimes(1);
 
-    identifiers.forEach((identifier, index) => {
-      expect(Notifications.scheduleNotificationAsync).toHaveBeenNthCalledWith(index + 1, {
-        identifier,
-        content: {
-          title: "One action for you now?",
-          body: "A quiet invitation is waiting.",
-          data: { route: "/trigger" },
-        },
-        trigger: {
-          type: "timeInterval",
-          seconds: 27 * 60 * (index + 1),
-          repeats: false,
-        },
-      });
+    expect(Notifications.scheduleNotificationAsync).toHaveBeenCalledWith({
+      identifier: INACTIVITY_NOTIFICATION_ID,
+      content: {
+        title: "One action for you now?",
+        body: "A quiet invitation is waiting.",
+        data: { route: "/trigger" },
+      },
+      trigger: {
+        type: "timeInterval",
+        seconds: 27 * 60,
+        repeats: false,
+      },
     });
   });
 
-  it("cancels every pending inactivity reminder", async () => {
+  it("cancels the current reminder plus legacy series reminders", async () => {
     await cancelInactivityNotification();
 
-    expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenCalledTimes(
-      INACTIVITY_NOTIFICATION_SERIES_COUNT,
-    );
+    expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenCalledTimes(6);
     expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenLastCalledWith(
       `${INACTIVITY_NOTIFICATION_ID}-6`,
     );
