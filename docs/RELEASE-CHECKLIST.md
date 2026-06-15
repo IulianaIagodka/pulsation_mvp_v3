@@ -153,10 +153,10 @@ npx expo-doctor
 npm audit --omit=dev
 ```
 
-- [x] **Regression:** `npm test` зелений (оновлювати count після локального/CI прогону)
+- [x] **Regression:** `npm test -- --runInBand` зелений (**24 suites, 123 tests**)
 - [x] **Type compatibility:** `npx tsc --noEmit` без помилок
-- [ ] **Expo compatibility:** `npx expo-doctor` — перевірити перед EAS
-- [ ] **Security:** `npm audit --omit=dev` переглянуто; high/critical відсутні або задокументовані
+- [x] **Expo compatibility:** `npm run doctor` — **18/18 checks passed**
+- [x] **Security:** `npm audit --omit=dev` переглянуто; high/critical прибрані через `npm audit fix` + `npm dedupe`; лишаються moderate, force-fix потребує breaking Expo/RN upgrades
 
 Поточний стан Store / repo:
 - Store: **1.0.2** build **36** LIVE
