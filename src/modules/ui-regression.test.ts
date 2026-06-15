@@ -25,6 +25,13 @@ import {
   getTriggerPathsLinkDelayMs,
   circlesLayout,
 } from "../design/animation-rhythm";
+import {
+  CIRCLES_LAYER_ELEVATION,
+  CIRCLES_LAYER_Z_INDEX,
+  CIRCLES_PRESS_HIT_SLOP,
+  getCirclesLayerHitTargetFrame,
+  getCirclesLayerHitTargetSize,
+} from "../design/circles-hit-target";
 
 describe("font scale accessibility caps", () => {
   it("keeps a 1.0 floor and XXL ceiling", () => {
@@ -79,6 +86,20 @@ describe("overflow scroll behavior", () => {
 describe("circles layout regression checks", () => {
   it("keeps one shared circles slot size", () => {
     expect(circlesLayout.slotMinHeight).toBe(160);
+  });
+
+  it("keeps the persistent circles overlay tight and above scroll content", () => {
+    const frame = getCirclesLayerHitTargetFrame(390, 200);
+
+    expect(getCirclesLayerHitTargetSize()).toBe(circlesLayout.size + CIRCLES_PRESS_HIT_SLOP * 2);
+    expect(frame).toEqual({
+      top: 200 - CIRCLES_PRESS_HIT_SLOP,
+      left: Math.round((390 - getCirclesLayerHitTargetSize()) / 2),
+      width: getCirclesLayerHitTargetSize(),
+      height: getCirclesLayerHitTargetSize(),
+    });
+    expect(CIRCLES_LAYER_Z_INDEX).toBeGreaterThanOrEqual(1000);
+    expect(CIRCLES_LAYER_ELEVATION).toBeGreaterThanOrEqual(1000);
   });
 
   it("keeps circles breathing phases stable and ordered", () => {

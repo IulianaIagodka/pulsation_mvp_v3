@@ -7,6 +7,11 @@ import { useAppStore } from "../../state/app-store";
 import { circlesLayout } from "../animation-rhythm";
 import { getCirclesAnchorMetrics } from "../circles-anchor-layout";
 import { setCirclesAnimationMode } from "../circles-breath-engine";
+import {
+  CIRCLES_LAYER_ELEVATION,
+  CIRCLES_LAYER_Z_INDEX,
+  getCirclesLayerHitTargetFrame,
+} from "../circles-hit-target";
 import { PersistentCircles } from "./PersistentCircles";
 
 function isFlowPath(pathname: string): boolean {
@@ -22,7 +27,7 @@ function isFlowPath(pathname: string): boolean {
 export function PersistentCirclesLayer() {
   const pathname = usePathname();
   const insets = useStableLayoutInsets();
-  const { height: windowHeight } = useStableWindowDimensions();
+  const { width: windowWidth, height: windowHeight } = useStableWindowDimensions();
   const selected = useAppStore((s) => s.selectedIntervention);
   const circlesPressHandler = useAppStore((s) => s.circlesPressHandler);
 
@@ -35,14 +40,16 @@ export function PersistentCirclesLayer() {
 
   const metrics = getCirclesAnchorMetrics(windowHeight, insets);
   const circlesTop = insets.top + metrics.circlesCenterY - circlesLayout.size / 2;
+  const hitTargetFrame = getCirclesLayerHitTargetFrame(windowWidth, circlesTop);
   const flowVisible = isFlowPath(pathname);
 
   return (
     <View
+      collapsable={false}
       pointerEvents={flowVisible ? "box-none" : "none"}
       style={[
         styles.circlesSlot,
-        { top: circlesTop },
+        hitTargetFrame,
         !flowVisible && styles.hidden,
       ]}
     >
@@ -59,14 +66,15 @@ const styles = StyleSheet.create({
   },
   circlesSlot: {
     position: "absolute",
-    left: 0,
-    right: 0,
     alignItems: "center",
-    zIndex: 50,
-    elevation: 12,
+    justifyContent: "center",
+    zIndex: CIRCLES_LAYER_Z_INDEX,
+    elevation: CIRCLES_LAYER_ELEVATION,
   },
   circlesBlock: {
     alignItems: "center",
+    justifyContent: "center",
     width: "100%",
+    height: "100%",
   },
 });

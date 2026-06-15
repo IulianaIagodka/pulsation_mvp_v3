@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { getCirclesBreathValues, resumeCalmLoopAfterViewMount } from "../circles-breath-engine";
+import { CIRCLES_PRESS_HIT_SLOP } from "../circles-hit-target";
+import { circlesLayout } from "../animation-rhythm";
 import { CalmPressable } from "./CalmPressable";
 import { CirclesRings } from "./CirclesRings";
 
@@ -29,7 +31,7 @@ export function PersistentCircles({ onPress }: Props) {
     <CalmPressable
       onPress={onPress}
       style={styles.pressWrap}
-      hitSlop={12}
+      hitSlop={CIRCLES_PRESS_HIT_SLOP}
       accessibilityRole="button"
     >
       <CirclesRings opacity={opacity} scale={scale} />
@@ -41,5 +43,7 @@ const styles = StyleSheet.create({
   pressWrap: {
     alignItems: "center",
     justifyContent: "center",
+    width: circlesLayout.size,
+    height: circlesLayout.size,
   },
 });
