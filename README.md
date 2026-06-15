@@ -109,12 +109,12 @@ For QA only, set `EXPO_PUBLIC_TEST_ROTATE_INTERVENTIONS=true` to cycle through a
 
 ## Inactivity trigger (adaptive)
 
-When Pulsation is in the background, it schedules **one local invitation** after a **dynamic interval** near 20 minutes (kept in a 10-30 minute window and adapted by recent completions, ignores, and absence — see `docs/adaptive-scheduling.md`):
+When Pulsation is in the background, it schedules a short series of local **one-action invitations** at a **dynamic interval** near 20 minutes (each gap kept in a 10-30 minute window and adapted by recent completions, ignores, and absence — see `docs/adaptive-scheduling.md`):
 
 1. A **local notification** may appear (“One action for you now?” / “Одна дія для тебе зараз?”).
 2. Reopening the app after the threshold navigates to `/trigger` (not during action / return), if eligibility passes (cooldown, daily cap, etc.).
 
-Timing adapts gently — it is not a fixed 20-minute reminder.
+Timing adapts gently — it is not a fixed 20-minute reminder — and returning to the app clears the remaining pending invitations.
 
 iOS will ask for notification permission the first time you background the app. After adding `expo-notifications`, run `npm run ios` once (not only Expo Go) so the native module is linked.
 
