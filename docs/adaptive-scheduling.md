@@ -50,7 +50,7 @@ flowchart TD
 | Scheduling | `adaptive-scheduler.ts` | Dynamic interval with jitter and destaggering |
 | Personalization | `intervention-planner.ts` | Action selection by time-of-day, history, and completion rates |
 | Orchestration | `trigger-engine.ts` | Eligibility gates + intervention planning |
-| Delivery | `inactivity-notification.ts` | Short local notification series on background |
+| Delivery | `inactivity-notification.ts` | Single next local notification on background |
 | Delivery | `InactivityTriggerListener.tsx` | Auto-open on resume when threshold + eligibility pass |
 
 **Design principles**
@@ -114,7 +114,7 @@ trigger delivery caps each background interval to [10m, 30m]
 
 **When the interval is computed**
 
-- On background → schedule a finite series of 6 local notifications from time to time at the adaptive interval, with each gap capped to the 10-30 minute trigger window (interval persisted as `lastScheduledIntervalMinutes`).
+- On background → schedule only the next local notification at the adaptive interval, capped to the 10-30 minute trigger window (interval persisted as `lastScheduledIntervalMinutes`).
 - On resume → compare inactive minutes against current interval; also check eligibility.
 
 **Eligibility gates** (unchanged, from `eligibility-safety.ts`)

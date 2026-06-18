@@ -4,20 +4,28 @@ import { getAdaptiveTriggerThresholdMinutes, getInactivityNotificationDelaySecon
 import { uiCopy } from "../modules/delivery-layer";
 
 export const INACTIVITY_NOTIFICATION_ID = "pulsation-inactivity-trigger";
-export const INACTIVITY_NOTIFICATION_SERIES_COUNT = 6;
+const LEGACY_INACTIVITY_NOTIFICATION_SERIES_COUNT = 6;
 
 function getInactivityNotificationIdentifier(index: number): string {
   return index === 0 ? INACTIVITY_NOTIFICATION_ID : `${INACTIVITY_NOTIFICATION_ID}-${index + 1}`;
 }
 
 export function getInactivityNotificationIdentifiers(): string[] {
-  return Array.from({ length: INACTIVITY_NOTIFICATION_SERIES_COUNT }, (_, index) =>
+  return [INACTIVITY_NOTIFICATION_ID];
+}
+
+function getLegacyInactivityNotificationIdentifiers(): string[] {
+  return Array.from({ length: LEGACY_INACTIVITY_NOTIFICATION_SERIES_COUNT }, (_, index) =>
     getInactivityNotificationIdentifier(index),
   );
 }
 
 async function cancelScheduledInactivityNotifications(): Promise<void> {
-  for (const identifier of getInactivityNotificationIdentifiers()) {
+  const identifiers = new Set([
+    ...getInactivityNotificationIdentifiers(),
+    ...getLegacyInactivityNotificationIdentifiers(),
+  ]);
+  for (const identifier of identifiers) {
     await Notifications.cancelScheduledNotificationAsync(identifier);
   }
 }
@@ -66,21 +74,19 @@ export async function scheduleInactivityNotification(): Promise<void> {
     const thresholdMinutes = getAdaptiveTriggerThresholdMinutes();
     const delaySeconds = getInactivityNotificationDelaySeconds(thresholdMinutes);
 
-    for (let index = 0; index < INACTIVITY_NOTIFICATION_SERIES_COUNT; index += 1) {
-      await Notifications.scheduleNotificationAsync({
-        identifier: getInactivityNotificationIdentifier(index),
-        content: {
-          title: uiCopy.inactivityNotificationTitle,
-          body: uiCopy.inactivityNotificationBody,
-          data: { route: "/trigger" },
-        },
-        trigger: {
-          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-          seconds: delaySeconds * (index + 1),
-          repeats: false,
-        },
-      });
-    }
+    await Notifications.scheduleNotificationAsync({
+      identifier: INACTIVITY_NOTIFICATION_ID,
+      content: {
+        title: uiCopy.inactivityNotificationTitle,
+        body: uiCopy.inactivityNotificationBody,
+        data: { route: "/trigger" },
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: delaySeconds,
+        repeats: false,
+      },
+    });
   } catch (error) {
     console.warn("[inactivity-notification] schedule failed:", error);
   }
