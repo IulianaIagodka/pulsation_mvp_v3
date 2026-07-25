@@ -3,8 +3,12 @@
 ## Connect — активний реліз
 
 **App Store:** **1.0.2** build **36** LIVE ✅.  
-**1.0.3** build **39** — був у Connect / processing.  
-**Наступний submit:** train **1.0.4** (notification cadence fix: near series + daily week + weekly follow-ups).
+**1.0.3** build **39** — historical / superseded by 1.0.4.  
+**1.0.4** build **41** — uploaded to App Store Connect (2026-07-25); waiting for Apple processing / TestFlight.  
+
+**Build:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/builds/abb0d999-e2ab-4441-95eb-cfceb6f4a33e  
+**Submission:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/submissions/19b61431-54d9-4283-afd4-44e5062db3cf  
+**TestFlight (після processing):** https://appstoreconnect.apple.com/apps/6773324495/testflight/ios
 
 ### What's New → EN (1.0.4) — вставити в Connect при submit
 
@@ -54,9 +58,9 @@ This build keeps the core user path unchanged and focuses on reliability polish:
 - the global circles press handler is guarded so only the focused screen action is active;
 - copy reveal timing and anchored main-copy layout are centralized and covered by regression tests.
 
-### Після submit 1.0.4
+### Після processing 1.0.4
 
-1. Connect → **1.0.4** → **Submit for Review** (після обробки Apple / TestFlight).
+1. Connect → **1.0.4** → вставити What's New (EN/UK вище) → **Submit for Review**.
 2. TestFlight на iPhone → перевірити, що після background є near-серія, а не лише тиша через ~2 години.
 3. Опційно оновити скріни з `docs/app-store-screenshots/marketing/` (EN) і `uk/` (UK).
 
