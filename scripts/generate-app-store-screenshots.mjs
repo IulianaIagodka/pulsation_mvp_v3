@@ -2,7 +2,8 @@
  * App Store Connect screenshots from simulator/phone captures.
  *
  * Default (--connect): exact pixel size, full app screen — does NOT change in-app UI.
- * Optional (--marketing): bright headline + phone frame for store preview only.
+ * Optional (--marketing): benefit headline + phone frame for store preview (conversion set).
+ * Optional (--story=product): older feature-focused marketing headlines.
  */
 import sharp from "sharp";
 import { existsSync, mkdirSync, readdirSync } from "fs";
@@ -21,16 +22,16 @@ const IPAD_TARGETS = [
 
 const BG = { r: 7, g: 13, b: 24, alpha: 1 };
 
-/** Matches app tokens / CalmScreen gradient — calm dark, not bright marketing blue. */
+/** Matches app tokens / CalmScreen gradient — calmer dark with brighter store headlines. */
 const PULSATION = {
-  bgTop: "#0A1222",
+  bgTop: "#0E1A2E",
   bgMid: "#070D18",
-  bgBottom: "#081021",
-  textPrimary: "#BCC8DA",
-  textSecondary: "#74839A",
-  circlesRing: "#3D5A82",
+  bgBottom: "#050A14",
+  textPrimary: "#E8EEF7",
+  textSecondary: "#9AABC2",
+  circlesRing: "#4A6F9E",
   circlesInner: "#1C2F4A",
-  phoneBorder: "#3D5A82",
+  phoneBorder: "#4A6F9E",
   phoneFill: "#070D18",
 };
 
@@ -42,55 +43,101 @@ const SLIDE_NAMES = [
   "05-about",
 ];
 
-const SLIDES_EN = SLIDE_NAMES.map((base) => ({
+/** Conversion set — pain → benefit → proof → outcome → differentiator. */
+const CONVERSION_EN = {
+  "01-onboarding": {
+    headline: "Stuck scrolling?",
+    sub: "One gentle action to reset",
+  },
+  "02-trigger": {
+    headline: "A quiet invitation",
+    sub: "When the phone sits nearby",
+  },
+  "03-action": {
+    headline: "One small action",
+    sub: "Feel your feet. One slow breath.",
+  },
+  "04-return": {
+    headline: "Back to yourself",
+    sub: "You are here — present again",
+  },
+  "05-about": {
+    headline: "No streaks. No feed.",
+    sub: "Minimal wellbeing, on device",
+  },
+};
+
+const CONVERSION_UK = {
+  "01-onboarding": {
+    headline: "Застрягли в скролі?",
+    sub: "Одна м’яка дія — і ти знову тут",
+  },
+  "02-trigger": {
+    headline: "Тихе запрошення",
+    sub: "Коли телефон просто поруч",
+  },
+  "03-action": {
+    headline: "Одна маленька дія",
+    sub: "Відчуй стопи. Один повільний подих.",
+  },
+  "04-return": {
+    headline: "Повернися до себе",
+    sub: "Ти тут — знову в моменті",
+  },
+  "05-about": {
+    headline: "Без серій і стрічки",
+    sub: "Мінімум. Лише на твоєму пристрої",
+  },
+};
+
+/** Older product/feature headlines (kept for A/B). */
+const PRODUCT_EN = {
+  "01-onboarding": { headline: "How it works", sub: "Four steps — then tap circles" },
+  "02-trigger": { headline: "One action for you", sub: "Tap circles to begin" },
+  "03-action": { headline: "Feet on the ground", sub: "Seven calm micro-actions" },
+  "04-return": { headline: "You are here", sub: "Settle back into the moment" },
+  "05-about": { headline: "Calm, not pressure", sub: "Minimal wellbeing, on device" },
+};
+
+const PRODUCT_UK = {
+  "01-onboarding": { headline: "Як це працює", sub: "Чотири кроки — потім торкнись кіл" },
+  "02-trigger": { headline: "Одна дія для тебе", sub: "Торкнись кіл, щоб почати" },
+  "03-action": { headline: "Стопи на опорі", sub: "Сім спокійних мікродій" },
+  "04-return": { headline: "Ти тут", sub: "Повернись у теперішній момент" },
+  "05-about": { headline: "Спокій, не тиск", sub: "Мінімалізм — лише на пристрої" },
+};
+
+const storyArg = process.argv.find((a) => a.startsWith("--story="));
+const story = storyArg?.slice("--story=".length) === "product" ? "product" : "conversion";
+const marketing = process.argv.includes("--marketing");
+const locale = process.argv.includes("--locale=uk") ? "uk" : "en";
+
+const storyMap =
+  story === "product"
+    ? locale === "uk"
+      ? PRODUCT_UK
+      : PRODUCT_EN
+    : locale === "uk"
+      ? CONVERSION_UK
+      : CONVERSION_EN;
+
+const slides = SLIDE_NAMES.map((base) => ({
+  base,
   capture: `${base}-1284x2778.png`,
   output: `${base}-1284x2778.png`,
-  headline:
-    base === "01-onboarding"
-      ? "How it works"
-      : base === "02-trigger"
-        ? "One action for you"
-        : base === "03-action"
-          ? "Feet on the ground"
-          : base === "04-return"
-            ? "You are here"
-            : "Calm, not pressure",
-  sub:
-    base === "01-onboarding"
-      ? "Four steps — then tap circles"
-      : base === "02-trigger"
-        ? "Tap circles to begin"
-        : base === "03-action"
-          ? "Seven calm micro-actions"
-          : base === "04-return"
-            ? "Settle back into the moment"
-            : "Minimal wellbeing, on device",
+  headline: storyMap[base].headline,
+  sub: storyMap[base].sub,
 }));
 
-const SLIDES_UK = SLIDE_NAMES.map((base) => ({
-  capture: `${base}-1284x2778.png`,
-  output: `${base}-1284x2778.png`,
-  headline:
-    base === "01-onboarding"
-      ? "Як це працює"
-      : base === "02-trigger"
-        ? "Одна дія для тебе"
-        : base === "03-action"
-          ? "Стопи на опорі"
-          : base === "04-return"
-            ? "Ти тут"
-            : "Спокій, не тиск",
-  sub:
-    base === "01-onboarding"
-      ? "Чотири кроки — потім торкнись кіл"
-      : base === "02-trigger"
-        ? "Торкнись кіл, щоб почати"
-        : base === "03-action"
-          ? "Сім спокійних мікродій"
-          : base === "04-return"
-            ? "Повернись у теперішній момент"
-            : "Мінімалізм — лише на пристрої",
-}));
+/** UK marketing → top-level uk/ (Connect locale slot). EN marketing → marketing/. */
+const outSubdir = marketing
+  ? locale === "uk"
+    ? "uk"
+    : "marketing"
+  : locale === "uk"
+    ? join("connect", "uk")
+    : "connect";
+const targetDir = join(baseDir, outSubdir);
 
 const PHONE = { y: 500, outerW: 952, outerH: 2060, radius: 52, pad: 12 };
 
@@ -121,11 +168,11 @@ function wrapHeadline(text, maxCharsPerLine = 22) {
 
 function marketingRingsMarkup(cx, cy, scale) {
   const rings = [
-    { r: 67.4, opacity: 0.35, sw: 1.4 },
-    { r: 54.4, opacity: 0.5, sw: 1.2 },
-    { r: 42.4, opacity: 0.58, sw: 1.2 },
-    { r: 30.4, opacity: 0.66, sw: 1.1 },
-    { r: 18.4, opacity: 0.74, sw: 1.1 },
+    { r: 67.4, opacity: 0.4, sw: 1.4 },
+    { r: 54.4, opacity: 0.55, sw: 1.2 },
+    { r: 42.4, opacity: 0.62, sw: 1.2 },
+    { r: 30.4, opacity: 0.7, sw: 1.1 },
+    { r: 18.4, opacity: 0.78, sw: 1.1 },
   ];
   const circles = rings
     .map(
@@ -140,10 +187,10 @@ function marketingRingsMarkup(cx, cy, scale) {
 function marketingFrameSvg({ headline, sub }) {
   const { w: W, h: H } = IPHONE;
   const cx = W / 2;
-  const lines = wrapHeadline(headline, /[а-яіїєґ]/i.test(headline) ? 18 : 22);
-  const lineHeight = 92;
+  const lines = wrapHeadline(headline, /[а-яіїєґ’']/i.test(headline) ? 16 : 20);
+  const lineHeight = 88;
   const headlineBlockH = lines.length * lineHeight;
-  const headlineStartY = 200 + Math.max(0, (280 - headlineBlockH) / 2);
+  const headlineStartY = 190 + Math.max(0, (260 - headlineBlockH) / 2);
   const headlineTspans = lines
     .map((line, i) => {
       const y = headlineStartY + i * lineHeight;
@@ -151,7 +198,7 @@ function marketingFrameSvg({ headline, sub }) {
     })
     .join("");
   const circlesCx = W - 200;
-  const circlesCy = 300;
+  const circlesCy = 290;
   const ringsMarkup = marketingRingsMarkup(circlesCx, circlesCy, 0.55);
   const phoneX = Math.round((W - PHONE.outerW) / 2);
   const innerX = phoneX + PHONE.pad;
@@ -159,6 +206,12 @@ function marketingFrameSvg({ headline, sub }) {
   const innerW = PHONE.outerW - PHONE.pad * 2;
   const innerH = PHONE.outerH - PHONE.pad * 2;
   const innerR = PHONE.radius - 8;
+  const subY = headlineStartY + headlineBlockH + 52;
+  const subMax = /[а-яіїєґ’']/i.test(sub) ? 28 : 34;
+  const subLines = wrapHeadline(sub, subMax);
+  const subTspans = subLines
+    .map((line, i) => `<tspan x="${cx}" y="${subY + i * 42}">${escapeXml(line)}</tspan>`)
+    .join("");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
@@ -168,8 +221,8 @@ function marketingFrameSvg({ headline, sub }) {
       <stop offset="55%" stop-color="${PULSATION.bgMid}"/>
       <stop offset="100%" stop-color="${PULSATION.bgBottom}"/>
     </linearGradient>
-    <radialGradient id="softGlow" cx="50%" cy="18%" r="55%">
-      <stop offset="0%" stop-color="${PULSATION.circlesRing}" stop-opacity="0.12"/>
+    <radialGradient id="softGlow" cx="50%" cy="16%" r="58%">
+      <stop offset="0%" stop-color="${PULSATION.circlesRing}" stop-opacity="0.22"/>
       <stop offset="100%" stop-color="${PULSATION.bgMid}" stop-opacity="0"/>
     </radialGradient>
     <filter id="phoneShadow" x="-15%" y="-8%" width="130%" height="115%">
@@ -178,19 +231,23 @@ function marketingFrameSvg({ headline, sub }) {
   </defs>
   <rect width="100%" height="100%" fill="url(#bg)"/>
   <rect width="100%" height="100%" fill="url(#softGlow)"/>
-  <g opacity="0.9">${ringsMarkup}</g>
-  <text text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="78" font-weight="600" fill="${PULSATION.textPrimary}">${headlineTspans}</text>
-  <text x="${cx}" y="${headlineStartY + headlineBlockH + 56}" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="36" font-weight="400" fill="${PULSATION.textSecondary}" opacity="0.95">${escapeXml(sub)}</text>
+  <g opacity="0.95">${ringsMarkup}</g>
+  <text text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="82" font-weight="600" fill="${PULSATION.textPrimary}">${headlineTspans}</text>
+  <text text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="400" fill="${PULSATION.textSecondary}" opacity="0.98">${subTspans}</text>
   <rect x="${phoneX}" y="${PHONE.y}" width="${PHONE.outerW}" height="${PHONE.outerH}" rx="${PHONE.radius}" fill="${PULSATION.phoneFill}" stroke="${PULSATION.phoneBorder}" stroke-width="2.5" opacity="0.95" filter="url(#phoneShadow)"/>
   <rect x="${innerX}" y="${innerY}" width="${innerW}" height="${innerH}" rx="${innerR}" fill="${PULSATION.bgMid}"/>
 </svg>`;
 }
 
 function capturePath(slide) {
+  if (locale === "uk") {
+    const ukNamed = join(capturesDir, "uk", slide.capture);
+    if (existsSync(ukNamed)) return ukNamed;
+  }
   const named = join(capturesDir, slide.capture);
   if (existsSync(named)) return named;
   throw new Error(
-    `Missing ${slide.capture} in docs/app-store-screenshots/captures/\n` +
+    `Missing ${slide.capture} in docs/app-store-screenshots/captures/${locale === "uk" ? "uk/" : ""}\n` +
       "Put raw simulator screenshots there (see README).",
   );
 }
@@ -262,30 +319,25 @@ async function writeMarketingPng(slide, inputPath, outputPath) {
 
 async function writeIpadFromIphone(iphoneDir) {
   for (const { dir, w, h } of IPAD_TARGETS) {
-    const targetDir = join(baseDir, dir);
-    mkdirSync(targetDir, { recursive: true });
-    for (const slide of SLIDES_EN) {
-      const base = slide.output.replace("-1284x2778", "");
+    const targetIpadDir = join(baseDir, dir);
+    mkdirSync(targetIpadDir, { recursive: true });
+    for (const slide of slides) {
+      const base = slide.base;
       const outName = `${base}-${w}x${h}.png`;
       await sharp(join(iphoneDir, slide.output))
         .resize(w, h, { fit: "contain", background: BG })
         .png({ force: true })
         .toColorspace("srgb")
-        .toFile(join(targetDir, outName));
+        .toFile(join(targetIpadDir, outName));
     }
   }
 }
 
 function listCaptures() {
-  if (!existsSync(capturesDir)) return [];
-  return readdirSync(capturesDir).filter((f) => f.endsWith(".png"));
+  const dir = locale === "uk" && existsSync(join(capturesDir, "uk")) ? join(capturesDir, "uk") : capturesDir;
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir).filter((f) => f.endsWith(".png"));
 }
-
-const marketing = process.argv.includes("--marketing");
-const locale = process.argv.includes("--locale=uk") ? "uk" : "en";
-const slides = locale === "uk" ? SLIDES_UK : SLIDES_EN;
-const outSubdir = marketing ? "marketing" : "connect";
-const targetDir = join(baseDir, locale === "uk" ? join(outSubdir, "uk") : outSubdir);
 
 async function main() {
   mkdirSync(capturesDir, { recursive: true });
@@ -298,6 +350,8 @@ async function main() {
     process.exit(1);
   }
 
+  console.log(`Story: ${story} · locale: ${locale} · mode: ${marketing ? "marketing" : "connect"}`);
+
   for (const slide of slides) {
     const input = capturePath(slide);
     const output = join(targetDir, slide.output);
@@ -307,7 +361,17 @@ async function main() {
       await writeConnectPng(input, output);
     }
     const meta = await sharp(output).metadata();
-    console.log(`Wrote ${output} (${meta.width}×${meta.height})`);
+    console.log(`Wrote ${output} (${meta.width}×${meta.height}) — ${slide.headline}`);
+  }
+
+  /** Mirror UK marketing into marketing/uk for discoverability. */
+  if (marketing && locale === "uk") {
+    const mirrorDir = join(baseDir, "marketing", "uk");
+    mkdirSync(mirrorDir, { recursive: true });
+    for (const slide of slides) {
+      await sharp(join(targetDir, slide.output)).toFile(join(mirrorDir, slide.output));
+    }
+    console.log(`Mirrored UK marketing → ${mirrorDir}`);
   }
 
   if (locale === "en" && !marketing) {
@@ -315,11 +379,15 @@ async function main() {
     console.log("Wrote iPad variants in ipad-13-inch/ and ipad-12.9-inch/");
   }
 
-  console.log(
-    marketing
-      ? "\nMarketing frames (optional). For Connect upload use: npm run generate:screenshots"
-      : "\nUpload files from docs/app-store-screenshots/connect/ to App Store Connect.",
-  );
+  if (marketing) {
+    console.log(
+      locale === "uk"
+        ? "\nUK conversion frames → docs/app-store-screenshots/uk/ (upload to Connect UK locale)."
+        : "\nEN conversion frames → docs/app-store-screenshots/marketing/ (upload to Connect EN).",
+    );
+  } else {
+    console.log("\nClean captures → docs/app-store-screenshots/connect/ (fallback without headlines).");
+  }
 }
 
 main().catch((err) => {

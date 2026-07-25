@@ -93,7 +93,7 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 4. [x] **Return** — «Ти тут» + коротке пояснення
 5. [x] **About** (опційно) — з онбордингу → «Про застосунок»
 
-Готові PNG для Connect: `docs/app-store-screenshots/connect/` (`npm run generate:screenshots` після знімків у `captures/`). Див. `docs/app-store-screenshots/README.md`.
+Готові PNG для Connect (conversion): `docs/app-store-screenshots/marketing/` (EN) + `uk/` (UK) — `npm run generate:screenshots:conversion`. Чисті UI-скріни: `connect/`. Див. `docs/app-store-screenshots/README.md`.
 
 ### B4. Завантажити в App Store Connect
 
@@ -102,7 +102,7 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 Для **1.0.1**:
 
 - [x] Connect → **Pulsation** → **App Store** → версія **1.0.1**
-- [x] **Screenshots** — `docs/app-store-screenshots/connect/` (EN), `uk/` (UK локаль)
+- [x] **Screenshots** — conversion: `marketing/` (EN), `uk/` (UK); запас: `connect/`
 - [ ] (Опційно) iPad — `ipad-13-inch/`
 
 ---

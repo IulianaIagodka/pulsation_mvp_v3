@@ -1,6 +1,7 @@
 /**
  * Renders 1284×2778 captures matching current Pulsation UI (rings + copy).
  * Output → docs/app-store-screenshots/captures/ → npm run generate:screenshots
+ * UK UI: --locale=uk → captures/uk/
  */
 import sharp from "sharp";
 import { mkdirSync } from "fs";
@@ -8,7 +9,7 @@ import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const capturesDir = join(root, "docs/app-store-screenshots/captures");
+const baseCapturesDir = join(root, "docs/app-store-screenshots/captures");
 
 const W = 1284;
 const H = 2778;
@@ -26,31 +27,63 @@ const P = {
   link: "#74839A",
 };
 
-const COPY = {
-  onboardingLine: "Pulsation exists to bring you back to yourself",
-  onboardingSubtitle: "How it works:",
-  onboardingSteps: [
-    "It stays in the background",
-    "It invites you from time to time",
-    "Tap the circles to continue",
-  ],
-  triggerPrompt: "One action for you",
-  actionText:
-    "Place your feet on the ground, notice the pressure under them, take one slow breath",
-  returnBody: "You are here",
-  returnExplanation: "Feeling the ground under your feet helps you feel grounded.",
-  keepForMe: "Save this for me",
-  aboutLink: "About",
-  aboutTitle: "About Pulsation",
-  aboutParagraphs: [
-    "Pulsation offers short, calming micro-actions when everyday digital use feels like a lot.",
-    "If you allow notifications, while the app is in the background it may send quiet one-action invitations from time to time. Timing adapts gently to your rhythm. No marketing messages.",
-    "Pulsation does not read or analyze your other apps; it uses only local app state on this device.",
-    "This is a wellbeing app, not a medical device or substitute for professional care.",
-  ],
-  aboutBack: "Return",
-  pathsLink: "Show my paths",
+const COPY_BY_LOCALE = {
+  en: {
+    onboardingLine: "Pulsation exists to bring you back to yourself",
+    onboardingSubtitle: "How it works:",
+    onboardingSteps: [
+      "It stays in the background",
+      "It invites you from time to time",
+      "Tap the circles to continue",
+    ],
+    triggerPrompt: "One action for you",
+    actionText:
+      "Place your feet on the ground, notice the pressure under them, take one slow breath",
+    returnBody: "You are here",
+    returnExplanation: "Feeling the ground under your feet helps you feel grounded.",
+    keepForMe: "Save this for me",
+    aboutLink: "About",
+    aboutTitle: "About Pulsation",
+    aboutParagraphs: [
+      "Pulsation offers short, calming micro-actions when everyday digital use feels like a lot.",
+      "If you allow notifications, while the app is in the background it may send quiet one-action invitations from time to time. Timing adapts gently to your rhythm. No marketing messages.",
+      "Pulsation does not read or analyze your other apps; it uses only local app state on this device.",
+      "This is a wellbeing app, not a medical device or substitute for professional care.",
+    ],
+    aboutBack: "Return",
+    pathsLink: "Show my paths",
+    aboutVersion: "Version 1.0.3",
+  },
+  uk: {
+    onboardingLine: "Pulsation допомагає повернутися до себе",
+    onboardingSubtitle: "Як це працює:",
+    onboardingSteps: [
+      "Лишається у фоні",
+      "Час від часу запрошує",
+      "Торкни кола, щоб продовжити",
+    ],
+    triggerPrompt: "Одна дія для тебе",
+    actionText: "Постав стопи на опору, відчуй тиск під ними, дихай",
+    returnBody: "Ти тут",
+    returnExplanation: "Відчуття опори під ногами допомагає відчути стійкість.",
+    keepForMe: "Збережи це для мене",
+    aboutLink: "Про застосунок",
+    aboutTitle: "Про Pulsation",
+    aboutParagraphs: [
+      "Pulsation — короткі спокійні дії, коли цифрове навантаження стає занадто великим.",
+      "Якщо дозволиш сповіщення, у фоні застосунок час від часу надсилатиме тихі запрошення до однієї дії. Частота м’яко підлаштовується під твій ритм. Без реклами.",
+      "Застосунок не читає й не аналізує інші додатки на телефоні; він використовує лише локальний стан Pulsation.",
+      "Це застосунок для добробуту, не медичний виріб і не заміна професійної допомоги.",
+    ],
+    aboutBack: "Повернутися",
+    pathsLink: "Мої шляхи",
+    aboutVersion: "Версія 1.0.3",
+  },
 };
+
+const locale = process.argv.includes("--locale=uk") ? "uk" : "en";
+const COPY = COPY_BY_LOCALE[locale];
+const capturesDir = locale === "uk" ? join(baseCapturesDir, "uk") : baseCapturesDir;
 
 function escapeXml(text) {
   return text
@@ -105,7 +138,7 @@ function bgDefs() {
 }
 
 function mainText(lines, y, fontSize = 34) {
-  const wrapped = Array.isArray(lines) ? lines : wrapLines(lines, 36);
+  const wrapped = Array.isArray(lines) ? lines : wrapLines(lines, locale === "uk" ? 30 : 36);
   return wrapped
     .map((line, i) => {
       const yy = y + i * (fontSize + 10);
@@ -115,7 +148,7 @@ function mainText(lines, y, fontSize = 34) {
 }
 
 function mutedText(lines, y, fontSize = 28, opacity = 0.58) {
-  const wrapped = Array.isArray(lines) ? lines : wrapLines(lines, 42);
+  const wrapped = Array.isArray(lines) ? lines : wrapLines(lines, locale === "uk" ? 36 : 42);
   return wrapped
     .map((line, i) => {
       const yy = y + i * (fontSize + 8);
@@ -143,10 +176,7 @@ const SCREENS = {
     const body = [
       mainText(COPY.onboardingLine, y, 34),
       mutedText(COPY.onboardingSubtitle, (y += 100), 28, 0.58),
-      ...COPY.onboardingSteps.map((step, i) => {
-        const block = mutedText(step, y + 56 + i * 44, 28, 0.58);
-        return block;
-      }),
+      ...COPY.onboardingSteps.map((step, i) => mutedText(step, y + 56 + i * 44, 28, 0.58)),
       footerLink(COPY.aboutLink, H - 120),
     ].join("");
     return screenSvg(body);
@@ -178,10 +208,10 @@ const SCREENS = {
     y += 80;
     for (const p of COPY.aboutParagraphs) {
       parts.push(mutedText(p, y, 26, 0.58));
-      y += wrapLines(p, 48).length * 34 + 28;
+      y += wrapLines(p, locale === "uk" ? 40 : 48).length * 34 + 28;
     }
     parts.push(
-      `<text x="${SCX}" y="${H - 180}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" fill="${P.textSecondary}" opacity="0.55">Version 1.0.1</text>`,
+      `<text x="${SCX}" y="${H - 180}" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" fill="${P.textSecondary}" opacity="0.55">${escapeXml(COPY.aboutVersion)}</text>`,
     );
     parts.push(footerLink(COPY.aboutBack, H - 120));
     return screenSvg(parts.join(""));

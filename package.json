@@ -19,10 +19,12 @@
     "submit:android:prod": "npx eas-cli submit -p android --profile production --latest",
     "generate:icon": "node scripts/generate-app-icon.mjs",
     "render:captures": "node scripts/render-app-store-captures.mjs",
+    "render:captures:uk": "node scripts/render-app-store-captures.mjs --locale=uk",
     "generate:screenshots": "node scripts/render-app-store-captures.mjs && node scripts/generate-app-store-screenshots.mjs",
-    "generate:screenshots:uk": "node scripts/generate-app-store-screenshots.mjs --locale=uk",
-    "generate:screenshots:marketing": "node scripts/generate-app-store-screenshots.mjs --marketing",
-    "generate:screenshots:marketing:uk": "node scripts/generate-app-store-screenshots.mjs --marketing --locale=uk"
+    "generate:screenshots:uk": "node scripts/render-app-store-captures.mjs --locale=uk && node scripts/generate-app-store-screenshots.mjs --locale=uk",
+    "generate:screenshots:marketing": "node scripts/render-app-store-captures.mjs && node scripts/generate-app-store-screenshots.mjs --marketing",
+    "generate:screenshots:marketing:uk": "node scripts/render-app-store-captures.mjs --locale=uk && node scripts/generate-app-store-screenshots.mjs --marketing --locale=uk",
+    "generate:screenshots:conversion": "npm run generate:screenshots:marketing && npm run generate:screenshots:marketing:uk"
   },
   "dependencies": {
     "@expo-google-fonts/roboto": "^0.4.3",
