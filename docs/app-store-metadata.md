@@ -1,12 +1,36 @@
 # App Store Metadata (EN + UK) for Pulsation
 
-## Connect — активний реліз (1.0.2, build 36)
+## Connect — активний реліз
 
-**App Store:** **1.0.2** build **36** LIVE ✅ (2026-06-10).  
-**Скріншоти:** завантажені ✅ (онбординг може потребувати оновлення після typography polish).  
-**Наступний submit:** train **1.0.3+** — використати секції **1.0.3** нижче; історичні **1.0.2** блоки лишаються для reference.
+**App Store:** **1.0.2** build **36** LIVE ✅.  
+**1.0.3** build **39** — був у Connect / processing.  
+**Наступний submit:** train **1.0.4** (notification cadence fix: near series + daily week + weekly follow-ups).
 
-### What's New → EN (1.0.3) — вставити в Connect при submit
+### What's New → EN (1.0.4) — вставити в Connect при submit
+
+```
+- More dependable invitations — gentle reminders no longer stop after a short background window.
+- If Pulsation stays closed, quiet daily follow-ups continue for a week, then weekly for about two more months.
+- Same calm flow: one action, then return to the moment.
+```
+
+### What's New → UK (1.0.4) — вставити в Connect при submit
+
+```
+- Надійніші запрошення — тихі нагадування більше не обриваються після короткого фонового вікна.
+- Якщо Pulsation лишається закритим, щоденні follow-up тривають тиждень, далі — раз на тиждень ще близько двох місяців.
+- Той самий спокійний шлях: одна дія, потім повернення в момент.
+```
+
+### Review Notes (1.0.4)
+
+This build keeps the core user path unchanged and fixes local invitation scheduling:
+
+- on background, Pulsation still schedules a short near series (~10–30 minute gaps);
+- if the app stays unopened, daily follow-ups cover the first week, then weekly follow-ups continue for eight more weeks;
+- opening the app cancels pending invitations; completing an action and backgrounding again starts a fresh plan.
+
+### What's New → EN (1.0.3) — historical
 
 ```
 - More reliable resume flow — cold starts, background returns, and onboarding routing are handled more consistently.
@@ -14,7 +38,7 @@
 - Smoother visual timing — main copy, follow-up text, bullets, and footer links share one stable reveal rhythm.
 ```
 
-### What's New → UK (1.0.3) — вставити в Connect при submit
+### What's New → UK (1.0.3) — historical
 
 ```
 - Надійніший resume flow — cold start, повернення з background і onboarding routing працюють послідовніше.
@@ -22,7 +46,7 @@
 - Плавніший візуальний ритм — main copy, пояснення, bullets і footer links мають єдиний стабільний reveal timing.
 ```
 
-### Review Notes (1.0.3)
+### Review Notes (1.0.3) — historical
 
 This build keeps the core user path unchanged and focuses on reliability polish:
 
@@ -30,10 +54,11 @@ This build keeps the core user path unchanged and focuses on reliability polish:
 - the global circles press handler is guarded so only the focused screen action is active;
 - copy reveal timing and anchored main-copy layout are centralized and covered by regression tests.
 
-### Після submit 1.0.3
+### Після submit 1.0.4
 
-1. Connect → **1.0.3** → **Submit for Review** (після обробки Apple).
-2. TestFlight на iPhone → regression checklist.
+1. Connect → **1.0.4** → **Submit for Review** (після обробки Apple / TestFlight).
+2. TestFlight на iPhone → перевірити, що після background є near-серія, а не лише тиша через ~2 години.
+3. Опційно оновити скріни з `docs/app-store-screenshots/marketing/` (EN) і `uk/` (UK).
 
 ---
 
