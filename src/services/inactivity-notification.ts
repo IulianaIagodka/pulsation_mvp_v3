@@ -4,19 +4,93 @@ import { getAdaptiveTriggerThresholdMinutes, getInactivityNotificationDelaySecon
 import { uiCopy } from "../modules/delivery-layer";
 
 export const INACTIVITY_NOTIFICATION_ID = "pulsation-inactivity-trigger";
+
+/** Near-term invitations while the phone sits unused (~10–30 min gaps). */
 export const INACTIVITY_NOTIFICATION_SERIES_COUNT = 6;
 
-function getInactivityNotificationIdentifier(index: number): string {
+/**
+ * Quiet daily follow-ups if the app stays unopened after the near series.
+ * Restores multi-day coverage (regression: series-only drained in ~1–3h).
+ */
+export const INACTIVITY_NOTIFICATION_FOLLOWUP_DAYS = 7;
+
+const SECONDS_PER_DAY = 24 * 60 * 60;
+
+export type InactivityNotificationPlanItem = {
+  identifier: string;
+  delaySeconds: number;
+  kind: "near" | "followup";
+};
+
+function getNearSeriesIdentifier(index: number): string {
   return index === 0 ? INACTIVITY_NOTIFICATION_ID : `${INACTIVITY_NOTIFICATION_ID}-${index + 1}`;
 }
 
+function getFollowupIdentifier(day: number): string {
+  return `${INACTIVITY_NOTIFICATION_ID}-day-${day}`;
+}
+
+/** All identifiers this build may own (near series + daily follow-ups). */
 export function getInactivityNotificationIdentifiers(): string[] {
-  return Array.from({ length: INACTIVITY_NOTIFICATION_SERIES_COUNT }, (_, index) =>
-    getInactivityNotificationIdentifier(index),
+  const near = Array.from({ length: INACTIVITY_NOTIFICATION_SERIES_COUNT }, (_, index) =>
+    getNearSeriesIdentifier(index),
+  );
+  const followups = Array.from({ length: INACTIVITY_NOTIFICATION_FOLLOWUP_DAYS }, (_, index) =>
+    getFollowupIdentifier(index + 1),
+  );
+  return [...near, ...followups];
+}
+
+/**
+ * Near series at adaptive gaps, then one invitation per day for FOLLOWUP_DAYS
+ * if Pulsation is never reopened (so the queue does not go silent after ~2h).
+ */
+export function buildInactivityNotificationPlan(delaySeconds: number): InactivityNotificationPlanItem[] {
+  const gap = Math.max(1, Math.round(delaySeconds));
+  const plan: InactivityNotificationPlanItem[] = [];
+
+  for (let index = 0; index < INACTIVITY_NOTIFICATION_SERIES_COUNT; index += 1) {
+    plan.push({
+      identifier: getNearSeriesIdentifier(index),
+      delaySeconds: gap * (index + 1),
+      kind: "near",
+    });
+  }
+
+  for (let day = 1; day <= INACTIVITY_NOTIFICATION_FOLLOWUP_DAYS; day += 1) {
+    plan.push({
+      identifier: getFollowupIdentifier(day),
+      // Same cadence as the prior next-day fix: first delay, then +1…+7 days.
+      delaySeconds: gap + day * SECONDS_PER_DAY,
+      kind: "followup",
+    });
+  }
+
+  return plan;
+}
+
+function isInactivityNotificationIdentifier(identifier: string): boolean {
+  return (
+    identifier === INACTIVITY_NOTIFICATION_ID ||
+    identifier.startsWith(`${INACTIVITY_NOTIFICATION_ID}-`)
   );
 }
 
 async function cancelScheduledInactivityNotifications(): Promise<void> {
+  // Cancel by prefix so older builds (series-only or day-lookahead-only) are cleared.
+  try {
+    const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+    const owned = scheduled
+      .map((item) => item.identifier)
+      .filter((id): id is string => typeof id === "string" && isInactivityNotificationIdentifier(id));
+    for (const identifier of owned) {
+      await Notifications.cancelScheduledNotificationAsync(identifier);
+    }
+    if (owned.length > 0) return;
+  } catch {
+    // Fall through to known-id cancel.
+  }
+
   for (const identifier of getInactivityNotificationIdentifiers()) {
     await Notifications.cancelScheduledNotificationAsync(identifier);
   }
@@ -65,10 +139,11 @@ export async function scheduleInactivityNotification(): Promise<void> {
 
     const thresholdMinutes = getAdaptiveTriggerThresholdMinutes();
     const delaySeconds = getInactivityNotificationDelaySeconds(thresholdMinutes);
+    const plan = buildInactivityNotificationPlan(delaySeconds);
 
-    for (let index = 0; index < INACTIVITY_NOTIFICATION_SERIES_COUNT; index += 1) {
+    for (const item of plan) {
       await Notifications.scheduleNotificationAsync({
-        identifier: getInactivityNotificationIdentifier(index),
+        identifier: item.identifier,
         content: {
           title: uiCopy.inactivityNotificationTitle,
           body: uiCopy.inactivityNotificationBody,
@@ -76,7 +151,7 @@ export async function scheduleInactivityNotification(): Promise<void> {
         },
         trigger: {
           type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-          seconds: delaySeconds * (index + 1),
+          seconds: item.delaySeconds,
           repeats: false,
         },
       });

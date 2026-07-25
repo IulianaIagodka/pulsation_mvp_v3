@@ -50,7 +50,7 @@ flowchart TD
 | Scheduling | `adaptive-scheduler.ts` | Dynamic interval with jitter and destaggering |
 | Personalization | `intervention-planner.ts` | Action selection by time-of-day, history, and completion rates |
 | Orchestration | `trigger-engine.ts` | Eligibility gates + intervention planning |
-| Delivery | `inactivity-notification.ts` | Short local notification series on background |
+| Delivery | `inactivity-notification.ts` | Near local series on background + daily follow-ups if unopened |
 | Delivery | `InactivityTriggerListener.tsx` | Auto-open on resume when threshold + eligibility pass |
 
 **Design principles**
@@ -114,7 +114,7 @@ trigger delivery caps each background interval to [10m, 30m]
 
 **When the interval is computed**
 
-- On background → schedule a finite series of 6 local notifications from time to time at the adaptive interval, with each gap capped to the 10-30 minute trigger window (interval persisted as `lastScheduledIntervalMinutes`).
+- On background → schedule a near series of 6 local notifications at the adaptive interval (gaps capped to the 10-30 minute trigger window), then one quiet follow-up per day for the next 7 days if the app stays unopened (interval persisted as `lastScheduledIntervalMinutes`).
 - On resume → compare inactive minutes against current interval; also check eligibility.
 
 **Eligibility gates** (unchanged, from `eligibility-safety.ts`)
@@ -172,7 +172,7 @@ Completion rates update via existing EMA in `memory-update.ts` (70/30 blend). Pe
 | Day | Events | Interval behavior |
 |-----|--------|-------------------|
 | Mon | One completion, then ignores twice | Interval grows to ~65m |
-| Tue–Thu | App not opened | — |
+| Tue–Thu | App not opened | Daily follow-up invitations may still fire (local, pre-scheduled) |
 | Fri | Opens app (5 days absent) | Next interval ~95m+ (absence bonus) |
 | Fri PM | Completes one action after return | Recovery shaves ~30% of dampening within 24h |
 | Sat | Regular use resumes | Interval drifts back toward ~25–35m over 1–2 days |
