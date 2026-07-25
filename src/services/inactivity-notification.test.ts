@@ -32,6 +32,7 @@ import {
   INACTIVITY_NOTIFICATION_FOLLOWUP_DAYS,
   INACTIVITY_NOTIFICATION_ID,
   INACTIVITY_NOTIFICATION_SERIES_COUNT,
+  INACTIVITY_NOTIFICATION_WEEKLY_FOLLOWUPS,
   buildInactivityNotificationPlan,
   cancelInactivityNotification,
   getInactivityNotificationIdentifiers,
@@ -49,18 +50,24 @@ describe("inactivity notifications", () => {
     (Notifications.getAllScheduledNotificationsAsync as jest.Mock).mockResolvedValue([]);
   });
 
-  it("plans a near adaptive series plus multi-day follow-ups", () => {
+  it("plans near series, daily week, then weekly follow-ups", () => {
     const gap = 20 * 60;
+    const day = 24 * 60 * 60;
     const plan = buildInactivityNotificationPlan(gap);
 
     expect(plan).toHaveLength(
-      INACTIVITY_NOTIFICATION_SERIES_COUNT + INACTIVITY_NOTIFICATION_FOLLOWUP_DAYS,
+      INACTIVITY_NOTIFICATION_SERIES_COUNT +
+        INACTIVITY_NOTIFICATION_FOLLOWUP_DAYS +
+        INACTIVITY_NOTIFICATION_WEEKLY_FOLLOWUPS,
     );
     expect(plan.filter((item) => item.kind === "near")).toHaveLength(
       INACTIVITY_NOTIFICATION_SERIES_COUNT,
     );
-    expect(plan.filter((item) => item.kind === "followup")).toHaveLength(
+    expect(plan.filter((item) => item.kind === "daily")).toHaveLength(
       INACTIVITY_NOTIFICATION_FOLLOWUP_DAYS,
+    );
+    expect(plan.filter((item) => item.kind === "weekly")).toHaveLength(
+      INACTIVITY_NOTIFICATION_WEEKLY_FOLLOWUPS,
     );
 
     expect(plan[0]).toMatchObject({
@@ -75,17 +82,27 @@ describe("inactivity notifications", () => {
     });
     expect(plan[6]).toMatchObject({
       identifier: `${INACTIVITY_NOTIFICATION_ID}-day-1`,
-      delaySeconds: gap + 24 * 60 * 60,
-      kind: "followup",
+      delaySeconds: gap + day,
+      kind: "daily",
+    });
+    expect(plan[12]).toMatchObject({
+      identifier: `${INACTIVITY_NOTIFICATION_ID}-day-7`,
+      delaySeconds: gap + 7 * day,
+      kind: "daily",
+    });
+    expect(plan[13]).toMatchObject({
+      identifier: `${INACTIVITY_NOTIFICATION_ID}-week-1`,
+      delaySeconds: gap + 14 * day,
+      kind: "weekly",
     });
     expect(plan[plan.length - 1]).toMatchObject({
-      identifier: `${INACTIVITY_NOTIFICATION_ID}-day-7`,
-      delaySeconds: gap + 7 * 24 * 60 * 60,
-      kind: "followup",
+      identifier: `${INACTIVITY_NOTIFICATION_ID}-week-8`,
+      delaySeconds: gap + 63 * day,
+      kind: "weekly",
     });
   });
 
-  it("lists stable identifiers for near series and daily follow-ups", () => {
+  it("lists stable identifiers for near, daily, and weekly reminders", () => {
     expect(getInactivityNotificationIdentifiers()).toEqual([
       INACTIVITY_NOTIFICATION_ID,
       `${INACTIVITY_NOTIFICATION_ID}-2`,
@@ -100,10 +117,18 @@ describe("inactivity notifications", () => {
       `${INACTIVITY_NOTIFICATION_ID}-day-5`,
       `${INACTIVITY_NOTIFICATION_ID}-day-6`,
       `${INACTIVITY_NOTIFICATION_ID}-day-7`,
+      `${INACTIVITY_NOTIFICATION_ID}-week-1`,
+      `${INACTIVITY_NOTIFICATION_ID}-week-2`,
+      `${INACTIVITY_NOTIFICATION_ID}-week-3`,
+      `${INACTIVITY_NOTIFICATION_ID}-week-4`,
+      `${INACTIVITY_NOTIFICATION_ID}-week-5`,
+      `${INACTIVITY_NOTIFICATION_ID}-week-6`,
+      `${INACTIVITY_NOTIFICATION_ID}-week-7`,
+      `${INACTIVITY_NOTIFICATION_ID}-week-8`,
     ]);
   });
 
-  it("schedules near reminders and multi-day follow-ups that open the trigger screen", async () => {
+  it("schedules the full invitation plan that opens the trigger screen", async () => {
     await scheduleInactivityNotification();
 
     const plan = buildInactivityNotificationPlan(27 * 60);
@@ -131,20 +156,18 @@ describe("inactivity notifications", () => {
       { identifier: INACTIVITY_NOTIFICATION_ID },
       { identifier: `${INACTIVITY_NOTIFICATION_ID}-3` },
       { identifier: `${INACTIVITY_NOTIFICATION_ID}-day-2` },
+      { identifier: `${INACTIVITY_NOTIFICATION_ID}-week-1` },
       { identifier: "other-app-notification" },
     ]);
 
     await cancelInactivityNotification();
 
-    expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenCalledTimes(3);
+    expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenCalledTimes(4);
     expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenCalledWith(
       INACTIVITY_NOTIFICATION_ID,
     );
     expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenCalledWith(
-      `${INACTIVITY_NOTIFICATION_ID}-3`,
-    );
-    expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenCalledWith(
-      `${INACTIVITY_NOTIFICATION_ID}-day-2`,
+      `${INACTIVITY_NOTIFICATION_ID}-week-1`,
     );
     expect(Notifications.cancelScheduledNotificationAsync).not.toHaveBeenCalledWith(
       "other-app-notification",

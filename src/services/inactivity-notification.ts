@@ -8,42 +8,52 @@ export const INACTIVITY_NOTIFICATION_ID = "pulsation-inactivity-trigger";
 /** Near-term invitations while the phone sits unused (~10–30 min gaps). */
 export const INACTIVITY_NOTIFICATION_SERIES_COUNT = 6;
 
-/**
- * Quiet daily follow-ups if the app stays unopened after the near series.
- * Restores multi-day coverage (regression: series-only drained in ~1–3h).
- */
+/** Quiet daily follow-ups for the first week if the app stays unopened. */
 export const INACTIVITY_NOTIFICATION_FOLLOWUP_DAYS = 7;
+
+/**
+ * After the first week, one quiet weekly invitation so Pulsation is not forgotten.
+ * 8 weeks ≈ two more months of gentle coverage (still well under iOS pending limits).
+ */
+export const INACTIVITY_NOTIFICATION_WEEKLY_FOLLOWUPS = 8;
 
 const SECONDS_PER_DAY = 24 * 60 * 60;
 
 export type InactivityNotificationPlanItem = {
   identifier: string;
   delaySeconds: number;
-  kind: "near" | "followup";
+  kind: "near" | "daily" | "weekly";
 };
 
 function getNearSeriesIdentifier(index: number): string {
   return index === 0 ? INACTIVITY_NOTIFICATION_ID : `${INACTIVITY_NOTIFICATION_ID}-${index + 1}`;
 }
 
-function getFollowupIdentifier(day: number): string {
+function getDailyFollowupIdentifier(day: number): string {
   return `${INACTIVITY_NOTIFICATION_ID}-day-${day}`;
 }
 
-/** All identifiers this build may own (near series + daily follow-ups). */
+function getWeeklyFollowupIdentifier(week: number): string {
+  return `${INACTIVITY_NOTIFICATION_ID}-week-${week}`;
+}
+
+/** All identifiers this build may own (near + daily + weekly). */
 export function getInactivityNotificationIdentifiers(): string[] {
   const near = Array.from({ length: INACTIVITY_NOTIFICATION_SERIES_COUNT }, (_, index) =>
     getNearSeriesIdentifier(index),
   );
-  const followups = Array.from({ length: INACTIVITY_NOTIFICATION_FOLLOWUP_DAYS }, (_, index) =>
-    getFollowupIdentifier(index + 1),
+  const daily = Array.from({ length: INACTIVITY_NOTIFICATION_FOLLOWUP_DAYS }, (_, index) =>
+    getDailyFollowupIdentifier(index + 1),
   );
-  return [...near, ...followups];
+  const weekly = Array.from({ length: INACTIVITY_NOTIFICATION_WEEKLY_FOLLOWUPS }, (_, index) =>
+    getWeeklyFollowupIdentifier(index + 1),
+  );
+  return [...near, ...daily, ...weekly];
 }
 
 /**
- * Near series at adaptive gaps, then one invitation per day for FOLLOWUP_DAYS
- * if Pulsation is never reopened (so the queue does not go silent after ~2h).
+ * Near series at adaptive gaps, then daily for a week, then weekly
+ * so the queue does not go silent if someone forgets the app.
  */
 export function buildInactivityNotificationPlan(delaySeconds: number): InactivityNotificationPlanItem[] {
   const gap = Math.max(1, Math.round(delaySeconds));
@@ -59,10 +69,19 @@ export function buildInactivityNotificationPlan(delaySeconds: number): Inactivit
 
   for (let day = 1; day <= INACTIVITY_NOTIFICATION_FOLLOWUP_DAYS; day += 1) {
     plan.push({
-      identifier: getFollowupIdentifier(day),
-      // Same cadence as the prior next-day fix: first delay, then +1…+7 days.
+      identifier: getDailyFollowupIdentifier(day),
       delaySeconds: gap + day * SECONDS_PER_DAY,
-      kind: "followup",
+      kind: "daily",
+    });
+  }
+
+  // Week 1 = day 14, week 2 = day 21, … after the 7 daily follow-ups.
+  for (let week = 1; week <= INACTIVITY_NOTIFICATION_WEEKLY_FOLLOWUPS; week += 1) {
+    const dayOffset = INACTIVITY_NOTIFICATION_FOLLOWUP_DAYS + week * 7;
+    plan.push({
+      identifier: getWeeklyFollowupIdentifier(week),
+      delaySeconds: gap + dayOffset * SECONDS_PER_DAY,
+      kind: "weekly",
     });
   }
 
