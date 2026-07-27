@@ -6,9 +6,10 @@
 | **1.0.1** | 28–33 | superseded |
 | **1.0.2** | 36 | **LIVE** в App Store ✅ |
 | **1.0.3** | 39 | submitted / processing (superseded by 1.0.4 train) |
-| **1.0.4** | 41 | submitted to App Store Connect / Apple processing |
+| **1.0.4** | 41 | release train / pre-1.0.5 storefront refresh |
+| **1.0.5** | TBD | build + submit — metadata + screenshots refresh |
 
-**Зараз:** Store має **1.0.2** build **36** LIVE ✅; **1.0.4 build 41** завантажено в App Store Connect і очікує Apple processing/TestFlight availability.
+**Зараз:** Store має **1.0.2** build **36** LIVE ✅; готуємо **1.0.5** для нового storefront (screenshots + description + keywords).
 
 Android: `docs/ANDROID-RELEASE-CHECKLIST.md`
 
