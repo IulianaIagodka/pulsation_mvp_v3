@@ -5,10 +5,10 @@
 **App Store:** **1.0.2** build **36** LIVE ✅.  
 **1.0.3** build **39** — historical / superseded by 1.0.4.  
 **1.0.4** build **41** — historical / release train before 1.0.5 metadata refresh.  
-**1.0.5** — next App Store version for updated screenshots, description, and metadata.  
+**1.0.5** build **42** — uploaded to App Store Connect (2026-07-27); waiting for Apple processing / TestFlight.  
 
-**Build:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/builds/abb0d999-e2ab-4441-95eb-cfceb6f4a33e  
-**Submission:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/submissions/19b61431-54d9-4283-afd4-44e5062db3cf  
+**Build:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/builds/848f8997-ae6d-4c63-ba5d-ec7c84295919  
+**Submission:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/submissions/d64cc0ff-8912-4eee-b969-fab18204dca4  
 **TestFlight (після processing):** https://appstoreconnect.apple.com/apps/6773324495/testflight/ios
 
 ### What's New → EN (1.0.5) — вставити в Connect при submit
