@@ -17,7 +17,15 @@ export const INACTIVITY_NOTIFICATION_FOLLOWUP_DAYS = 7;
  */
 export const INACTIVITY_NOTIFICATION_WEEKLY_FOLLOWUPS = 8;
 
+/**
+ * Daily/weekly follow-ups land in this local-hour window so a late-evening
+ * background does not pin the next day's invitation to after 22:00.
+ */
+export const INACTIVITY_FOLLOWUP_DAYTIME_START_HOUR = 10;
+export const INACTIVITY_FOLLOWUP_DAYTIME_END_HOUR = 20;
+
 const SECONDS_PER_DAY = 24 * 60 * 60;
+const MS_PER_SECOND = 1000;
 
 export type InactivityNotificationPlanItem = {
   identifier: string;
@@ -52,12 +60,61 @@ export function getInactivityNotificationIdentifiers(): string[] {
 }
 
 /**
+ * Move a follow-up timestamp into the preferred daytime window when it would
+ * otherwise land late at night or before morning. Preserves minutes from the
+ * original target so reminders stay slightly varied.
+ */
+export function snapFollowupToDaytimeWindow(
+  targetMs: number,
+  earliestMs: number,
+  daytimeStartHour = INACTIVITY_FOLLOWUP_DAYTIME_START_HOUR,
+  daytimeEndHour = INACTIVITY_FOLLOWUP_DAYTIME_END_HOUR,
+): number {
+  const target = new Date(targetMs);
+  const hour = target.getHours();
+  const inWindow = hour >= daytimeStartHour && hour < daytimeEndHour;
+
+  if (inWindow && targetMs >= earliestMs) {
+    return targetMs;
+  }
+
+  const snapOnDay = (day: Date): number => {
+    const snapped = new Date(day);
+    snapped.setHours(daytimeStartHour, target.getMinutes(), target.getSeconds(), 0);
+    return snapped.getTime();
+  };
+
+  let candidate = snapOnDay(target);
+  // Past end of window (e.g. 22:15) → morning of that calendar day.
+  // Before start (e.g. 07:10) → morning of that calendar day.
+  // If that morning is already too soon (still inside / before near series), push one day.
+  if (candidate < earliestMs) {
+    const nextDay = new Date(target);
+    nextDay.setDate(nextDay.getDate() + 1);
+    candidate = snapOnDay(nextDay);
+  }
+
+  return Math.max(candidate, earliestMs);
+}
+
+function delaySecondsFromNow(targetMs: number, nowMs: number): number {
+  return Math.max(1, Math.round((targetMs - nowMs) / MS_PER_SECOND));
+}
+
+/**
  * Near series at adaptive gaps, then daily for a week, then weekly
  * so the queue does not go silent if someone forgets the app.
+ *
+ * Daily/weekly times are snapped into a local daytime window so backgrounding
+ * after 22:00 does not leave the next calendar day empty until late evening.
  */
-export function buildInactivityNotificationPlan(delaySeconds: number): InactivityNotificationPlanItem[] {
+export function buildInactivityNotificationPlan(
+  delaySeconds: number,
+  nowMs: number = Date.now(),
+): InactivityNotificationPlanItem[] {
   const gap = Math.max(1, Math.round(delaySeconds));
   const plan: InactivityNotificationPlanItem[] = [];
+  const earliestFollowupMs = nowMs + gap * INACTIVITY_NOTIFICATION_SERIES_COUNT * MS_PER_SECOND;
 
   for (let index = 0; index < INACTIVITY_NOTIFICATION_SERIES_COUNT; index += 1) {
     plan.push({
@@ -68,9 +125,11 @@ export function buildInactivityNotificationPlan(delaySeconds: number): Inactivit
   }
 
   for (let day = 1; day <= INACTIVITY_NOTIFICATION_FOLLOWUP_DAYS; day += 1) {
+    const rawMs = nowMs + (gap + day * SECONDS_PER_DAY) * MS_PER_SECOND;
+    const snappedMs = snapFollowupToDaytimeWindow(rawMs, earliestFollowupMs);
     plan.push({
       identifier: getDailyFollowupIdentifier(day),
-      delaySeconds: gap + day * SECONDS_PER_DAY,
+      delaySeconds: delaySecondsFromNow(snappedMs, nowMs),
       kind: "daily",
     });
   }
@@ -78,9 +137,11 @@ export function buildInactivityNotificationPlan(delaySeconds: number): Inactivit
   // Week 1 = day 14, week 2 = day 21, … after the 7 daily follow-ups.
   for (let week = 1; week <= INACTIVITY_NOTIFICATION_WEEKLY_FOLLOWUPS; week += 1) {
     const dayOffset = INACTIVITY_NOTIFICATION_FOLLOWUP_DAYS + week * 7;
+    const rawMs = nowMs + (gap + dayOffset * SECONDS_PER_DAY) * MS_PER_SECOND;
+    const snappedMs = snapFollowupToDaytimeWindow(rawMs, earliestFollowupMs);
     plan.push({
       identifier: getWeeklyFollowupIdentifier(week),
-      delaySeconds: gap + dayOffset * SECONDS_PER_DAY,
+      delaySeconds: delaySecondsFromNow(snappedMs, nowMs),
       kind: "weekly",
     });
   }

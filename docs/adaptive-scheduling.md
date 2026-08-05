@@ -115,6 +115,7 @@ trigger delivery caps each background interval to [10m, 30m]
 **When the interval is computed**
 
 - On background → schedule a near series of 6 local notifications at the adaptive interval (gaps capped to the 10-30 minute trigger window), then one quiet follow-up per day for 7 days, then one per week for 8 more weeks if the app stays unopened (interval persisted as `lastScheduledIntervalMinutes`).
+- Daily/weekly follow-ups snap into a local **daytime window (10:00–20:00)** so backgrounding after 22:00 does not leave the next calendar day empty until late evening.
 - On resume → compare inactive minutes against current interval; also check eligibility.
 
 **Eligibility gates** (unchanged, from `eligibility-safety.ts`)
