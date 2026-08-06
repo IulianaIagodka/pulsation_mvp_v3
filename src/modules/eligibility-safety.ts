@@ -41,9 +41,10 @@ export function checkEligibility(signal: UserSignal, safety: SafetyState) {
     }
   }
 
-  if (safety.dismissalStreak >= 3) {
-    return { eligible: false, reason: "dismissal_dampening" };
-  }
+  // Dismissal hard-block removed — keep counting dismissalStreak / consecutiveIgnored
+  // so ignored Pulsations only gently lengthen the next interval (+15m each), without
+  // cutting off auto-open or the chance to switch back.
+  // Re-enable with: safety.dismissalStreak >= 3 → "dismissal_dampening".
 
   return { eligible: true as const };
 }

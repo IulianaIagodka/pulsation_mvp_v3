@@ -83,7 +83,7 @@ Derived at read time:
 ### Existing profiles (unchanged schema, extended use)
 
 - **`OutcomesProfile`** — EMA completion rates, learned hour preferences, recent intervention history (last 8).
-- **`SafetyState`** — daily cap field kept (default 4) but **eligibility check temporarily off**; cooldown (45 min), dismissal streak, quiet hours.
+- **`SafetyState`** — daily cap field kept (default 4) but **eligibility check temporarily off**; cooldown (45 min); dismissal streak counted for soft spacing only (no hard block); quiet hours.
 
 ### Event log
 
@@ -124,7 +124,7 @@ trigger delivery caps each background interval to [10m, 30m]
 - ~~Daily cap reached~~ — temporarily disabled (counter still updates for spacing / Paths)
 - Cooldown active
 - Quiet hours (after first intervention)
-- 3+ consecutive dismissals → pause until streak resets
+- ~~3+ consecutive dismissals → hard pause~~ — removed; ignores only lengthen the next interval (+15m each)
 
 ---
 
@@ -185,12 +185,12 @@ Completion rates update via existing EMA in `memory-update.ts` (70/30 blend). Pe
 
 | Step | Event | Result |
 |------|-------|--------|
-| 1 | Ignore trigger | +15m, dismissalStreak = 1 |
-| 2 | Ignore again | +30m, dismissalStreak = 2 |
-| 3 | Ignore again | +45m, dismissalStreak = 3 → **eligibility blocked** |
-| 4 | User completes onboarding circles later | Streak resets on next completion |
+| 1 | Ignore trigger | +15m to next interval, dismissalStreak = 1 |
+| 2 | Ignore again | +30m total ignore bonus |
+| 3 | Ignore again | +45m total ignore bonus; auto-open still allowed |
+| 4 | User completes an action | Streak / consecutiveIgnored reset |
 
-**Feel:** Clear boundary — Pulsation steps back until the user is ready.
+**Feel:** Softer cadence after ignores, without cutting off the chance to switch back.
 
 ### Scenario D — Evening regular
 

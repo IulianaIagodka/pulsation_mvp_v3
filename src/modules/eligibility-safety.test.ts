@@ -89,4 +89,22 @@ describe("checkEligibility", () => {
 
     expect(result).toEqual({ eligible: true });
   });
+
+  it("does not hard-block after three dismissals (soft spacing only)", () => {
+    const now = new Date("2026-06-05T14:00:00").getTime();
+    const result = checkEligibility(
+      { timestamp: now, distractingSessionMinutes: 30, appCategory: "social" },
+      {
+        quietHoursStart: 0,
+        quietHoursEnd: 0,
+        dailyCap: 4,
+        cooldownMinutes: 45,
+        interventionsToday: 1,
+        lastInterventionAt: now - 120 * 60000,
+        dismissalStreak: 5,
+      },
+    );
+
+    expect(result).toEqual({ eligible: true });
+  });
 });
