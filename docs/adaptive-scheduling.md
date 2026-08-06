@@ -83,7 +83,7 @@ Derived at read time:
 ### Existing profiles (unchanged schema, extended use)
 
 - **`OutcomesProfile`** — EMA completion rates, learned hour preferences, recent intervention history (last 8).
-- **`SafetyState`** — daily cap field kept (default 4) but **eligibility check temporarily off**; cooldown (45 min); dismissal streak counted for soft spacing only (no hard block); quiet hours.
+- **`SafetyState`** — quiet hours **23:00–07:00** (migrates older 0/0 installs); daily cap field kept but eligibility check off; cooldown (45 min); dismissal streak counted for soft spacing only.
 
 ### Event log
 
@@ -115,15 +115,16 @@ trigger delivery caps each background interval to [10m, 30m]
 **When the interval is computed**
 
 - On background → schedule a near series of 6 local notifications at the adaptive interval (gaps capped to the 10-30 minute trigger window), then one quiet follow-up per day for 7 days, then one per week for 8 more weeks if the app stays unopened (interval persisted as `lastScheduledIntervalMinutes`).
-- Daily/weekly follow-ups snap into a local **daytime window (10:00–20:00)** so backgrounding after 22:00 does not leave the next calendar day empty until late evening.
+- **Quiet hours 23:00–07:00:** no invitations fire overnight; times that would land then snap to after 07:00 (near series restacked with gap).
+- Daily/weekly follow-ups also snap into a local **daytime window (10:00–20:00)** so backgrounding after 22:00 does not leave the next calendar day empty until late evening.
 - On resume → compare inactive minutes against current interval; also check eligibility.
 
 **Eligibility gates** (from `eligibility-safety.ts`)
 
 - Session too short (< 20 min distracting time)
+- Quiet hours **23:00–07:00** (auto-open blocked; notifications also never scheduled in this window)
 - ~~Daily cap reached~~ — temporarily disabled (counter still updates for spacing / Paths)
 - Cooldown active
-- Quiet hours (after first intervention)
 - ~~3+ consecutive dismissals → hard pause~~ — removed; ignores only lengthen the next interval (+15m each)
 
 ---

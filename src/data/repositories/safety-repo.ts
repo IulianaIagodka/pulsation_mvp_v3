@@ -6,9 +6,8 @@ const primaryId = "primary";
 
 function getInitialSafetyState(): SafetyState {
   return {
-    // start === end means quiet hours off (see eligibility-safety)
-    quietHoursStart: 0,
-    quietHoursEnd: 0,
+    quietHoursStart: 23,
+    quietHoursEnd: 7,
     dailyCap: 4,
     cooldownMinutes: 45,
     interventionsToday: 0,
@@ -36,8 +35,15 @@ export function getSafetyState(): SafetyState {
       lastInterventionAt: row.last_intervention_at ?? undefined,
       dismissalStreak: row.dismissal_streak,
     };
-    const normalized = normalizeSafetyState(restored, row.updated_at ?? undefined);
+    // Older installs stored 0/0 as "quiet hours off" — migrate to overnight quiet.
+    const withQuietHours =
+      restored.quietHoursStart === restored.quietHoursEnd
+        ? { ...restored, quietHoursStart: 23, quietHoursEnd: 7 }
+        : restored;
+    const normalized = normalizeSafetyState(withQuietHours, row.updated_at ?? undefined);
     if (
+      normalized.quietHoursStart !== restored.quietHoursStart ||
+      normalized.quietHoursEnd !== restored.quietHoursEnd ||
       normalized.interventionsToday !== restored.interventionsToday ||
       normalized.dismissalStreak !== restored.dismissalStreak
     ) {

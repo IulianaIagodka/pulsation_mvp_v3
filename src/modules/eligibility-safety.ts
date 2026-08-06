@@ -17,11 +17,8 @@ export function checkEligibility(signal: UserSignal, safety: SafetyState) {
   }
 
   const hour = new Date(signal.timestamp).getHours();
-  const noRecordedInterventionsYet =
-    safety.lastInterventionAt == null && safety.interventionsToday === 0;
   if (
     !isQuietHoursDisabled(safety) &&
-    !noRecordedInterventionsYet &&
     isQuietHour(hour, safety.quietHoursStart, safety.quietHoursEnd)
   ) {
     return { eligible: false, reason: "quiet_hours" };

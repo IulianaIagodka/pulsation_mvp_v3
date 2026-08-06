@@ -35,11 +35,15 @@ import {
   INACTIVITY_NOTIFICATION_ID,
   INACTIVITY_NOTIFICATION_SERIES_COUNT,
   INACTIVITY_NOTIFICATION_WEEKLY_FOLLOWUPS,
+  INACTIVITY_QUIET_HOURS_END,
+  INACTIVITY_QUIET_HOURS_START,
   buildInactivityNotificationPlan,
   cancelInactivityNotification,
   getInactivityNotificationIdentifiers,
+  isInQuietHours,
   scheduleInactivityNotification,
   snapFollowupToDaytimeWindow,
+  snapOutOfQuietHours,
 } from "./inactivity-notification";
 
 /** Midday local time so raw follow-ups stay inside the daytime window. */
@@ -124,6 +128,37 @@ describe("inactivity notifications", () => {
     expect(fireAt.getDate()).toBe(6);
     // Must arrive well before evening — the bug was a whole silent day until after 22.
     expect(fireAt.getHours()).toBeLessThan(18);
+  });
+
+  it("never schedules invitations during overnight quiet hours", () => {
+    const gap = 20 * 60;
+    const lateNow = new Date(2026, 7, 5, 23, 10, 0).getTime();
+    const plan = buildInactivityNotificationPlan(gap, lateNow);
+
+    for (const item of plan) {
+      const fireAt = new Date(lateNow + item.delaySeconds * 1000);
+      expect(isInQuietHours(fireAt)).toBe(false);
+      expect(
+        fireAt.getHours() >= INACTIVITY_QUIET_HOURS_START ||
+          fireAt.getHours() < INACTIVITY_QUIET_HOURS_END,
+      ).toBe(false);
+    }
+
+    const nearTimes = plan
+      .filter((item) => item.kind === "near")
+      .map((item) => lateNow + item.delaySeconds * 1000);
+    // Near series that would have fired overnight is pushed to morning and destaggered.
+    expect(new Date(nearTimes[0]).getHours()).toBeGreaterThanOrEqual(INACTIVITY_QUIET_HOURS_END);
+    expect(nearTimes[1] - nearTimes[0]).toBeGreaterThanOrEqual(gap * 1000);
+  });
+
+  it("snaps a quiet-hour timestamp to 07:00 local", () => {
+    const target = new Date(2026, 7, 6, 1, 20, 0).getTime();
+    const earliest = new Date(2026, 7, 5, 23, 0, 0).getTime();
+    const snapped = new Date(snapOutOfQuietHours(target, earliest));
+    expect(snapped.getHours()).toBe(INACTIVITY_QUIET_HOURS_END);
+    expect(snapped.getMinutes()).toBe(20);
+    expect(snapped.getDate()).toBe(6);
   });
 
   it("keeps midday follow-ups on their natural clock time", () => {

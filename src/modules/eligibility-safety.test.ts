@@ -19,7 +19,7 @@ describe("checkEligibility", () => {
     expect(result).toEqual({ eligible: false, reason: "cooldown" });
   });
 
-  it("allows the first prompt even during quiet hours", () => {
+  it("blocks during quiet hours including the first prompt", () => {
     const duringQuietHours = new Date("2026-06-01T02:00:00").getTime();
     const result = checkEligibility(
       { timestamp: duringQuietHours, distractingSessionMinutes: 30, appCategory: "social" },
@@ -33,7 +33,7 @@ describe("checkEligibility", () => {
       },
     );
 
-    expect(result).toEqual({ eligible: true });
+    expect(result).toEqual({ eligible: false, reason: "quiet_hours" });
   });
 
   it("blocks quiet hours after any recorded intervention", () => {
