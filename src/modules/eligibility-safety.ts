@@ -27,9 +27,9 @@ export function checkEligibility(signal: UserSignal, safety: SafetyState) {
     return { eligible: false, reason: "quiet_hours" };
   }
 
-  if (safety.interventionsToday >= safety.dailyCap) {
-    return { eligible: false, reason: "daily_cap" };
-  }
+  // Daily cap temporarily disabled — keep counting interventionsToday for
+  // adaptive spacing / Paths, but do not block eligibility on the hard limit.
+  // Re-enable with: safety.interventionsToday >= safety.dailyCap → "daily_cap".
 
   if (
     safety.lastInterventionAt &&

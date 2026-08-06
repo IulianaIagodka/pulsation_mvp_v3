@@ -71,4 +71,22 @@ describe("checkEligibility", () => {
 
     expect(result).toEqual({ eligible: true });
   });
+
+  it("does not block when interventionsToday is at or above dailyCap (cap temporarily off)", () => {
+    const now = new Date("2026-06-05T14:00:00").getTime();
+    const result = checkEligibility(
+      { timestamp: now, distractingSessionMinutes: 30, appCategory: "social" },
+      {
+        quietHoursStart: 0,
+        quietHoursEnd: 0,
+        dailyCap: 4,
+        cooldownMinutes: 45,
+        interventionsToday: 6,
+        lastInterventionAt: now - 120 * 60000,
+        dismissalStreak: 0,
+      },
+    );
+
+    expect(result).toEqual({ eligible: true });
+  });
 });

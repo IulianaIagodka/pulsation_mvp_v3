@@ -83,7 +83,7 @@ Derived at read time:
 ### Existing profiles (unchanged schema, extended use)
 
 - **`OutcomesProfile`** — EMA completion rates, learned hour preferences, recent intervention history (last 8).
-- **`SafetyState`** — daily cap (4), cooldown (45 min), dismissal streak, quiet hours.
+- **`SafetyState`** — daily cap field kept (default 4) but **eligibility check temporarily off**; cooldown (45 min), dismissal streak, quiet hours.
 
 ### Event log
 
@@ -118,10 +118,10 @@ trigger delivery caps each background interval to [10m, 30m]
 - Daily/weekly follow-ups snap into a local **daytime window (10:00–20:00)** so backgrounding after 22:00 does not leave the next calendar day empty until late evening.
 - On resume → compare inactive minutes against current interval; also check eligibility.
 
-**Eligibility gates** (unchanged, from `eligibility-safety.ts`)
+**Eligibility gates** (from `eligibility-safety.ts`)
 
 - Session too short (< 20 min distracting time)
-- Daily cap reached
+- ~~Daily cap reached~~ — temporarily disabled (counter still updates for spacing / Paths)
 - Cooldown active
 - Quiet hours (after first intervention)
 - 3+ consecutive dismissals → pause until streak resets
