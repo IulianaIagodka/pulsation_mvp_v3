@@ -8,9 +8,9 @@
 | **1.0.3** | 39 | submitted / processing (superseded by 1.0.4 train) |
 | **1.0.4** | 41 | release train / pre-1.0.5 storefront refresh |
 | **1.0.5** | 42 | submitted / processing (superseded by 1.0.6 train) |
-| **1.0.6** | 43 | prepare — gentler invitation cadence + overnight quiet hours |
+| **1.0.6** | 44 | submitted to App Store Connect / Apple processing |
 
-**Зараз:** Store має **1.0.2** build **36** LIVE ✅; готуємо **1.0.6 build 43** (EAS production + submit).
+**Зараз:** Store має **1.0.2** build **36** LIVE ✅; **1.0.6 build 44** завантажено в App Store Connect і очікує Apple processing/TestFlight availability.
 
 Android: `docs/ANDROID-RELEASE-CHECKLIST.md`
 

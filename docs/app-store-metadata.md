@@ -4,8 +4,10 @@
 
 **App Store:** **1.0.2** build **36** LIVE ✅.  
 **1.0.3**–**1.0.5** — historical / superseded by the **1.0.6** invitation-cadence train.  
-**1.0.6** build **43** — prepare / EAS production submit (gentler invites + overnight quiet hours).  
+**1.0.6** build **44** — uploaded to App Store Connect (2026-08-06); waiting for Apple processing / TestFlight.  
 
+**Build:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/builds/3c4adc6f-da33-4e17-9af4-a6d7d4f4a773  
+**Submission:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/submissions/774d5c2e-7dc7-4c56-98a9-afc7e5ccb8fd  
 **TestFlight (після processing):** https://appstoreconnect.apple.com/apps/6773324495/testflight/ios
 
 ### What's New → EN (1.0.6) — вставити в Connect при submit

@@ -28,8 +28,8 @@ npm run build:ios:testflight
 
 - Профіль: **production** (`distribution: store`).
 - EAS запитає Apple credentials (можна довірити EAS).
-- **version** `1.0.6`, **buildNumber** EAS remote auto-increment from local `43`.
-- **Latest prepared:** **1.0.6** build **43** (gentler invitation cadence + overnight quiet hours).
+- **version** `1.0.6`, **buildNumber** EAS remote auto-increment from local.
+- **Latest submitted:** **1.0.6** build **44** uploaded to App Store Connect; Apple processing/TestFlight availability follows.
 - **App Store:** **1.0.2** build **36** LIVE ✅.
 - Тестовий режим ротації дій **вимкнено** у production-білді.
 
