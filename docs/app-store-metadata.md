@@ -3,29 +3,51 @@
 ## Connect — активний реліз
 
 **App Store:** **1.0.2** build **36** LIVE ✅.  
-**1.0.3** build **39** — historical / superseded by 1.0.4.  
-**1.0.4** build **41** — historical / release train before 1.0.5 metadata refresh.  
-**1.0.5** build **42** — uploaded to App Store Connect (2026-07-27); waiting for Apple processing / TestFlight.  
+**1.0.3**–**1.0.5** — historical / superseded by the **1.0.6** invitation-cadence train.  
+**1.0.6** build **44** — uploaded to App Store Connect (2026-08-06); waiting for Apple processing / TestFlight.  
 
-**Build:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/builds/848f8997-ae6d-4c63-ba5d-ec7c84295919  
-**Submission:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/submissions/d64cc0ff-8912-4eee-b969-fab18204dca4  
+**Build:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/builds/3c4adc6f-da33-4e17-9af4-a6d7d4f4a773  
+**Submission:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/submissions/774d5c2e-7dc7-4c56-98a9-afc7e5ccb8fd  
 **TestFlight (після processing):** https://appstoreconnect.apple.com/apps/6773324495/testflight/ios
 
-### What's New → EN (1.0.5) — вставити в Connect при submit
+### What's New → EN (1.0.6) — вставити в Connect при submit
+
+```
+- Gentler invitations — quiet hours overnight (23:00–07:00), daytime follow-ups, and no hard stop after a few ignores.
+- Same calm flow: one action, then return to the moment.
+```
+
+### What's New → UK (1.0.6) — вставити в Connect при submit
+
+```
+- М’якші запрошення — тиша вночі (23:00–07:00), денні follow-up і без жорсткої зупинки після кількох ігнорів.
+- Той самий спокійний шлях: одна дія, потім повернення в момент.
+```
+
+### Review Notes (1.0.6)
+
+This build keeps the core user path unchanged and softens invitation cadence:
+
+- local reminders still use a short near series (~10–30 minute gaps), then daytime daily / weekly follow-ups if unopened;
+- nothing is delivered between 23:00 and 07:00 local time;
+- ignores only gently lengthen spacing (no hard eligibility cut-off); daily cap is not enforced for now;
+- opening the app cancels pending invitations; completing an action and backgrounding again starts a fresh plan.
+
+### What's New → EN (1.0.5) — historical
 
 ```
 - Updated screenshots and App Store text to better reflect the Pulsation experience.
 - The same calm, minimal flow: one gentle action, then return to the moment.
 ```
 
-### What's New → UK (1.0.5) — вставити в Connect при submit
+### What's New → UK (1.0.5) — historical
 
 ```
 - Оновлені скріншоти й текст в App Store, щоб точніше показати досвід Pulsation.
 - Той самий спокійний мінімалістичний сценарій: одна м’яка дія, потім повернення в момент.
 ```
 
-### Review Notes (1.0.5)
+### Review Notes (1.0.5) — historical
 
 This version is primarily a storefront refresh:
 
@@ -80,11 +102,10 @@ This build keeps the core user path unchanged and focuses on reliability polish:
 - the global circles press handler is guarded so only the focused screen action is active;
 - copy reveal timing and anchored main-copy layout are centralized and covered by regression tests.
 
-### Після submit 1.0.5
+### Після submit 1.0.6
 
-1. Connect → **1.0.5** → вставити What's New (EN/UK вище).
-2. Оновити screenshots / subtitle / keywords / description для storefront refresh.
-3. Submit for Review після того, як build з'явиться в App Store Connect.
+1. Connect → **1.0.6** → вставити What's New (EN/UK вище).
+2. Submit for Review після того, як build з'явиться в App Store Connect / TestFlight.
 
 ---
 
@@ -129,7 +150,7 @@ Lifestyle
 mindfulness,focus,breathing,calm,wellbeing,detox,stress,grounding,habit
 
 ### Promotional Text
-A minimal wellbeing app that offers one gentle micro-action to help you pause and return to the present moment.
+Helps you gently interrupt stuck scrolling with one calm action — a quiet invitation back to yourself, not another feed.
 
 ### Description
 Pulsation helps you return to yourself with one gentle action at a time.
@@ -306,7 +327,7 @@ Pulsation
 усвідомленість,фокус,дихання,спокій,добробут,детокс,стрес,заземлення,звички
 
 ### Promotional Text
-Мінімалістичний застосунок добробуту, який пропонує одну м'яку дію, щоб зробити паузу й повернути увагу до теперішнього моменту.
+М’яко перериває застрягання в автоскролі однією спокійною дією — тихе запрошення повернутися до себе, а не ще одна стрічка.
 
 ### Description
 Pulsation допомагає повернутися до себе по одній м'якій дії за раз.

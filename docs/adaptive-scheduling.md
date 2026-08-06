@@ -57,6 +57,7 @@ flowchart TD
 
 - Lightweight heuristics, not ML — every decision is explainable via `explainInterval()`.
 - Longer intervals = fewer invitations; the app never speeds up to “catch up”.
+- Soft availability over hard cut-offs — ignores lengthen spacing; overnight quiet protects rest; daytime follow-ups keep a gentle chance to switch back.
 - Random jitter (±18%) and destaggering avoid clock-like predictability.
 - All data stays in `pulsation.db` on the device.
 
@@ -83,7 +84,7 @@ Derived at read time:
 ### Existing profiles (unchanged schema, extended use)
 
 - **`OutcomesProfile`** — EMA completion rates, learned hour preferences, recent intervention history (last 8).
-- **`SafetyState`** — daily cap (4), cooldown (45 min), dismissal streak, quiet hours.
+- **`SafetyState`** — quiet hours **23:00–07:00** (migrates older 0/0 installs); daily cap field kept but eligibility check off; cooldown (45 min); dismissal streak counted for soft spacing only.
 
 ### Event log
 
@@ -115,15 +116,17 @@ trigger delivery caps each background interval to [10m, 30m]
 **When the interval is computed**
 
 - On background → schedule a near series of 6 local notifications at the adaptive interval (gaps capped to the 10-30 minute trigger window), then one quiet follow-up per day for 7 days, then one per week for 8 more weeks if the app stays unopened (interval persisted as `lastScheduledIntervalMinutes`).
+- **Quiet hours 23:00–07:00:** no invitations fire overnight; times that would land then snap to after 07:00 (near series restacked with gap).
+- Daily/weekly follow-ups also snap into a local **daytime window (10:00–20:00)** so backgrounding after 22:00 does not leave the next calendar day empty until late evening.
 - On resume → compare inactive minutes against current interval; also check eligibility.
 
-**Eligibility gates** (unchanged, from `eligibility-safety.ts`)
+**Eligibility gates** (from `eligibility-safety.ts`)
 
 - Session too short (< 20 min distracting time)
-- Daily cap reached
+- Quiet hours **23:00–07:00** (auto-open blocked; notifications also never scheduled in this window)
+- ~~Daily cap reached~~ — temporarily disabled (counter still updates for spacing / Paths)
 - Cooldown active
-- Quiet hours (after first intervention)
-- 3+ consecutive dismissals → pause until streak resets
+- ~~3+ consecutive dismissals → hard pause~~ — removed; ignores only lengthen the next interval (+15m each)
 
 ---
 
@@ -184,12 +187,12 @@ Completion rates update via existing EMA in `memory-update.ts` (70/30 blend). Pe
 
 | Step | Event | Result |
 |------|-------|--------|
-| 1 | Ignore trigger | +15m, dismissalStreak = 1 |
-| 2 | Ignore again | +30m, dismissalStreak = 2 |
-| 3 | Ignore again | +45m, dismissalStreak = 3 → **eligibility blocked** |
-| 4 | User completes onboarding circles later | Streak resets on next completion |
+| 1 | Ignore trigger | +15m to next interval, dismissalStreak = 1 |
+| 2 | Ignore again | +30m total ignore bonus |
+| 3 | Ignore again | +45m total ignore bonus; auto-open still allowed |
+| 4 | User completes an action | Streak / consecutiveIgnored reset |
 
-**Feel:** Clear boundary — Pulsation steps back until the user is ready.
+**Feel:** Softer cadence after ignores, without cutting off the chance to switch back.
 
 ### Scenario D — Evening regular
 

@@ -21,7 +21,7 @@ Pulsation is a cross-platform mobile MVP for helping people pause when they get 
 
 - `src/modules/signal-collector.ts`: on-device session signal (native Screen Time integration planned)
 - `src/modules/trigger-engine.ts`: orchestration across safety + adaptive logic
-- `src/modules/eligibility-safety.ts`: hard safety rules (quiet hours, cap, cooldown, dismissal dampening)
+- `src/modules/eligibility-safety.ts`: hard safety rules (quiet hours, cooldown; daily cap / dismissal hard-block currently off)
 - `src/modules/state-interpreter.ts`: context interpretation for adaptation
 - `src/interventions/registry.ts`: intervention catalog (presentation mode, defaults)
 - `src/modules/intervention-planner.ts`: adaptive intervention selection (time-of-day, completion rates, variety)
@@ -109,10 +109,10 @@ For QA only, set `EXPO_PUBLIC_TEST_ROTATE_INTERVENTIONS=true` to cycle through a
 
 ## Inactivity trigger (adaptive)
 
-When Pulsation is in the background, it schedules a **near series** of local **one-action invitations** at a **dynamic interval** near 20 minutes (each gap kept in a 10-30 minute window), then **daily follow-ups for 7 days**, then **weekly follow-ups for 8 more weeks** if the app stays unopened — so invitations do not go silent after a couple of hours or after one quiet week (see `docs/adaptive-scheduling.md`):
+When Pulsation is in the background, it schedules a **near series** of local **one-action invitations** at a **dynamic interval** near 20 minutes (each gap kept in a 10-30 minute window), then **daily follow-ups for 7 days**, then **weekly follow-ups for 8 more weeks** if the app stays unopened — so invitations do not go silent after a couple of hours or after one quiet week. **Nothing is delivered between 23:00 and 07:00** local time; daily/weekly times also land in a **daytime window (10:00–20:00)** (see `docs/adaptive-scheduling.md`):
 
 1. A **local notification** may appear (“One action for you now?” / “Одна дія для тебе зараз?”).
-2. Reopening the app after the threshold navigates to `/trigger` (not during action / return), if eligibility passes (cooldown, daily cap, etc.).
+2. Reopening the app after the threshold navigates to `/trigger` (not during action / return), if eligibility passes (cooldown, etc.; daily cap and dismissal hard-block temporarily off — ignores only soft-space the next invite).
 
 Timing adapts gently — it is not a fixed 20-minute reminder — and returning to the app clears the remaining pending invitations.
 
