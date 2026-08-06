@@ -150,7 +150,7 @@ Lifestyle
 mindfulness,focus,breathing,calm,wellbeing,detox,stress,grounding,habit
 
 ### Promotional Text
-A minimal wellbeing app that offers one gentle micro-action to help you pause and return to the present moment.
+Helps you gently interrupt stuck scrolling with one calm action — a quiet invitation back to yourself, not another feed.
 
 ### Description
 Pulsation helps you return to yourself with one gentle action at a time.
