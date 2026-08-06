@@ -1,6 +1,6 @@
 # Privacy Policy for Pulsation
 
-Last updated: May 27, 2026
+Last updated: August 6, 2026
 
 Pulsation ("the App") is a wellbeing mobile application that offers short, calming micro-actions.
 
@@ -9,7 +9,7 @@ Pulsation ("the App") is a wellbeing mobile application that offers short, calmi
 Pulsation stores limited in-app data locally on your device to support core functionality, such as:
 
 - event logs (for example, when a signal is collected or an intervention outcome is recorded),
-- safety state (for example, daily limits and time since the last intervention),
+- safety state (for example, overnight quiet hours, cooldown, and time since the last intervention),
 - an outcomes profile used to choose and rotate micro-actions over time.
 
 At this time, Pulsation does not require account registration.
@@ -26,7 +26,7 @@ Local data is used to:
 
 ## 2a. Notifications
 
-If you allow notifications, Pulsation may schedule **local reminders** on your device after the app has been in the background for a while (adaptively around 20 minutes apart, within a 10-30 minute window, then occasional daily and later weekly follow-ups if the app stays unopened). These reminders are generated on your phone; we do not send marketing push messages from a server.
+If you allow notifications, Pulsation may schedule **local reminders** on your device after the app has been in the background for a while (adaptively around 20 minutes apart, within a 10-30 minute window, then occasional daytime daily and later weekly follow-ups if the app stays unopened). Reminders are not delivered overnight between **23:00 and 07:00** local time. These reminders are generated on your phone; we do not send marketing push messages from a server.
 
 ## 3. Data Sharing
 

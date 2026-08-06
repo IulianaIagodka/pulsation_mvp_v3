@@ -1,6 +1,6 @@
 # App Privacy Mapping (App Store Connect) — Pulsation
 
-Last updated: May 28, 2026
+Last updated: August 6, 2026
 
 Use this file when filling **App Privacy** in App Store Connect.
 
@@ -10,7 +10,7 @@ Use this file when filling **App Privacy** in App Store Connect.
 - No third-party analytics SDK.
 - No ad SDK.
 - Data stays on device (SQLite).
-- Notifications are periodic local one-action reminders only (scheduled on device).
+- Notifications are periodic local one-action reminders only (scheduled on device; none overnight 23:00–07:00).
 - No backend data collection from the app.
 
 ## What is stored locally (on device)
@@ -21,7 +21,7 @@ Pulsation stores only in-app state needed for app behavior:
   - signal/intervention events (for example: trigger evaluations, intervention outcomes, circles tap count events),
   - timestamps and event payload needed for local flow logic.
 - `safety_state` table:
-  - quiet hours, daily cap, cooldown windows, intervention counters.
+  - quiet hours (23:00–07:00), daily cap field, cooldown windows, intervention counters.
 - `outcomes_profile` table:
   - intervention completion memory,
   - recent interventions,
@@ -43,7 +43,8 @@ Storage layer: local SQLite DB (`src/data/schema.ts`).
 
 ## Notifications
 
-- App may schedule local reminders after inactivity (adaptively around 20 minutes apart, within a 10-30 minute window, then occasional daily and later weekly follow-ups if unopened).
+- App may schedule local reminders after inactivity (adaptively around 20 minutes apart, within a 10-30 minute window, then daytime daily and later weekly follow-ups if unopened).
+- No reminders between **23:00 and 07:00** local time.
 - Notification generation is local/on-device.
 - No remote marketing push campaigns from backend.
 

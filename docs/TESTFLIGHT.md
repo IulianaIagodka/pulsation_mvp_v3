@@ -28,8 +28,8 @@ npm run build:ios:testflight
 
 - Профіль: **production** (`distribution: store`).
 - EAS запитає Apple credentials (можна довірити EAS).
-- **version** `1.0.3`, **buildNumber** EAS remote auto-increment.
-- **Latest submitted:** **1.0.3** build **39** uploaded to App Store Connect; Apple processing/TestFlight availability follows.
+- **version** `1.0.6`, **buildNumber** EAS remote auto-increment from local `43`.
+- **Latest prepared:** **1.0.6** build **43** (gentler invitation cadence + overnight quiet hours).
 - **App Store:** **1.0.2** build **36** LIVE ✅.
 - Тестовий режим ротації дій **вимкнено** у production-білді.
 
@@ -90,7 +90,7 @@ npm run start
 | Submit failed | `npm run submit:ios:testflight` після успішного build |
 | `could not determine executable` | Спочатку `npm install` у папці проєкту |
 | Білд «Processing» довго | Зачекай; інколи до 1 год |
-| TestFlight не бачить build | Перевір, що build прив’язаний до версії **1.0.3** |
+| TestFlight не бачить build | Перевір, що build прив’язаний до версії **1.0.6** |
 
 ## Privacy / metadata (для external beta)
 

@@ -57,6 +57,7 @@ flowchart TD
 
 - Lightweight heuristics, not ML — every decision is explainable via `explainInterval()`.
 - Longer intervals = fewer invitations; the app never speeds up to “catch up”.
+- Soft availability over hard cut-offs — ignores lengthen spacing; overnight quiet protects rest; daytime follow-ups keep a gentle chance to switch back.
 - Random jitter (±18%) and destaggering avoid clock-like predictability.
 - All data stays in `pulsation.db` on the device.
 
