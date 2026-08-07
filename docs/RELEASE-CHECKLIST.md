@@ -9,9 +9,9 @@
 | **1.0.4** | 41 | historical |
 | **1.0.5** | 42 | historical / storefront refresh |
 | **1.0.6** | 44 | invitation-cadence train (Expo) |
-| **1.0.7** | 46 | messaging / How it works refresh — EAS build in progress |
+| **1.0.7** | 46 | submitted to App Store Connect / Apple processing |
 
-**Зараз:** Store має **1.0.2** build **36** LIVE ✅; **1.0.7 build 46** — messaging refresh (automatic scrolling → choice).
+**Зараз:** Store має **1.0.2** build **36** LIVE ✅; **1.0.7 build 46** завантажено в App Store Connect і очікує Apple processing/TestFlight.
 
 Android: `docs/ANDROID-RELEASE-CHECKLIST.md`
 
@@ -217,7 +217,7 @@ npm audit --omit=dev
 ### 1.0.7 (build 46) — messaging refresh
 
 - [x] Bump **version** `1.0.7` / build **46**
-- [ ] EAS build + submit → build **46**
+- [x] EAS build + submit → build **46**
 - [ ] Connect → What's New + Promotional Text + Description
 - [ ] Submit for Review після processing
 
