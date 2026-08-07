@@ -132,29 +132,25 @@ mindfulness,focus,breathing,calm,wellbeing,detox,stress,grounding,habit
 When scrolling becomes automatic, Pulsation offers a simple action that helps bring choice back
 
 ### Description
-Pulsation helps you return to yourself with one gentle action at a time.
+Pulsation helps you pause when scrolling becomes automatic — with one gentle action, then a quiet return to yourself.
 
-When you feel mentally overloaded, Pulsation offers a short, gentle micro-action:
-- Feet on ground
-- Find 3 things (seven simple prompt sets — shape, color, feel — with calm everyday words)
+Most wellness apps ask you to track habits, earn rewards, finish courses, or spend more time inside the product. Pulsation does the opposite: one brief intervention at a time, then you leave.
+
+When scrolling turns automatic, Pulsation offers a short grounding prompt, for example:
+- Feet on the ground
+- Find 3 things
 - Triangle breath
 - Relax your jaw
 - Drop your shoulders
 - Notice 3 sounds
 - Press your palms together
 
-The experience is intentionally minimal:
-onboarding -> one prompt -> one action -> return ("You are here" with soft explanation).
-
-Why people use Pulsation:
-- Create a short pause during busy moments
-- Return attention to the present moment
-- Build a softer daily rhythm with technology
-
-Pulsation is designed for calm, not pressure.
-
 How it works
-Pulsation is designed to help interrupt stuck scrolling. After onboarding, it can send periodic local "One action for you" invitations while the app is in the background. Each invitation opens one gentle action, chosen from seven options based on recent in-app use stored only on your device. Pulsation does not read or analyze your other apps.
+Open Pulsation, take one small action, then leave. In the background it can send a quiet local invitation from time to time — open, act, return ("You are here").
+
+Timing adapts gently to your recent use on this device. No streaks. No feed. No score to chase. The goal is not more time in the app — it is a softer pause.
+
+Privacy. All data stays on your device. No account required. Pulsation does not read or analyze your other apps.
 
 Note: Pulsation is a wellbeing app and does not provide medical diagnosis or treatment.
 
@@ -309,29 +305,25 @@ Pulsation
 Коли скрол стає автоматичним, Pulsation пропонує просту дію, яка допомагає повернути вибір
 
 ### Description
-Pulsation допомагає повернутися до себе по одній м'якій дії за раз.
+Pulsation допомагає зупинитися, коли скрол стає автоматичним — однією м’якою дією, а тоді тихим поверненням до себе.
 
-Коли відчуваєш ментальне перенавантаження, Pulsation пропонує коротку м'яку дію:
+Більшість wellness-застосунків просять трекати звички, збирати нагороди, проходити курси або проводити більше часу всередині продукту. Pulsation робить навпаки: одна коротка інтервенція за раз — і ти йдеш.
+
+Коли скрол стає автоматичним, Pulsation пропонує коротку підказку для заземлення, наприклад:
 - Стопи на опорі
-- Знайди 3 речі (7 простих наборів підказок — форма, колір, відчуття)
+- Знайди 3 речі
 - Трикутне дихання
 - Розслаб щелепу
 - Опусти плечі
 - Поміть 3 звуки
 - Склади долоні разом
 
-Досвід навмисно мінімалістичний:
-онбординг -> один запит -> одна дія -> коротке пояснення -> повернення.
-
-Навіщо використовують Pulsation:
-- Зробити коротку паузу в насичений момент
-- Повернути увагу до теперішнього моменту
-- Сформувати м'якший щоденний ритм взаємодії з технологіями
-
-Pulsation створено для спокою, а не тиску.
-
 Як це працює
-Pulsation допомагає перервати застрягання у скролінгу. Після онбордингу застосунок може надсилати локальні запрошення **Одна дія для тебе** у фоні час від часу. Кожне запрошення відкриває одну м'яку дію з семи опцій, обрану з урахуванням нещодавнього досвіду в застосунку (лише на пристрої). Інші додатки не читаються й не аналізуються.
+Відкрий Pulsation, зроби одну невелику дію — і йди. У фоні час від часу може прийти тихе локальне запрошення: відкрити, зробити, повернутися («Ти тут»).
+
+Таймінг м’яко підлаштовується під нещодавнє використання на цьому пристрої. Без стріків. Без стрічки. Без балів, за якими треба бігти. Мета — не більше часу в застосунку, а м’якша пауза.
+
+Приватність. Усі дані лишаються на пристрої. Акаунт не потрібен. Pulsation не читає й не аналізує інші додатки.
 
 Примітка: Pulsation є застосунком для добробуту і не надає медичних порад, діагностики чи лікування.
 
