@@ -129,7 +129,7 @@ Lifestyle
 mindfulness,focus,breathing,calm,wellbeing,detox,stress,grounding,habit
 
 ### Promotional Text
-A minimal wellbeing app that offers one gentle micro-action to help you pause and return to the present moment.
+When scrolling becomes automatic, Pulsation offers a simple action that helps bring choice back
 
 ### Description
 Pulsation helps you return to yourself with one gentle action at a time.
@@ -306,7 +306,7 @@ Pulsation
 усвідомленість,фокус,дихання,спокій,добробут,детокс,стрес,заземлення,звички
 
 ### Promotional Text
-Мінімалістичний застосунок добробуту, який пропонує одну м'яку дію, щоб зробити паузу й повернути увагу до теперішнього моменту.
+Коли скрол стає автоматичним, Pulsation пропонує просту дію, яка допомагає повернути вибір
 
 ### Description
 Pulsation допомагає повернутися до себе по одній м'якій дії за раз.
