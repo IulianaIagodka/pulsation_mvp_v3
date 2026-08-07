@@ -5,11 +5,13 @@
 | **1.0.0** | 26 | superseded |
 | **1.0.1** | 28–33 | superseded |
 | **1.0.2** | 36 | **LIVE** в App Store ✅ |
-| **1.0.3** | 39 | submitted / processing (superseded by 1.0.4 train) |
-| **1.0.4** | 41 | release train / pre-1.0.5 storefront refresh |
-| **1.0.5** | 42 | submitted to App Store Connect / Apple processing |
+| **1.0.3** | 39 | historical |
+| **1.0.4** | 41 | historical |
+| **1.0.5** | 42 | historical / storefront refresh |
+| **1.0.6** | 44 | invitation-cadence train (Expo) |
+| **1.0.7** | 45 | messaging / How it works refresh — build + submit |
 
-**Зараз:** Store має **1.0.2** build **36** LIVE ✅; **1.0.5 build 42** завантажено в App Store Connect і очікує Apple processing/TestFlight availability.
+**Зараз:** Store має **1.0.2** build **36** LIVE ✅; **1.0.7 build 45** — messaging refresh (automatic scrolling → choice).
 
 Android: `docs/ANDROID-RELEASE-CHECKLIST.md`
 
@@ -211,6 +213,13 @@ npm audit --omit=dev
 - [x] EAS build + auto-submit → build **39**
 - [ ] App Store Connect processing complete → TestFlight available
 - [ ] TestFlight device regression (`docs/circles-regression-checklist.md` + D2 above)
+
+### 1.0.7 (build 45) — messaging refresh
+
+- [x] Bump **version** `1.0.7` / build **45**
+- [ ] EAS build + submit → build **45**
+- [ ] Connect → What's New + Promotional Text + Description
+- [ ] Submit for Review після processing
 
 ---
 
