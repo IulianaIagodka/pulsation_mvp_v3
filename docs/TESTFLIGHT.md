@@ -90,7 +90,7 @@ npm run start
 | Submit failed | `npm run submit:ios:testflight` після успішного build |
 | `could not determine executable` | Спочатку `npm install` у папці проєкту |
 | Білд «Processing» довго | Зачекай; інколи до 1 год |
-| TestFlight не бачить build | Перевір, що build прив’язаний до версії **1.0.3** |
+| TestFlight не бачить build | Перевір, що build прив’язаний до версії **1.0.7** |
 
 ## Privacy / metadata (для external beta)
 
