@@ -146,7 +146,7 @@ When scrolling turns automatic, Pulsation offers a short grounding prompt, for e
 - Press your palms together
 
 How it works
-When scrolling becomes automatic, Pulsation stays in the background. From time to time it sends a quiet local invitation — open, take one small action, return ("You are here"), then leave.
+When scrolling becomes automatic, Pulsation offers one quiet invitation and one small action. Tap the circles to continue, then leave — Pulsation stays in the background for the next invitation.
 
 Timing adapts gently to your recent use on this device. No streaks. No feed. No score to chase. The goal is not more time in the app — it is a softer pause.
 
@@ -319,7 +319,7 @@ Pulsation допомагає зупинитися, коли скрол стає 
 - Склади долоні разом
 
 Як це працює
-Коли скрол стає автоматичним, Pulsation лишається у фоні. Час від часу надсилає тихе локальне запрошення — відкрити, зробити одну невелику дію, повернутися («Ти тут») і йти.
+Коли скрол стає автоматичним, Pulsation пропонує одне тихе запрошення і одну невелику дію. Торкни кола, щоб продовжити, а тоді йди — Pulsation лишається у фоні до наступного запрошення.
 
 Таймінг м’яко підлаштовується під нещодавнє використання на цьому пристрої. Без стріків. Без стрічки. Без балів, за якими треба бігти. Мета — не більше часу в застосунку, а м’якша пауза.
 

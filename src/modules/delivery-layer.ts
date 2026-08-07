@@ -253,9 +253,9 @@ const uiCopyByLocale: Record<
     onboardingSubtitle: "How it works:",
     onboardingSteps: [
       "When scrolling becomes automatic",
-      "It stays in the background",
-      "A quiet invitation offers one small action",
+      "One quiet invitation, one small action",
       "Tap the circles to continue",
+      "Then it stays in the background",
     ] as const,
     triggerPrompt: "One action for you",
     keepForMe: "Save this for me",
@@ -286,9 +286,9 @@ const uiCopyByLocale: Record<
     onboardingSubtitle: "Як це працює:",
     onboardingSteps: [
       "Коли скрол стає автоматичним",
-      "Лишається у фоні",
-      "Тихе запрошення — одна невелика дія",
+      "Одне тихе запрошення, одна невелика дія",
       "Торкни кола, щоб продовжити",
+      "Потім лишається у фоні",
     ] as const,
     triggerPrompt: "Одна дія для тебе",
     keepForMe: "Збережи це для мене",
