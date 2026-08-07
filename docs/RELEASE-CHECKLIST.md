@@ -10,9 +10,9 @@
 | **1.0.5** | 42 | historical / storefront refresh |
 | **1.0.6** | 44 | invitation-cadence train (Expo) |
 | **1.0.7** | 46 | messaging refresh / App Store Connect processing |
-| **1.0.8** | TBD | build + submit — Paths remove-icon crop fix |
+| **1.0.8** | 48 | EAS building / auto-submit queued |
 
-**Зараз:** Store має **1.0.2** build **36** LIVE ✅; готуємо **1.0.8** з фіксом обрізаної іконки видалення на Paths.
+**Зараз:** Store має **1.0.2** build **36** LIVE ✅; **1.0.8 build 48** на EAS (auto-submit після finish).
 
 Android: `docs/ANDROID-RELEASE-CHECKLIST.md`
 
