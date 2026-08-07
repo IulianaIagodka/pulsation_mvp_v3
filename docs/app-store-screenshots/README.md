@@ -8,8 +8,8 @@
 
 | Локаль | Папка | Сюжет |
 |--------|--------|--------|
-| **EN** | `marketing/` | Stuck scrolling? → quiet invitation → one action → back to yourself → no streaks |
-| **UK** | `uk/` | Застрягли в скролі? → тихе запрошення → одна дія → повернися до себе → без серій |
+| **EN** | `marketing/` | Automatic scrolling → quiet invitation → one action → back to yourself → no streaks |
+| **UK** | `uk/` | Автоскрол → тихе запрошення → одна дія → повернися до себе → без серій |
 
 Порядок зверху вниз: `01` → `05`. Перший кадр має читатися за 1–2 секунди в мініатюрі.
 

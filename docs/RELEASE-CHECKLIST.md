@@ -5,11 +5,13 @@
 | **1.0.0** | 26 | superseded |
 | **1.0.1** | 28–33 | superseded |
 | **1.0.2** | 36 | **LIVE** в App Store ✅ |
-| **1.0.3** | 39 | submitted / processing (superseded by 1.0.4 train) |
-| **1.0.4** | 41 | release train / pre-1.0.5 storefront refresh |
-| **1.0.5** | 42 | submitted to App Store Connect / Apple processing |
+| **1.0.3** | 39 | historical |
+| **1.0.4** | 41 | historical |
+| **1.0.5** | 42 | historical / storefront refresh |
+| **1.0.6** | 44 | invitation-cadence train (Expo) |
+| **1.0.7** | 46 | submitted to App Store Connect / Apple processing |
 
-**Зараз:** Store має **1.0.2** build **36** LIVE ✅; **1.0.5 build 42** завантажено в App Store Connect і очікує Apple processing/TestFlight availability.
+**Зараз:** Store має **1.0.2** build **36** LIVE ✅; **1.0.7 build 46** завантажено в App Store Connect і очікує Apple processing/TestFlight.
 
 Android: `docs/ANDROID-RELEASE-CHECKLIST.md`
 
@@ -89,7 +91,7 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 
 Порядок у App Store (зверху вниз):
 
-1. [x] **Онбординг** — кола + «How it works:» / «Як це працює:» + кроки + «Tap circles» в кінці
+1. [x] **Онбординг** — кола + «How it works:» / «Як це працює:» + 4 кроки (scrolling → invitation → tap circles → background)
 2. [x] **Trigger** — «Одна дія для тебе»
 3. [x] **Action** — одна з дій (feet / find 3 / triangle breath / relax jaw / drop shoulders / notice 3 sounds / press palms)
 4. [x] **Return** — «Ти тут» + коротке пояснення
@@ -116,7 +118,7 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 ### C1. Тексти (1.0.2 build 36) — LIVE ✅
 
 - [x] **What's New** EN + UK — у Store (build **36**)
-- [ ] **Promotional Text** (опційно)
+- [ ] **Promotional Text** — EN/UK з `docs/app-store-metadata.md` (automatic scrolling → choice back)
 - [x] **Review Notes** — у `docs/app-store-metadata.md` (секція 1.0.2 build 34+)
 
 ### C2. URLs (GitHub Pages)
@@ -184,7 +186,7 @@ npm audit --omit=dev
 - [ ] `triangle_breath`: хінт після 3 циклів дихання
 - [ ] `find_three`: кола не завершують дію, поки не показані всі 3 буліти
 - [ ] `return`: **Збережи це для мене** не показується для вже збереженої дії
-- [ ] Онбординг: **Pulsation exists** лишається → **Tap circles** під колами → **How it works** + кроки нижче; 1-й тап — усі кроки, 2-й — trigger
+- [ ] Онбординг: **Pulsation exists** лишається → **How it works** + 4 кроки нижче (scrolling → invitation → tap circles → background); 1-й тап — усі кроки, 2-й — trigger
 - [ ] Android: tap по колах працює на кожному flow screen; footer links лишаються tappable.
 
 ---
@@ -211,6 +213,13 @@ npm audit --omit=dev
 - [x] EAS build + auto-submit → build **39**
 - [ ] App Store Connect processing complete → TestFlight available
 - [ ] TestFlight device regression (`docs/circles-regression-checklist.md` + D2 above)
+
+### 1.0.7 (build 46) — messaging refresh
+
+- [x] Bump **version** `1.0.7` / build **46**
+- [x] EAS build + submit → build **46**
+- [ ] Connect → What's New + Promotional Text + Description
+- [ ] Submit for Review після processing
 
 ---
 

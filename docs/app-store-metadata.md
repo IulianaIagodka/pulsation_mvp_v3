@@ -3,29 +3,52 @@
 ## Connect — активний реліз
 
 **App Store:** **1.0.2** build **36** LIVE ✅.  
-**1.0.3** build **39** — historical / superseded by 1.0.4.  
-**1.0.4** build **41** — historical / release train before 1.0.5 metadata refresh.  
-**1.0.5** build **42** — uploaded to App Store Connect (2026-07-27); waiting for Apple processing / TestFlight.  
+**1.0.3**–**1.0.6** — historical / prior trains (1.0.6 invitation-cadence build **44** already on Expo).  
+**1.0.7** build **46** — uploaded to App Store Connect (2026-08-07); waiting for Apple processing / TestFlight.  
 
-**Build:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/builds/848f8997-ae6d-4c63-ba5d-ec7c84295919  
-**Submission:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/submissions/d64cc0ff-8912-4eee-b969-fab18204dca4  
+**Build:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/builds/7ccdcc22-0607-4d33-be25-cb23434c1167  
+**Submission:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/submissions/fa380742-4905-4de9-ba41-08b709ddec72  
 **TestFlight (після processing):** https://appstoreconnect.apple.com/apps/6773324495/testflight/ios
 
-### What's New → EN (1.0.5) — вставити в Connect при submit
+### What's New → EN (1.0.7) — вставити в Connect при submit
+
+```
+- Clearer first steps — How it works now follows automatic scrolling → one quiet invitation → tap circles → stay in the background.
+- Updated App Store text around pause, choice, and leaving after one action.
+- Same calm flow: one gentle action, then return to the moment.
+```
+
+### What's New → UK (1.0.7) — вставити в Connect при submit
+
+```
+- Зрозуміліший старт — «Як це працює» тепер іде: автоскрол → одне тихе запрошення → торкни кола → лишається у фоні.
+- Оновлений текст в App Store про паузу, вибір і вихід після однієї дії.
+- Той самий спокійний шлях: одна м’яка дія, потім повернення в момент.
+```
+
+### Review Notes (1.0.7)
+
+This version is a messaging and onboarding-copy refresh:
+
+- extended onboarding How it works steps follow a first-use path (scrolling → invitation → tap → background);
+- App Store promotional text / description emphasize automatic scrolling, one brief action, then leave;
+- the core flow remains unchanged: onboarding → One action for you → one micro-action → You are here.
+
+### What's New → EN (1.0.5) — historical
 
 ```
 - Updated screenshots and App Store text to better reflect the Pulsation experience.
 - The same calm, minimal flow: one gentle action, then return to the moment.
 ```
 
-### What's New → UK (1.0.5) — вставити в Connect при submit
+### What's New → UK (1.0.5) — historical
 
 ```
 - Оновлені скріншоти й текст в App Store, щоб точніше показати досвід Pulsation.
 - Той самий спокійний мінімалістичний сценарій: одна м’яка дія, потім повернення в момент.
 ```
 
-### Review Notes (1.0.5)
+### Review Notes (1.0.5) — historical
 
 This version is primarily a storefront refresh:
 
@@ -80,10 +103,10 @@ This build keeps the core user path unchanged and focuses on reliability polish:
 - the global circles press handler is guarded so only the focused screen action is active;
 - copy reveal timing and anchored main-copy layout are centralized and covered by regression tests.
 
-### Після submit 1.0.5
+### Після submit 1.0.7
 
-1. Connect → **1.0.5** → вставити What's New (EN/UK вище).
-2. Оновити screenshots / subtitle / keywords / description для storefront refresh.
+1. Connect → **1.0.7** → вставити What's New (EN/UK вище).
+2. Вставити Promotional Text + Description з секцій EN/UK нижче.
 3. Submit for Review після того, як build з'явиться в App Store Connect.
 
 ---
@@ -129,32 +152,36 @@ Lifestyle
 mindfulness,focus,breathing,calm,wellbeing,detox,stress,grounding,habit
 
 ### Promotional Text
-A minimal wellbeing app that offers one gentle micro-action to help you pause and return to the present moment.
+When scrolling becomes automatic, Pulsation offers a simple action that helps bring choice back
+
+### In-app How it works steps (extended onboarding)
+Canonical copy lives in `src/modules/delivery-layer.ts` (`uiCopy.onboardingSteps`):
+
+1. When scrolling becomes automatic
+2. One quiet invitation, one small action
+3. Tap the circles to continue
+4. Then it stays in the background
 
 ### Description
-Pulsation helps you return to yourself with one gentle action at a time.
+Pulsation helps you pause when scrolling becomes automatic — with one gentle action, then a quiet return to yourself.
 
-When you feel mentally overloaded, Pulsation offers a short, gentle micro-action:
-- Feet on ground
-- Find 3 things (seven simple prompt sets — shape, color, feel — with calm everyday words)
+Most wellness apps ask you to track habits, earn rewards, finish courses, or spend more time inside the product. Pulsation does the opposite: one brief action at a time, then you leave.
+
+When scrolling turns automatic, Pulsation offers a short calm prompt, for example:
+- Feet on the ground
+- Find 3 things
 - Triangle breath
 - Relax your jaw
 - Drop your shoulders
 - Notice 3 sounds
 - Press your palms together
 
-The experience is intentionally minimal:
-onboarding -> one prompt -> one action -> return ("You are here" with soft explanation).
-
-Why people use Pulsation:
-- Create a short pause during busy moments
-- Return attention to the present moment
-- Build a softer daily rhythm with technology
-
-Pulsation is designed for calm, not pressure.
-
 How it works
-Pulsation is designed to help interrupt stuck scrolling. After onboarding, it can send periodic local "One action for you" invitations while the app is in the background. Each invitation opens one gentle action, chosen from seven options based on recent in-app use stored only on your device. Pulsation does not read or analyze your other apps.
+When scrolling becomes automatic, Pulsation offers one quiet invitation and one small action. Tap the circles to continue, then leave — Pulsation stays in the background for the next invitation.
+
+Timing adapts gently to your recent use on this device. No streaks. No feed. No score to chase. The goal is not more time in the app — it is a softer pause.
+
+Privacy. All data stays on your device. No account required. Pulsation does not read or analyze your other apps.
 
 Note: Pulsation is a wellbeing app and does not provide medical diagnosis or treatment.
 
@@ -306,32 +333,36 @@ Pulsation
 усвідомленість,фокус,дихання,спокій,добробут,детокс,стрес,заземлення,звички
 
 ### Promotional Text
-Мінімалістичний застосунок добробуту, який пропонує одну м'яку дію, щоб зробити паузу й повернути увагу до теперішнього моменту.
+Коли скрол стає автоматичним, Pulsation пропонує просту дію, яка допомагає повернути вибір
+
+### In-app How it works steps (extended onboarding)
+Канонічний текст у `src/modules/delivery-layer.ts` (`uiCopy.onboardingSteps`):
+
+1. Коли скрол стає автоматичним
+2. Одне тихе запрошення, одна невелика дія
+3. Торкни кола, щоб продовжити
+4. Потім лишається у фоні
 
 ### Description
-Pulsation допомагає повернутися до себе по одній м'якій дії за раз.
+Pulsation допомагає зупинитися, коли скрол стає автоматичним — однією м’якою дією, а тоді тихим поверненням до себе.
 
-Коли відчуваєш ментальне перенавантаження, Pulsation пропонує коротку м'яку дію:
+Більшість wellness-застосунків просять трекати звички, збирати нагороди, проходити курси або проводити більше часу всередині продукту. Pulsation робить навпаки: одна коротка дія за раз — і ти йдеш.
+
+Коли скрол стає автоматичним, Pulsation пропонує коротку спокійну підказку, наприклад:
 - Стопи на опорі
-- Знайди 3 речі (7 простих наборів підказок — форма, колір, відчуття)
+- Знайди 3 речі
 - Трикутне дихання
 - Розслаб щелепу
 - Опусти плечі
 - Поміть 3 звуки
 - Склади долоні разом
 
-Досвід навмисно мінімалістичний:
-онбординг -> один запит -> одна дія -> коротке пояснення -> повернення.
-
-Навіщо використовують Pulsation:
-- Зробити коротку паузу в насичений момент
-- Повернути увагу до теперішнього моменту
-- Сформувати м'якший щоденний ритм взаємодії з технологіями
-
-Pulsation створено для спокою, а не тиску.
-
 Як це працює
-Pulsation допомагає перервати застрягання у скролінгу. Після онбордингу застосунок може надсилати локальні запрошення **Одна дія для тебе** у фоні час від часу. Кожне запрошення відкриває одну м'яку дію з семи опцій, обрану з урахуванням нещодавнього досвіду в застосунку (лише на пристрої). Інші додатки не читаються й не аналізуються.
+Коли скрол стає автоматичним, Pulsation пропонує одне тихе запрошення і одну невелику дію. Торкни кола, щоб продовжити, а тоді йди — Pulsation лишається у фоні до наступного запрошення.
+
+Таймінг м’яко підлаштовується під нещодавнє використання на цьому пристрої. Без стріків. Без стрічки. Без балів, за якими треба бігти. Мета — не більше часу в застосунку, а м’якша пауза.
+
+Приватність. Усі дані лишаються на пристрої. Акаунт не потрібен. Pulsation не читає й не аналізує інші додатки.
 
 Примітка: Pulsation є застосунком для добробуту і не надає медичних порад, діагностики чи лікування.
 
