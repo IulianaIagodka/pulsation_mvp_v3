@@ -252,8 +252,8 @@ const uiCopyByLocale: Record<
     onboardingLine: "Pulsation exists to bring you back to yourself",
     onboardingSubtitle: "How it works:",
     onboardingSteps: [
-      "It stays in the background",
-      "It invites you from time to time",
+      "When scrolling becomes automatic",
+      "A quiet invitation offers one small action",
       "Tap the circles to continue",
     ] as const,
     triggerPrompt: "One action for you",
@@ -284,8 +284,8 @@ const uiCopyByLocale: Record<
     onboardingLine: "Pulsation допомагає повернутися до себе",
     onboardingSubtitle: "Як це працює:",
     onboardingSteps: [
-      "Лишається у фоні",
-      "Час від часу запрошує",
+      "Коли скрол стає автоматичним",
+      "Тихе запрошення — одна невелика дія",
       "Торкни кола, щоб продовжити",
     ] as const,
     triggerPrompt: "Одна дія для тебе",
