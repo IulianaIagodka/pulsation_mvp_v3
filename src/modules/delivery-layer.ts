@@ -228,7 +228,7 @@ const uiCopyByLocale: Record<
   {
     onboardingLine: string;
     onboardingSubtitle: string;
-    onboardingSteps: readonly [string, string, string];
+    onboardingSteps: readonly [string, string, string, string];
     triggerPrompt: string;
     keepForMe: string;
     keepForMeSaved: string;
@@ -253,6 +253,7 @@ const uiCopyByLocale: Record<
     onboardingSubtitle: "How it works:",
     onboardingSteps: [
       "When scrolling becomes automatic",
+      "It stays in the background",
       "A quiet invitation offers one small action",
       "Tap the circles to continue",
     ] as const,
@@ -285,6 +286,7 @@ const uiCopyByLocale: Record<
     onboardingSubtitle: "Як це працює:",
     onboardingSteps: [
       "Коли скрол стає автоматичним",
+      "Лишається у фоні",
       "Тихе запрошення — одна невелика дія",
       "Торкни кола, щоб продовжити",
     ] as const,
