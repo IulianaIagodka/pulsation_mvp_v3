@@ -4,9 +4,9 @@
 
 **App Store:** **1.0.2** build **36** LIVE ✅.  
 **1.0.3**–**1.0.6** — historical / prior trains (1.0.6 invitation-cadence build **44** already on Expo).  
-**1.0.7** build **45** — messaging / How it works refresh (automatic scrolling → choice); prepare EAS build + submit.  
+**1.0.7** build **46** — messaging / How it works refresh (automatic scrolling → choice); EAS build in progress.  
 
-**Build:** _(після EAS)_  
+**Build:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/builds/7ccdcc22-0607-4d33-be25-cb23434c1167  
 **Submission:** _(після submit)_  
 **TestFlight (після processing):** https://appstoreconnect.apple.com/apps/6773324495/testflight/ios
 
