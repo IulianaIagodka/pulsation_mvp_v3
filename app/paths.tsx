@@ -133,16 +133,19 @@ export default function PathsScreen() {
                 const label = interventionCopy[id as keyof typeof interventionCopy] ?? id;
                 return (
                   <View key={id} style={styles.savedRow}>
-                    <CalmText
-                      style={[
-                        styles.sectionBody,
-                        styles.savedItemLabel,
-                        { opacity: bodyOpacity },
-                        highContrast && styles.bodyHighContrast,
-                      ]}
-                    >
-                      {label}
-                    </CalmText>
+                    <View style={styles.savedItemLabel}>
+                      <CalmText
+                        flowWidth={false}
+                        style={[
+                          styles.sectionBody,
+                          styles.savedItemText,
+                          { opacity: bodyOpacity },
+                          highContrast && styles.bodyHighContrast,
+                        ]}
+                      >
+                        {label}
+                      </CalmText>
+                    </View>
                     <CalmPressable
                       onPress={() => onRemoveKept(id)}
                       hitSlop={10}
@@ -265,11 +268,16 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
     flexShrink: 1,
-    width: undefined,
-    maxWidth: undefined,
     paddingRight: spacing.sm,
   },
+  savedItemText: {
+    width: "100%",
+    maxWidth: "100%",
+    textAlign: "left",
+  },
   removeButton: {
+    flexGrow: 0,
+    flexShrink: 0,
     minWidth: 44,
     minHeight: 44,
     alignItems: "center",

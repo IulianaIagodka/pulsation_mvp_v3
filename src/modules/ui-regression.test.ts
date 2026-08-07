@@ -4,7 +4,11 @@ import {
   MIN_FONT_SIZE_MULTIPLIER,
 } from "../design/accessibility-scale";
 import { contentOverflows, getVerticalContentPadding, shouldShowScrollOverflowHint } from "../design/overflow-scroll";
-import { getFlowCopyTextWidth, getFlowScreenHorizontalInset } from "../design/responsive";
+import {
+  getCalmScreenHorizontalPadding,
+  getFlowCopyTextWidth,
+  getFlowScreenHorizontalInset,
+} from "../design/responsive";
 import {
   breathingRhythm,
   copyReveal,
@@ -60,6 +64,18 @@ describe("flow copy width", () => {
     expect(getFlowCopyTextWidth(390, { left: 0, right: 0 })).toBe(312);
     expect(getFlowCopyTextWidth(390, { left: 12, right: 12 })).toBe(288);
     expect(getFlowCopyTextWidth(390, { left: 0, right: 0 }, 20)).toBe(370);
+  });
+
+  it("documents why paths saved rows wrap CalmText before the remove control", () => {
+    const windowWidth = 390;
+    const calmPad = getCalmScreenHorizontalPadding(windowWidth);
+    const contentWidth = windowWidth - calmPad * 2;
+    const flowCopyWidth = getFlowCopyTextWidth(windowWidth, { left: 0, right: 0 });
+    const removeButtonMin = 44;
+    // CalmText widthWrap maxWidth + remove button exceeds the padded content width, so
+    // the label must live in a flex:1 minWidth:0 wrapper (see app/paths.tsx savedRow).
+    expect(flowCopyWidth + removeButtonMin).toBeGreaterThan(contentWidth);
+    expect(contentWidth - removeButtonMin).toBeGreaterThan(flowCopyWidth / 2);
   });
 });
 
