@@ -5,11 +5,14 @@
 | **1.0.0** | 26 | superseded |
 | **1.0.1** | 28–33 | superseded |
 | **1.0.2** | 36 | **LIVE** в App Store ✅ |
-| **1.0.3** | 39 | submitted / processing (superseded by 1.0.4 train) |
-| **1.0.4** | 41 | release train / pre-1.0.5 storefront refresh |
-| **1.0.5** | 42 | submitted to App Store Connect / Apple processing |
+| **1.0.3** | 39 | historical |
+| **1.0.4** | 41 | historical |
+| **1.0.5** | 42 | historical / storefront refresh |
+| **1.0.6** | 44 | invitation-cadence train (Expo) |
+| **1.0.7** | 46 | messaging refresh / App Store Connect processing |
+| **1.0.8** | 48 | submitted to App Store Connect / Apple processing |
 
-**Зараз:** Store має **1.0.2** build **36** LIVE ✅; **1.0.5 build 42** завантажено в App Store Connect і очікує Apple processing/TestFlight availability.
+**Зараз:** Store має **1.0.2** build **36** LIVE ✅; **1.0.8 build 48** завантажено в App Store Connect і очікує Apple processing/TestFlight.
 
 Android: `docs/ANDROID-RELEASE-CHECKLIST.md`
 

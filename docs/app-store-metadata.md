@@ -3,29 +3,49 @@
 ## Connect — активний реліз
 
 **App Store:** **1.0.2** build **36** LIVE ✅.  
-**1.0.3** build **39** — historical / superseded by 1.0.4.  
-**1.0.4** build **41** — historical / release train before 1.0.5 metadata refresh.  
-**1.0.5** build **42** — uploaded to App Store Connect (2026-07-27); waiting for Apple processing / TestFlight.  
+**1.0.3**–**1.0.7** — historical / prior trains (latest Expo: **1.0.7** build **46**).  
+**1.0.8** build **48** — uploaded to App Store Connect (2026-08-07); waiting for Apple processing / TestFlight.  
 
-**Build:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/builds/848f8997-ae6d-4c63-ba5d-ec7c84295919  
-**Submission:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/submissions/d64cc0ff-8912-4eee-b969-fab18204dca4  
+**Build:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/builds/d397661b-1652-4d3b-964d-74fa0de453d9  
+**Submission:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/submissions/0af20cae-9bac-4ed5-9e20-c66bb6c3691a  
 **TestFlight (після processing):** https://appstoreconnect.apple.com/apps/6773324495/testflight/ios
 
-### What's New → EN (1.0.5) — вставити в Connect при submit
+### What's New → EN (1.0.8) — вставити в Connect при submit
+
+```
+- Fixed the remove control on Saved paths so the trash icon is no longer clipped at the screen edge.
+- Same calm flow: one gentle action, then return to the moment.
+```
+
+### What's New → UK (1.0.8) — вставити в Connect при submit
+
+```
+- Виправлено кнопку видалення в «Збережені» — іконка смітника більше не обрізається краєм екрана.
+- Той самий спокійний шлях: одна м’яка дія, потім повернення в момент.
+```
+
+### Review Notes (1.0.8)
+
+This build keeps the core user path unchanged and fixes a Paths UI clipping bug:
+
+- the remove control next to saved interventions stays fully visible within the padded content area;
+- CalmText can skip flow-copy max width in inline row layouts so sibling controls are not pushed off-screen.
+
+### What's New → EN (1.0.5) — historical
 
 ```
 - Updated screenshots and App Store text to better reflect the Pulsation experience.
 - The same calm, minimal flow: one gentle action, then return to the moment.
 ```
 
-### What's New → UK (1.0.5) — вставити в Connect при submit
+### What's New → UK (1.0.5) — historical
 
 ```
 - Оновлені скріншоти й текст в App Store, щоб точніше показати досвід Pulsation.
 - Той самий спокійний мінімалістичний сценарій: одна м’яка дія, потім повернення в момент.
 ```
 
-### Review Notes (1.0.5)
+### Review Notes (1.0.5) — historical
 
 This version is primarily a storefront refresh:
 
@@ -80,10 +100,10 @@ This build keeps the core user path unchanged and focuses on reliability polish:
 - the global circles press handler is guarded so only the focused screen action is active;
 - copy reveal timing and anchored main-copy layout are centralized and covered by regression tests.
 
-### Після submit 1.0.5
+### Після submit 1.0.8
 
-1. Connect → **1.0.5** → вставити What's New (EN/UK вище).
-2. Оновити screenshots / subtitle / keywords / description для storefront refresh.
+1. Connect → **1.0.8** → вставити What's New (EN/UK вище).
+2. TestFlight на iPhone → Paths → збережений пункт → іконка видалення повністю видима.
 3. Submit for Review після того, як build з'явиться в App Store Connect.
 
 ---
