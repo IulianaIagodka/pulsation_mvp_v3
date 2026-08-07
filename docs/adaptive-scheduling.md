@@ -1,6 +1,6 @@
 # Adaptive Pulsation Scheduling
 
-Pulsation helps interrupt stuck scrolling by inviting you back to one small action from time to time. The MVP does not monitor other apps; scheduling runs entirely on-device from Pulsation background/resume state, with no server, account, cloud sync, or external analytics.
+Pulsation helps interrupt automatic scrolling by inviting you back to one small action from time to time. The MVP does not monitor other apps; scheduling runs entirely on-device from Pulsation background/resume state, with no server, account, cloud sync, or external analytics.
 
 ---
 

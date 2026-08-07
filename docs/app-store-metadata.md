@@ -131,6 +131,14 @@ mindfulness,focus,breathing,calm,wellbeing,detox,stress,grounding,habit
 ### Promotional Text
 When scrolling becomes automatic, Pulsation offers a simple action that helps bring choice back
 
+### In-app How it works steps (extended onboarding)
+Canonical copy lives in `src/modules/delivery-layer.ts` (`uiCopy.onboardingSteps`):
+
+1. When scrolling becomes automatic
+2. One quiet invitation, one small action
+3. Tap the circles to continue
+4. Then it stays in the background
+
 ### Description
 Pulsation helps you pause when scrolling becomes automatic — with one gentle action, then a quiet return to yourself.
 
@@ -303,6 +311,14 @@ Pulsation
 
 ### Promotional Text
 Коли скрол стає автоматичним, Pulsation пропонує просту дію, яка допомагає повернути вибір
+
+### In-app How it works steps (extended onboarding)
+Канонічний текст у `src/modules/delivery-layer.ts` (`uiCopy.onboardingSteps`):
+
+1. Коли скрол стає автоматичним
+2. Одне тихе запрошення, одна невелика дія
+3. Торкни кола, щоб продовжити
+4. Потім лишається у фоні
 
 ### Description
 Pulsation допомагає зупинитися, коли скрол стає автоматичним — однією м’якою дією, а тоді тихим поверненням до себе.

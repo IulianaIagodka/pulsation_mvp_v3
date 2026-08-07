@@ -266,7 +266,7 @@ const uiCopyByLocale: Record<
     aboutLink: "About",
     aboutTitle: "About Pulsation",
     aboutParagraphs: [
-      "Pulsation offers short, calming micro-actions when everyday digital use feels like a lot.",
+      "Pulsation offers short, calming micro-actions when scrolling becomes automatic.",
       "If you allow notifications, while the app is in the background it may send quiet one-action invitations from time to time. Timing adapts gently to your rhythm. No marketing messages.",
       "Pulsation does not read or analyze your other apps; it uses only local app state on this device.",
       "This is a wellbeing app, not a medical device or substitute for professional care.",
@@ -299,7 +299,7 @@ const uiCopyByLocale: Record<
     aboutLink: "Про застосунок",
     aboutTitle: "Про Pulsation",
     aboutParagraphs: [
-      "Pulsation — короткі спокійні дії, коли цифрове навантаження стає занадто великим.",
+      "Pulsation — короткі спокійні дії, коли скрол стає автоматичним.",
       "Якщо дозволиш сповіщення, у фоні застосунок час від часу надсилатиме тихі запрошення до однієї дії. Частота м’яко підлаштовується під твій ритм. Без реклами.",
       "Застосунок не читає й не аналізує інші додатки на телефоні; він використовує лише локальний стан Pulsation.",
       "Це застосунок для добробуту, не медичний виріб і не заміна професійної допомоги.",

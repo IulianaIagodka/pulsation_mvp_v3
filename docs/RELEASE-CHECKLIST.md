@@ -89,7 +89,7 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 
 Порядок у App Store (зверху вниз):
 
-1. [x] **Онбординг** — кола + «How it works:» / «Як це працює:» + кроки + «Tap circles» в кінці
+1. [x] **Онбординг** — кола + «How it works:» / «Як це працює:» + 4 кроки (scrolling → invitation → tap circles → background)
 2. [x] **Trigger** — «Одна дія для тебе»
 3. [x] **Action** — одна з дій (feet / find 3 / triangle breath / relax jaw / drop shoulders / notice 3 sounds / press palms)
 4. [x] **Return** — «Ти тут» + коротке пояснення
@@ -116,7 +116,7 @@ sips -g pixelWidth -g pixelHeight ~/Desktop/"Simulator Screenshot ... .png"
 ### C1. Тексти (1.0.2 build 36) — LIVE ✅
 
 - [x] **What's New** EN + UK — у Store (build **36**)
-- [ ] **Promotional Text** (опційно)
+- [ ] **Promotional Text** — EN/UK з `docs/app-store-metadata.md` (automatic scrolling → choice back)
 - [x] **Review Notes** — у `docs/app-store-metadata.md` (секція 1.0.2 build 34+)
 
 ### C2. URLs (GitHub Pages)
@@ -184,7 +184,7 @@ npm audit --omit=dev
 - [ ] `triangle_breath`: хінт після 3 циклів дихання
 - [ ] `find_three`: кола не завершують дію, поки не показані всі 3 буліти
 - [ ] `return`: **Збережи це для мене** не показується для вже збереженої дії
-- [ ] Онбординг: **Pulsation exists** лишається → **Tap circles** під колами → **How it works** + кроки нижче; 1-й тап — усі кроки, 2-й — trigger
+- [ ] Онбординг: **Pulsation exists** лишається → **How it works** + 4 кроки нижче (scrolling → invitation → tap circles → background); 1-й тап — усі кроки, 2-й — trigger
 - [ ] Android: tap по колах працює на кожному flow screen; footer links лишаються tappable.
 
 ---

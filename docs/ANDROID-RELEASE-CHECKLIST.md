@@ -203,7 +203,7 @@ Privacy / Support URL — ті самі GitHub Pages (вже live).
 
 ### D1. Рекомендований набір (як iOS)
 
-1. Onboarding (How it works + tap circles)
+1. Onboarding (How it works: scrolling → invitation → tap circles → background)
 2. Trigger
 3. Action
 4. Return

@@ -32,9 +32,10 @@ const COPY_BY_LOCALE = {
     onboardingLine: "Pulsation exists to bring you back to yourself",
     onboardingSubtitle: "How it works:",
     onboardingSteps: [
-      "It stays in the background",
-      "It invites you from time to time",
+      "When scrolling becomes automatic",
+      "One quiet invitation, one small action",
       "Tap the circles to continue",
+      "Then it stays in the background",
     ],
     triggerPrompt: "One action for you",
     actionText:
@@ -45,7 +46,7 @@ const COPY_BY_LOCALE = {
     aboutLink: "About",
     aboutTitle: "About Pulsation",
     aboutParagraphs: [
-      "Pulsation offers short, calming micro-actions when everyday digital use feels like a lot.",
+      "Pulsation offers short, calming micro-actions when scrolling becomes automatic.",
       "If you allow notifications, while the app is in the background it may send quiet one-action invitations from time to time. Timing adapts gently to your rhythm. No marketing messages.",
       "Pulsation does not read or analyze your other apps; it uses only local app state on this device.",
       "This is a wellbeing app, not a medical device or substitute for professional care.",
@@ -58,9 +59,10 @@ const COPY_BY_LOCALE = {
     onboardingLine: "Pulsation допомагає повернутися до себе",
     onboardingSubtitle: "Як це працює:",
     onboardingSteps: [
-      "Лишається у фоні",
-      "Час від часу запрошує",
+      "Коли скрол стає автоматичним",
+      "Одне тихе запрошення, одна невелика дія",
       "Торкни кола, щоб продовжити",
+      "Потім лишається у фоні",
     ],
     triggerPrompt: "Одна дія для тебе",
     actionText: "Постав стопи на опору, відчуй тиск під ними, дихай",
@@ -70,7 +72,7 @@ const COPY_BY_LOCALE = {
     aboutLink: "Про застосунок",
     aboutTitle: "Про Pulsation",
     aboutParagraphs: [
-      "Pulsation — короткі спокійні дії, коли цифрове навантаження стає занадто великим.",
+      "Pulsation — короткі спокійні дії, коли скрол стає автоматичним.",
       "Якщо дозволиш сповіщення, у фоні застосунок час від часу надсилатиме тихі запрошення до однієї дії. Частота м’яко підлаштовується під твій ритм. Без реклами.",
       "Застосунок не читає й не аналізує інші додатки на телефоні; він використовує лише локальний стан Pulsation.",
       "Це застосунок для добробуту, не медичний виріб і не заміна професійної допомоги.",

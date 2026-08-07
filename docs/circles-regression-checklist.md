@@ -19,7 +19,7 @@ Use this checklist before release whenever animation/layout is changed.
 
 ## Copy order
 
-- [ ] On **extended onboarding**: **Pulsation exists…** **stays visible**; **How it works:** + steps appear **below** (auto one-by-one, or all on first circles tap); second tap continues to trigger.
+- [ ] On **extended onboarding**: **Pulsation exists…** **stays visible**; **How it works:** + four steps appear **below** in order — **When scrolling becomes automatic** → **One quiet invitation, one small action** → **Tap the circles to continue** → **Then it stays in the background** (auto one-by-one, or all on first circles tap); second tap continues to trigger.
 - [ ] On **short onboarding**: headline + **About** footer only; circles tap → trigger.
 - [ ] On **trigger**, **action**, **return**: **no** text under circles (`PersistentCirclesLayer` renders circles only).
 - [ ] On **trigger**: **One action for you** first; **Show my paths** with main copy when `hasPathsContent()`.
@@ -42,7 +42,7 @@ Use this checklist before release whenever animation/layout is changed.
 - [ ] On return, **Save this for me** becomes **Saved** on tap (stays visible, not clickable); later visits with the same saved intervention do **not** show the control.
 - [ ] With **Accessibility XXL** text size (Settings → Display → Larger Text): main line stays pinned; onboarding scrolls (pinned **How it works:**); About / paths scroll when overflow (`OverflowScrollView`); return explanation flows below main without shifting **You are here**.
 - [ ] **Paths**: today's count **20 pt**; **Saved for you:** **20 pt**; saved items **17 pt**; list scrolls when many items.
-- [ ] Onboarding shows **Pulsation exists…** (stays visible) → **How it works** steps below; not “one action for you now?” on first screen.
+- [ ] Onboarding shows **Pulsation exists…** (stays visible) → **How it works** four steps below (scrolling → invitation → tap → background); not “one action for you now?” on first screen.
 
 ## Automated safety net
 

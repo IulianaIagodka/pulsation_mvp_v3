@@ -92,7 +92,7 @@ const CONVERSION_UK = {
 
 /** Older product/feature headlines (kept for A/B). */
 const PRODUCT_EN = {
-  "01-onboarding": { headline: "How it works", sub: "Four steps — then tap circles" },
+  "01-onboarding": { headline: "How it works", sub: "Scrolling → action → background" },
   "02-trigger": { headline: "One action for you", sub: "Tap circles to begin" },
   "03-action": { headline: "Feet on the ground", sub: "Seven calm micro-actions" },
   "04-return": { headline: "You are here", sub: "Settle back into the moment" },
@@ -100,7 +100,7 @@ const PRODUCT_EN = {
 };
 
 const PRODUCT_UK = {
-  "01-onboarding": { headline: "Як це працює", sub: "Чотири кроки — потім торкнись кіл" },
+  "01-onboarding": { headline: "Як це працює", sub: "Скрол → дія → фон" },
   "02-trigger": { headline: "Одна дія для тебе", sub: "Торкнись кіл, щоб почати" },
   "03-action": { headline: "Стопи на опорі", sub: "Сім спокійних мікродій" },
   "04-return": { headline: "Ти тут", sub: "Повернись у теперішній момент" },
