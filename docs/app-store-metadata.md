@@ -4,7 +4,7 @@
 
 **App Store:** **1.0.2** build **36** LIVE ✅.  
 **1.0.3**–**1.0.7** — historical / prior trains (latest Expo: **1.0.7** build **46**).  
-**1.0.8** build **48** — EAS building (2026-08-07); auto-submit queued after finish.  
+**1.0.8** build **48** — uploaded to App Store Connect (2026-08-07); waiting for Apple processing / TestFlight.  
 
 **Build:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/builds/d397661b-1652-4d3b-964d-74fa0de453d9  
 **Submission:** https://expo.dev/accounts/iuliana.iagodka/projects/pulsation/submissions/0af20cae-9bac-4ed5-9e20-c66bb6c3691a  
