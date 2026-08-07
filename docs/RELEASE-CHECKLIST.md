@@ -10,9 +10,9 @@
 | **1.0.5** | 42 | historical / storefront refresh |
 | **1.0.6** | 44 | invitation-cadence train (Expo) |
 | **1.0.7** | 46 | messaging refresh / App Store Connect processing |
-| **1.0.8** | 48 | EAS building / auto-submit queued |
+| **1.0.8** | 48 | submitted to App Store Connect / Apple processing |
 
-**Зараз:** Store має **1.0.2** build **36** LIVE ✅; **1.0.8 build 48** на EAS (auto-submit після finish).
+**Зараз:** Store має **1.0.2** build **36** LIVE ✅; **1.0.8 build 48** завантажено в App Store Connect і очікує Apple processing/TestFlight.
 
 Android: `docs/ANDROID-RELEASE-CHECKLIST.md`
 
