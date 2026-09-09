@@ -2,10 +2,13 @@ import { useRouter } from "expo-router";
 import Constants from "expo-constants";
 import { useMemo } from "react";
 import { StyleSheet, useWindowDimensions, View } from "react-native";
-import { AboutFooterLink } from "../src/design/components/AboutFooterLink";
 import { OverflowScrollView } from "../src/design/components/OverflowScrollView";
 import { CalmScreen } from "../src/design/components/CalmScreen";
 import { CalmText } from "../src/design/components/CalmText";
+import {
+  getSecondaryFooterHeight,
+  SecondaryScreenFooter,
+} from "../src/design/components/SecondaryScreenFooter";
 import { utilityFontFamily } from "../src/design/app-font";
 import { getCappedFontScale, legibleOpacity } from "../src/design/accessibility";
 import { getContentMaxWidth } from "../src/design/responsive";
@@ -20,7 +23,7 @@ export default function AboutScreen() {
   const fontScale = getCappedFontScale();
   const version = Constants.expoConfig?.version ?? "1.0.0";
   const versionOpacity = legibleOpacity(0.55, highContrast, "faint");
-  const footerRowHeight = Math.min(Math.max(44 * fontScale, 44), 132);
+  const footerRowHeight = getSecondaryFooterHeight(fontScale);
 
   const scrollContentStyle = useMemo(
     () => [
@@ -51,9 +54,7 @@ export default function AboutScreen() {
             {uiCopy.aboutVersionPrefix} {version}
           </CalmText>
         </OverflowScrollView>
-        <View style={styles.pinnedFooter}>
-          <AboutFooterLink label={uiCopy.aboutBack} onPress={() => router.back()} />
-        </View>
+        <SecondaryScreenFooter onBack={() => router.back()} />
       </View>
     </CalmScreen>
   );
@@ -103,14 +104,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     textAlign: "left",
-    width: "100%",
-  },
-  pinnedFooter: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    alignItems: "center",
     width: "100%",
   },
 });
