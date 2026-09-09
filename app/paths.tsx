@@ -2,12 +2,15 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { StyleSheet, useWindowDimensions, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import { AboutFooterLink } from "../src/design/components/AboutFooterLink";
 import { OverflowScrollView } from "../src/design/components/OverflowScrollView";
 import { CalmPressable } from "../src/design/components/CalmPressable";
 import { resolvePressableTextOpacity } from "../src/design/pressable-highlight";
 import { CalmScreen } from "../src/design/components/CalmScreen";
 import { CalmText } from "../src/design/components/CalmText";
+import {
+  getSecondaryFooterHeight,
+  SecondaryScreenFooter,
+} from "../src/design/components/SecondaryScreenFooter";
 import { getCappedFontScale, legibleOpacity } from "../src/design/accessibility";
 import { useHighContrast } from "../src/hooks/use-high-contrast";
 import { interventionCopy, uiCopy } from "../src/modules/delivery-layer";
@@ -60,7 +63,7 @@ export default function PathsScreen() {
     }, []),
   );
 
-  const footerRowHeight = Math.min(Math.max(44 * fontScale, 44), 132);
+  const footerRowHeight = getSecondaryFooterHeight(fontScale);
   const pageInnerStyle = useMemo(
     () => [styles.pageInner, { maxWidth: getContentMaxWidth(width), paddingBottom: footerRowHeight }],
     [footerRowHeight, width],
@@ -172,9 +175,7 @@ export default function PathsScreen() {
             )}
           </OverflowScrollView>
         </View>
-        <View style={styles.pinnedFooter}>
-          <AboutFooterLink label={uiCopy.aboutBack} onPress={() => router.back()} />
-        </View>
+        <SecondaryScreenFooter onBack={() => router.back()} />
       </View>
     </CalmScreen>
   );
@@ -283,13 +284,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(255,255,255,0.06)",
-  },
-  pinnedFooter: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    alignItems: "center",
-    width: "100%",
   },
 });

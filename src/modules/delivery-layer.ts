@@ -240,6 +240,8 @@ const uiCopyByLocale: Record<
     aboutParagraphs: readonly string[];
     aboutBack: string;
     aboutVersionPrefix: string;
+    feedbackLink: string;
+    feedbackMailSubject: string;
     pathsLink: string;
     pathsTodayNone: string;
     pathsTodayCountLabel: (count: number) => string;
@@ -272,6 +274,8 @@ const uiCopyByLocale: Record<
     ] as const,
     aboutBack: "Return",
     aboutVersionPrefix: "Version",
+    feedbackLink: "Send feedback",
+    feedbackMailSubject: "Pulsation feedback",
     pathsLink: "Show my paths",
     pathsTodayNone: "No actions for yourself yet today",
     pathsTodayCountLabel: (count) =>
@@ -304,6 +308,8 @@ const uiCopyByLocale: Record<
     ] as const,
     aboutBack: "Повернутися",
     aboutVersionPrefix: "Версія",
+    feedbackLink: "Надіслати відгук",
+    feedbackMailSubject: "Відгук щодо Pulsation",
     pathsLink: "Мої шляхи",
     pathsTodayNone: "Сьогодні ще не було закінчених дій",
     pathsTodayCountLabel: (count) => {
